@@ -1,3 +1,5 @@
 node_modules/
 feelya.db
+feelya.db-shm
+feelya.db-wal
 .env
