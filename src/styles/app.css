@@ -351,6 +351,7 @@ button { font-family: var(--font); }
   white-space: nowrap;
   text-decoration: none;
 }
+.btn:hover, .btn:focus, .btn:active { text-decoration: none; }
 
 .btn--xs { padding: 6px 14px; font-size: 12px; }
 .btn--sm { padding: 8px 20px; font-size: 13px; }
