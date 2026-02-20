@@ -11,16 +11,17 @@ import Login from './pages/Login';
 // User app
 import UserShell from './app/user/UserShell';
 import HomePage from './app/user/HomePage';
-import StartPage from './app/user/StartPage';
-import ActivityPage from './app/user/ActivityPage';
-import CommunityPage from './app/user/CommunityPage';
-import GuideProfilePage from './app/user/GuideProfilePage';
+import SessionsPage from './app/user/SessionsPage';
+import TherapistDirectoryPage from './app/user/TherapistDirectoryPage';
+import TherapistProfilePage from './app/user/TherapistProfilePage';
+import WorkshopsPage from './app/user/WorkshopsPage';
+import ResourcesPage from './app/user/ResourcesPage';
 import ProfilePage from './app/user/ProfilePage';
 
 // HR portal
 import HRShell from './app/hr/HRShell';
 import OverviewPage from './app/hr/OverviewPage';
-import WorkshopsPage from './app/hr/WorkshopsPage';
+import HRWorkshopsPage from './app/hr/WorkshopsPage';
 import RequestsPage from './app/hr/RequestsPage';
 import HREmployeesPage from './app/hr/EmployeesPage';
 import InsightsPage from './app/hr/InsightsPage';
@@ -57,17 +58,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           {/* User app (any authenticated user) */}
           <Route path="/app" element={<RequireAuth><UserShell /></RequireAuth>}>
             <Route index element={<HomePage />} />
-            <Route path="community" element={<CommunityPage />} />
-            <Route path="start" element={<StartPage />} />
-            <Route path="activity" element={<ActivityPage />} />
+            <Route path="sessions" element={<SessionsPage />} />
+            <Route path="therapists" element={<TherapistDirectoryPage />} />
+            <Route path="therapist/:id" element={<TherapistProfilePage />} />
+            <Route path="workshops" element={<WorkshopsPage />} />
+            <Route path="resources" element={<ResourcesPage />} />
             <Route path="profile" element={<ProfilePage />} />
-            <Route path="guide/:id" element={<GuideProfilePage />} />
           </Route>
 
           {/* HR Portal */}
           <Route path="/hr" element={<RequireAuth roles={['HR_ADMIN', 'SUPER_ADMIN']}><HRShell /></RequireAuth>}>
             <Route index element={<OverviewPage />} />
-            <Route path="workshops" element={<WorkshopsPage />} />
+            <Route path="workshops" element={<HRWorkshopsPage />} />
             <Route path="requests" element={<RequestsPage />} />
             <Route path="employees" element={<HREmployeesPage />} />
             <Route path="insights" element={<InsightsPage />} />
