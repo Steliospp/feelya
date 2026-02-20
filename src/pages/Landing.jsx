@@ -416,13 +416,13 @@ const Landing = () => {
         ref={navRef}
       >
         <div className="container nav__inner">
-          <a href="#" className="nav__logo" onClick={(e) => e.preventDefault()}>
+          <Link to="/" className="nav__logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <span className="nav__logo-icon">
               <LogoSvg gradientId="logo-grad" />
             </span>
             <span className="nav__logo-text">feelya</span>
             <span className="nav__logo-badge">for Business</span>
-          </a>
+          </Link>
 
           <div className={`nav__links${mobileMenuOpen ? ' nav__links--open' : ''}`}>
             <a href="#how-it-works" className="nav__link" onClick={(e) => scrollToSection(e, 'how-it-works')}>How It Works</a>
