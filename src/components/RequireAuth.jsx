@@ -12,6 +12,7 @@ export default function RequireAuth({ children, roles }) {
     // Redirect to the appropriate home for their role
     if (user.role === 'SUPER_ADMIN') return <Navigate to="/admin" replace />;
     if (user.role === 'HR_ADMIN') return <Navigate to="/app/hr" replace />;
+    if (user.role === 'THERAPIST') return <Navigate to="/therapist" replace />;
     return <Navigate to="/app" replace />;
   }
 
