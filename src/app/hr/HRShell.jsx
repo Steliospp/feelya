@@ -73,9 +73,9 @@ export default function HRShell() {
         </div>
       </aside>
 
-      {/* Main */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="max-w-[1200px] mx-auto p-6">
+      {/* Main — atmospheric background */}
+      <main className="flex-1 overflow-y-auto app-atmosphere">
+        <div className="max-w-[1200px] mx-auto p-6 lg:p-8">
           <Outlet />
         </div>
       </main>

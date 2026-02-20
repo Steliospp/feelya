@@ -127,7 +127,7 @@ export default function UserShell() {
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile header */}
-        <header className="lg:hidden flex items-center justify-between h-14 px-4 bg-surface border-b border-border shrink-0">
+        <header className="lg:hidden flex items-center justify-between h-14 px-4 bg-surface/80 backdrop-blur-sm border-b border-border shrink-0">
           <button
             onClick={() => setMobileOpen(true)}
             className="w-9 h-9 flex items-center justify-center rounded-[8px] hover:bg-surface-dim cursor-pointer border-none bg-transparent"
@@ -138,8 +138,8 @@ export default function UserShell() {
           <Avatar name={`${user?.first_name} ${user?.last_name}`} color={user?.avatar_color} size="sm" />
         </header>
 
-        {/* Content */}
-        <main className="flex-1 overflow-y-auto">
+        {/* Content — atmospheric background */}
+        <main className="flex-1 overflow-y-auto app-atmosphere">
           <div className="max-w-[1200px] mx-auto p-6 lg:p-8">
             <Outlet />
           </div>

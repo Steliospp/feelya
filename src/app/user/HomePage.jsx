@@ -3,8 +3,10 @@ import { useAuth } from '../../context/AuthContext';
 import { Calendar, Clock, Video, ArrowRight, Users, BookOpen, Wind } from 'lucide-react';
 import Card from '../../components/ui/card';
 import Button from '../../components/ui/button';
-import Avatar from '../../components/ui/avatar';
 import Badge from '../../components/ui/badge';
+import PageHeader from '../../components/ui/page-header';
+import HeroSessionCard from '../../components/ui/hero-session-card';
+import SectionCard from '../../components/ui/section-card';
 
 const upcomingSession = {
   id: 1,
@@ -42,47 +44,25 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Greeting */}
-      <div className="mb-8">
-        <h1 className="text-[28px] font-semibold text-text-primary tracking-tight">
-          {getGreeting()}, {firstName}
-        </h1>
-        <p className="text-[15px] text-text-secondary mt-1">Here's your wellbeing space.</p>
-      </div>
+      <PageHeader
+        title={`${getGreeting()}, ${firstName}`}
+        description="Here's your wellbeing space."
+      />
 
-      {/* Two-column layout on desktop */}
+      {/* Two-column layout: 8 / 4 on desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Left column — primary content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Upcoming Session */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Hero Upcoming Session */}
           <section>
-            <h2 className="text-[18px] font-semibold text-text-primary mb-3">Upcoming session</h2>
             {upcomingSession ? (
-              <Card className="!p-5">
-                <div className="flex items-center gap-4">
-                  <Avatar name={upcomingSession.therapist} color={upcomingSession.color} size="lg" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[16px] font-semibold text-text-primary">{upcomingSession.therapist}</div>
-                    <Badge variant="default" className="mt-1">{upcomingSession.topic}</Badge>
-                  </div>
-                </div>
-                <div className="flex items-center gap-5 mt-4 text-[14px] text-text-secondary">
-                  <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {upcomingSession.date}</span>
-                  <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" /> {upcomingSession.time}</span>
-                  <span className="flex items-center gap-1.5"><Video className="w-4 h-4" /> {upcomingSession.mode}</span>
-                </div>
-                <div className="flex gap-3 mt-4">
-                  <Button variant="outline" size="md" onClick={() => navigate(`/app/therapist/${upcomingSession.id}`)}>
-                    Reschedule
-                  </Button>
-                  <Button variant="primary" size="md">
-                    <Video className="w-4 h-4" /> Join session
-                  </Button>
-                </div>
-                <p className="text-[13px] text-text-muted mt-3">Available to join 5 min before your session.</p>
-              </Card>
+              <HeroSessionCard
+                session={upcomingSession}
+                onJoin={() => {}}
+                onReschedule={() => navigate(`/app/therapist/${upcomingSession.id}`)}
+              />
             ) : (
-              <Card className="!p-5">
+              <Card elevation={2} className="!p-6">
                 <p className="text-[15px] text-text-secondary mb-3">No upcoming sessions.</p>
                 <Button variant="primary" size="md" onClick={() => navigate('/app/therapists')}>
                   Book a session
@@ -91,11 +71,11 @@ export default function HomePage() {
             )}
           </section>
 
-          {/* Book a Session */}
+          {/* Book a Session — secondary action card */}
           <section>
-            <Card className="!p-6">
+            <Card elevation={1} className="!p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-[14px] bg-primary-50 flex items-center justify-center text-primary shrink-0">
+                <div className="w-12 h-12 rounded-[14px] bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center text-primary shrink-0">
                   <Calendar className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
@@ -103,7 +83,7 @@ export default function HomePage() {
                   <p className="text-[14px] text-text-secondary mt-1">
                     Browse your company's approved therapists and schedule a session.
                   </p>
-                  <Button variant="primary" size="md" className="mt-4" onClick={() => navigate('/app/therapists')}>
+                  <Button variant="secondary" size="md" className="mt-4" onClick={() => navigate('/app/therapists')}>
                     Browse therapists
                   </Button>
                 </div>
@@ -111,9 +91,9 @@ export default function HomePage() {
             </Card>
           </section>
 
-          {/* Workshops */}
+          {/* Workshops — card grid */}
           <section>
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-[18px] font-semibold text-text-primary">Upcoming workshops</h2>
               <button
                 onClick={() => navigate('/app/workshops')}
@@ -122,15 +102,20 @@ export default function HomePage() {
                 View all
               </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {upcomingWorkshops.map((w) => (
-                <Card key={w.id} className="!p-4 cursor-pointer hover:shadow-elevated transition-shadow" onClick={() => navigate('/app/workshops')}>
-                  <div className="w-10 h-10 rounded-[12px] bg-primary-50 flex items-center justify-center text-primary mb-3">
+                <Card
+                  key={w.id}
+                  elevation={1}
+                  className="!p-5 cursor-pointer hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-200"
+                  onClick={() => navigate('/app/workshops')}
+                >
+                  <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center text-primary mb-3">
                     <Users className="w-5 h-5" />
                   </div>
                   <div className="text-[15px] font-medium text-text-primary">{w.title}</div>
-                  <div className="text-[13px] text-text-secondary mt-1">{w.date}, {w.time}</div>
-                  <div className="text-[12px] text-text-muted mt-0.5">{w.seats} seats left</div>
+                  <div className="text-[13px] text-text-secondary mt-1.5">{w.date}, {w.time}</div>
+                  <Badge variant="muted" className="mt-2">{w.seats} seats left</Badge>
                 </Card>
               ))}
             </div>
@@ -138,61 +123,61 @@ export default function HomePage() {
         </div>
 
         {/* Right column — sidebar content */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Quick Resources */}
           <section>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[18px] font-semibold text-text-primary">Resources</h2>
-              <button
-                onClick={() => navigate('/app/resources')}
-                className="text-[14px] font-medium text-primary cursor-pointer bg-transparent border-none hover:underline"
-              >
-                View all
-              </button>
-            </div>
-            <Card className="!p-0 overflow-hidden">
+            <SectionCard
+              title="Resources"
+              noPadding
+              action={
+                <button
+                  onClick={() => navigate('/app/resources')}
+                  className="text-[13px] font-medium text-primary cursor-pointer bg-transparent border-none hover:underline"
+                >
+                  View all
+                </button>
+              }
+            >
               {resources.map((r, i) => {
                 const Icon = r.icon;
                 return (
                   <div key={r.id}>
                     {i > 0 && <div className="border-t border-border-light" />}
-                    <div className="flex items-center gap-3 px-4 py-3.5 cursor-pointer hover:bg-surface-dim transition-colors">
-                      <div className="w-9 h-9 rounded-[10px] bg-primary-50 flex items-center justify-center text-primary shrink-0">
+                    <div className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-surface-dim transition-colors">
+                      <div className="w-9 h-9 rounded-[10px] bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center text-primary shrink-0">
                         <Icon className="w-[18px] h-[18px]" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-[14px] font-medium text-text-primary">{r.title}</div>
-                        <div className="text-[12px] text-text-muted">{r.type} &middot; {r.time}</div>
+                        <div className="text-[12px] text-text-muted mt-0.5">{r.type} &middot; {r.time}</div>
                       </div>
                       <ArrowRight className="w-4 h-4 text-text-muted shrink-0" />
                     </div>
                   </div>
                 );
               })}
-            </Card>
+            </SectionCard>
           </section>
 
-          {/* Stats summary */}
+          {/* Activity stats */}
           <section>
-            <h2 className="text-[18px] font-semibold text-text-primary mb-3">Your activity</h2>
-            <Card className="!p-5">
+            <SectionCard title="Your activity">
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[14px] text-text-secondary">Sessions this month</span>
-                  <span className="text-[16px] font-semibold text-text-primary">3</span>
-                </div>
-                <div className="border-t border-border-light" />
-                <div className="flex items-center justify-between">
-                  <span className="text-[14px] text-text-secondary">Workshops attended</span>
-                  <span className="text-[16px] font-semibold text-text-primary">2</span>
-                </div>
-                <div className="border-t border-border-light" />
-                <div className="flex items-center justify-between">
-                  <span className="text-[14px] text-text-secondary">Resources viewed</span>
-                  <span className="text-[16px] font-semibold text-text-primary">7</span>
-                </div>
+                {[
+                  { label: 'Sessions this month', value: '3' },
+                  { label: 'Workshops attended', value: '2' },
+                  { label: 'Resources viewed', value: '7' },
+                ].map((stat, i) => (
+                  <div key={stat.label}>
+                    {i > 0 && <div className="border-t border-border-light -mx-5 my-0" />}
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-[14px] text-text-secondary">{stat.label}</span>
+                      <span className="text-[18px] font-semibold text-text-primary">{stat.value}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </Card>
+            </SectionCard>
           </section>
         </div>
       </div>
