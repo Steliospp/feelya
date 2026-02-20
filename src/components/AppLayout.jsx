@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ToastProvider } from './Toast';
@@ -8,38 +8,19 @@ import TherapistProfileModal from './TherapistProfileModal';
 import '../styles/app.css';
 
 export default function AppLayout() {
-  const { user, loading, logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [notifCount, setNotifCount] = useState(0);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/login');
-    }
-  }, [user, loading, navigate]);
-
-  useEffect(() => {
-    if (user) loadNotifCount();
-  }, [user]);
-
-  async function loadNotifCount() {
-    try {
-      const res = await fetch('/api/notifications');
-      const notifs = await res.json();
-      setNotifCount(notifs.filter(n => !n.read).length);
-    } catch {}
-  }
-
-  async function handleLogout() {
-    await logout();
+  function handleLogout() {
+    logout();
     navigate('/login');
   }
 
-  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: '#64748b' }}>Loading...</div>;
   if (!user) return null;
 
-  const initial = user.first_name[0].toUpperCase();
+  const initial = (user.first_name || 'U')[0].toUpperCase();
+  const isAdmin = user.role === 'admin' || user.role === 'HR_ADMIN' || user.role === 'SUPER_ADMIN';
 
   return (
     <ModalProvider>
@@ -52,14 +33,14 @@ export default function AppLayout() {
             <span>feelya</span>
           </a>
 
-          {user.org_name && (
+          {user.companyName && (
             <div className="sidebar__org">
-              <div className="sidebar__org-name">{user.org_name}</div>
+              <div className="sidebar__org-name">{user.companyName}</div>
             </div>
           )}
 
           <nav className="sidebar__nav">
-            {user.role === 'admin' && (
+            {isAdmin && (
               <div className="sidebar__section">
                 <div className="sidebar__section-label">Organisation</div>
                 <NavLink to="/app/org" className={({ isActive }) => `sidebar__link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
@@ -73,7 +54,7 @@ export default function AppLayout() {
               </div>
             )}
 
-            {user.role === 'admin' && <div className="sidebar__section-label">Personal</div>}
+            {isAdmin && <div className="sidebar__section-label">Personal</div>}
 
             <NavLink to="/app/dashboard" className={({ isActive }) => `sidebar__link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 10l7-7 7 7M5 8.5V16a1 1 0 001 1h3v-4h2v4h3a1 1 0 001-1V8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -98,7 +79,6 @@ export default function AppLayout() {
             <NavLink to="/app/notifications" className={({ isActive }) => `sidebar__link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 00-6 6v3l-1.5 2.5h15L16 11V8a6 6 0 00-6-6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M8 15.5a2.5 2.5 0 005 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
               Notifications
-              {notifCount > 0 && <span className="sidebar__badge">{notifCount}</span>}
             </NavLink>
           </nav>
         </div>
@@ -129,7 +109,7 @@ export default function AppLayout() {
       {/* Main Content */}
       <main className="main">
         <div className="main__content">
-          <Outlet context={{ user, loadNotifCount }} />
+          <Outlet context={{ user }} />
         </div>
       </main>
 

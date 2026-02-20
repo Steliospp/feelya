@@ -3,6 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/auth.css';
 
+function redirectForRole(role) {
+  if (role === 'SUPER_ADMIN') return '/admin';
+  if (role === 'HR_ADMIN') return '/app/hr';
+  return '/app';
+}
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,17 +19,17 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const result = await login(email, password);
+      const result = login(email, password);
       if (result.success) {
-        navigate('/app/dashboard');
+        navigate(redirectForRole(result.user.role));
       } else {
-        setError(result.error);
+        setError(result.error || 'Invalid credentials');
       }
     } catch {
       setError('Something went wrong. Please try again.');
@@ -72,6 +78,14 @@ export default function Login() {
               </svg>
               <span>500+ organisations trust Feelya</span>
             </div>
+          </div>
+
+          <div className="auth__demo-hint">
+            <div className="auth__demo-hint-title">Demo accounts</div>
+            <div className="auth__demo-hint-item"><strong>employee@demo.com</strong> &mdash; Employee</div>
+            <div className="auth__demo-hint-item"><strong>hr@demo.com</strong> &mdash; HR Admin</div>
+            <div className="auth__demo-hint-item"><strong>admin@feelya.com</strong> &mdash; Super Admin</div>
+            <div className="auth__demo-hint-note">Any password works</div>
           </div>
         </div>
       </div>

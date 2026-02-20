@@ -300,6 +300,36 @@ a:hover { color: var(--primary-dark); }
   margin-top: 24px;
 }
 
+.auth__demo-hint {
+  margin-top: 32px;
+  padding: 16px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.auth__demo-hint-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 8px;
+}
+.auth__demo-hint-item {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.8;
+}
+.auth__demo-hint-item strong {
+  color: #fff;
+  font-weight: 500;
+}
+.auth__demo-hint-note {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 6px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .auth {

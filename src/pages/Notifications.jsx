@@ -38,7 +38,7 @@ function NotifIcon({ type }) {
 
 export default function Notifications() {
   const showToast = useToast();
-  const { loadNotifCount } = useOutletContext();
+  const { loadNotifCount } = useOutletContext() || {};
   const [notifications, setNotifications] = useState(null);
   const [error, setError] = useState(false);
 

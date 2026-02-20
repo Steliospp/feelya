@@ -5,7 +5,7 @@ import { useToast } from '../components/Toast';
 export default function Sessions() {
   const navigate = useNavigate();
   const showToast = useToast();
-  const { loadNotifCount } = useOutletContext();
+  const { loadNotifCount } = useOutletContext() || {};
 
   const [sessions, setSessions] = useState([]);
   const [activeTab, setActiveTab] = useState('upcoming');

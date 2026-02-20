@@ -1,71 +1,84 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useContext, useState, useCallback } from 'react';
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+const STORAGE_KEY = 'feelya_auth';
 
-  const fetchUser = useCallback(async () => {
-    try {
-      const res = await fetch('/api/me');
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data);
-      } else {
-        setUser(null);
-      }
-    } catch {
-      setUser(null);
-    } finally {
-      setLoading(false);
+const MOCK_USERS = {
+  'employee@demo.com': { id: 'emp-1', email: 'employee@demo.com', role: 'EMPLOYEE', companyId: 'comp-1', companyName: 'Acme Corp', first_name: 'Alex', last_name: 'Taylor', avatar_color: '#6366f1' },
+  'hr@demo.com': { id: 'hr-1', email: 'hr@demo.com', role: 'HR_ADMIN', companyId: 'comp-1', companyName: 'Acme Corp', first_name: 'Sam', last_name: 'Rivera', avatar_color: '#8b5cf6' },
+  'admin@feelya.com': { id: 'sa-1', email: 'admin@feelya.com', role: 'SUPER_ADMIN', companyId: 'feelya', companyName: 'Feelya', first_name: 'Jordan', last_name: 'Lee', avatar_color: '#10b981' },
+};
+
+function loadAuth() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed.isAuthed && parsed.user) return parsed.user;
     }
+  } catch {}
+  return null;
+}
+
+function saveAuth(user) {
+  if (user) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ isAuthed: true, user }));
+  } else {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+}
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(() => loadAuth());
+  const loading = false;
+
+  const login = useCallback((email, _password) => {
+    const mockUser = MOCK_USERS[email.toLowerCase()];
+    if (mockUser) {
+      setUser(mockUser);
+      saveAuth(mockUser);
+      return { success: true, user: mockUser };
+    }
+    // For any other email, default to EMPLOYEE
+    const fallbackUser = {
+      id: 'user-' + Date.now(),
+      email,
+      role: 'EMPLOYEE',
+      companyId: 'comp-1',
+      companyName: 'Acme Corp',
+      first_name: email.split('@')[0],
+      last_name: '',
+      avatar_color: '#6366f1',
+    };
+    setUser(fallbackUser);
+    saveAuth(fallbackUser);
+    return { success: true, user: fallbackUser };
   }, []);
 
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
-
-  const login = async (email, password) => {
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      await fetchUser();
-      return { success: true };
-    }
-    return { success: false, error: data.error };
-  };
-
-  const signup = async (formData) => {
-    const res = await fetch('/api/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
-    const data = await res.json();
-    if (data.success) {
-      await fetchUser();
-      return { success: true };
-    }
-    return { success: false, error: data.error };
-  };
-
-  const logout = async () => {
-    await fetch('/api/logout', { method: 'POST' });
+  const logout = useCallback(() => {
     setUser(null);
-  };
+    saveAuth(null);
+  }, []);
 
-  const updateUser = async () => {
-    await fetchUser();
-  };
+  const switchRole = useCallback((role) => {
+    const roleMap = {
+      EMPLOYEE: MOCK_USERS['employee@demo.com'],
+      HR_ADMIN: MOCK_USERS['hr@demo.com'],
+      SUPER_ADMIN: MOCK_USERS['admin@feelya.com'],
+    };
+    const newUser = roleMap[role];
+    if (newUser) {
+      setUser(newUser);
+      saveAuth(newUser);
+    }
+    return newUser;
+  }, []);
+
+  const updateUser = useCallback(() => {}, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, switchRole, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

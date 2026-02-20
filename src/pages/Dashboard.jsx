@@ -22,7 +22,7 @@ function timeAgo(dateStr) {
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { loadNotifCount } = useOutletContext();
+  const { loadNotifCount } = useOutletContext() || {};
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
