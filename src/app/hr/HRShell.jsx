@@ -20,8 +20,8 @@ function SideLink({ to, label, icon: Icon, end }) {
       end={end}
       className={({ isActive }) =>
         cn(
-          'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-colors no-underline hover:no-underline',
-          isActive ? 'text-primary bg-primary-50' : 'text-text-secondary hover:text-text-primary hover:bg-surface-dim'
+          'flex items-center gap-3 px-4 py-2.5 rounded-xl text-[14px] font-medium transition-colors no-underline hover:no-underline',
+          isActive ? 'text-primary bg-primary-100' : 'text-text-secondary hover:text-text-primary hover:bg-surface-dim'
         )
       }
     >
