@@ -24,6 +24,10 @@ import HREmployees from './pages/HREmployees';
 import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDemos from './pages/AdminDemos';
+import TherapistLayout from './components/TherapistLayout';
+import TherapistDashboard from './pages/TherapistDashboard';
+import TherapistSessions from './pages/TherapistSessions';
+import TherapistProfile from './pages/TherapistProfile';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -55,6 +59,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/app/hr" element={<RequireAuth roles={['HR_ADMIN', 'SUPER_ADMIN']}><HRLayout /></RequireAuth>}>
             <Route index element={<HRDashboard />} />
             <Route path="employees" element={<HREmployees />} />
+          </Route>
+
+          {/* Therapist portal routes */}
+          <Route path="/therapist" element={<RequireAuth roles={['THERAPIST', 'SUPER_ADMIN']}><TherapistLayout /></RequireAuth>}>
+            <Route index element={<TherapistDashboard />} />
+            <Route path="sessions" element={<TherapistSessions />} />
+            <Route path="profile" element={<TherapistProfile />} />
           </Route>
 
           {/* Super Admin routes */}

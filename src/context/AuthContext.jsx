@@ -8,6 +8,7 @@ const MOCK_USERS = {
   'employee@demo.com': { id: 'emp-1', email: 'employee@demo.com', role: 'EMPLOYEE', companyId: 'comp-1', companyName: 'Acme Corp', first_name: 'Alex', last_name: 'Taylor', avatar_color: '#6366f1' },
   'hr@demo.com': { id: 'hr-1', email: 'hr@demo.com', role: 'HR_ADMIN', companyId: 'comp-1', companyName: 'Acme Corp', first_name: 'Sam', last_name: 'Rivera', avatar_color: '#8b5cf6' },
   'admin@feelya.com': { id: 'sa-1', email: 'admin@feelya.com', role: 'SUPER_ADMIN', companyId: 'feelya', companyName: 'Feelya', first_name: 'Jordan', last_name: 'Lee', avatar_color: '#10b981' },
+  'therapist@demo.com': { id: 'th-1', email: 'therapist@demo.com', role: 'THERAPIST', therapistId: 1, first_name: 'Sarah', last_name: 'Mitchell', avatar_color: '#ec4899' },
 };
 
 function loadAuth() {
@@ -66,6 +67,7 @@ export function AuthProvider({ children }) {
       EMPLOYEE: MOCK_USERS['employee@demo.com'],
       HR_ADMIN: MOCK_USERS['hr@demo.com'],
       SUPER_ADMIN: MOCK_USERS['admin@feelya.com'],
+      THERAPIST: MOCK_USERS['therapist@demo.com'],
     };
     const newUser = roleMap[role];
     if (newUser) {
