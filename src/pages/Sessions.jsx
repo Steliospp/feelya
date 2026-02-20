@@ -2,6 +2,20 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useToast } from '../components/Toast';
 
+const formatIcons = {
+  video: (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.3" />
+      <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  ),
+  audio: (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 2v8M5 6v4m6-4v4M3 7v2m10-2v2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  ),
+};
+
 export default function Sessions() {
   const navigate = useNavigate();
   const showToast = useToast();
@@ -34,7 +48,7 @@ export default function Sessions() {
     try {
       await fetch(`/api/sessions/${id}/cancel`, { method: 'PUT' });
       showToast('Session cancelled');
-      loadNotifCount();
+      if (loadNotifCount) loadNotifCount();
       await loadSessions();
     } catch {
       showToast('Failed to cancel session', 'error');
@@ -42,6 +56,11 @@ export default function Sessions() {
   }
 
   const filtered = sessions.filter(s => s.status === activeTab);
+  const counts = {
+    upcoming: sessions.filter(s => s.status === 'upcoming').length,
+    completed: sessions.filter(s => s.status === 'completed').length,
+    cancelled: sessions.filter(s => s.status === 'cancelled').length,
+  };
 
   const emptyMessages = {
     upcoming: 'No upcoming sessions',
@@ -61,19 +80,19 @@ export default function Sessions() {
           className={`sessions-tab${activeTab === 'upcoming' ? ' active' : ''}`}
           onClick={() => setActiveTab('upcoming')}
         >
-          Upcoming
+          Upcoming ({counts.upcoming})
         </button>
         <button
           className={`sessions-tab${activeTab === 'completed' ? ' active' : ''}`}
           onClick={() => setActiveTab('completed')}
         >
-          Past
+          Past ({counts.completed})
         </button>
         <button
           className={`sessions-tab${activeTab === 'cancelled' ? ' active' : ''}`}
           onClick={() => setActiveTab('cancelled')}
         >
-          Cancelled
+          Cancelled ({counts.cancelled})
         </button>
       </div>
 
@@ -114,8 +133,17 @@ export default function Sessions() {
               </div>
               <div>
                 <div className="session-item__name">{s.therapist_name}</div>
-                <div className="session-item__detail">
-                  {s.therapist_title} &middot; {s.session_format} &middot; {s.duration}min &middot; &pound;{s.price}
+                <div className="session-item__detail" style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                  <span>{s.therapist_title}</span>
+                  <span style={{ color: 'var(--border)' }}>&middot;</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--primary)' }}>
+                    {formatIcons[s.session_format] || formatIcons.video}
+                    <span style={{ textTransform: 'capitalize' }}>{s.session_format}</span>
+                  </span>
+                  <span style={{ color: 'var(--border)' }}>&middot;</span>
+                  <span>{s.duration}min</span>
+                  <span style={{ color: 'var(--border)' }}>&middot;</span>
+                  <span style={{ fontWeight: 600, color: 'var(--text)' }}>&pound;{s.price}</span>
                 </div>
               </div>
             </div>

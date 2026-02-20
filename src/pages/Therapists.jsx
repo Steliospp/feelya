@@ -233,109 +233,82 @@ export default function Therapists() {
   );
 }
 
-function TherapistCard({ therapist: t, onViewProfile, onBookNow }) {
-  const specs = t.specialisations ? t.specialisations.split(',') : [];
+function PriceCell({ price, duration }) {
+  if (!price) {
+    return <div className="therapist-card__price-amount therapist-card__price-amount--na">&ndash;</div>;
+  }
+  return (
+    <div className="therapist-card__price-amount">
+      &pound;{price}
+      {duration && <span className="therapist-card__price-duration">/{duration}min</span>}
+    </div>
+  );
+}
 
+const videoIcon = (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.3" />
+    <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.3" />
+  </svg>
+);
+
+const audioIcon = (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M8 2v8M5 6v4m6-4v4M3 7v2m10-2v2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+  </svg>
+);
+
+function TherapistCard({ therapist: t, onViewProfile, onBookNow }) {
   return (
     <div className="therapist-card">
-      <div className="therapist-card__header">
-        <div className="therapist-card__avatar">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-            <path d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12zm0 2c-3 0-9 1.5-9 4.5V21h18v-2.5c0-3-6-4.5-9-4.5z" fill="white" />
-          </svg>
-          <div className="therapist-card__status"></div>
-        </div>
-        <div>
-          <div className="therapist-card__name">{t.name}</div>
-          <div className="therapist-card__title">{t.title} &middot; {t.accreditation}</div>
-          <div className="therapist-card__rating">
-            {'\u2733'.repeat(0) /* stars rendered below */}
-            {Array.from({ length: Math.round(t.rating) }, (_, i) => (
-              <span key={i}>{'\u2733'}</span>
-            ))}
-            {' '}
-            <span>({t.review_count} reviews)</span>
-          </div>
-        </div>
+      <div className="therapist-card__avatar">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+          <path d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12zm0 2c-3 0-9 1.5-9 4.5V21h18v-2.5c0-3-6-4.5-9-4.5z" fill="white" />
+        </svg>
+        <div className="therapist-card__status"></div>
       </div>
 
-      <div className="therapist-card__tags">
-        {specs.map((s, i) => (
-          <span className="tag" key={i}>{s.trim()}</span>
-        ))}
-      </div>
+      <div className="therapist-card__name">{t.name}</div>
+      <div className="therapist-card__title">{t.title}</div>
+      <div className="therapist-card__accreditation">{t.accreditation}</div>
 
       <div className="therapist-card__pricing">
-        {t.intro_video_price && (
-          <div className="therapist-card__price-row">
-            <div className="therapist-card__price-type">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.3" />
-                <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.3" />
-              </svg>
-              Introductory Video
-            </div>
-            <div className="therapist-card__price-amount">
-              &pound;{t.intro_video_price}
-              <span className="therapist-card__price-duration">/{t.intro_duration}min</span>
-            </div>
+        <div className="therapist-card__price-row">
+          <div className="therapist-card__price-type">
+            {videoIcon}
+            Introductory Video
           </div>
-        )}
-
-        {t.intro_audio_price && (
-          <div className="therapist-card__price-row">
-            <div className="therapist-card__price-type">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M8 2v8M5 6v4m6-4v4M3 7v2m10-2v2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-              </svg>
-              Introductory Audio
-            </div>
-            <div className="therapist-card__price-amount">
-              &pound;{t.intro_audio_price}
-              <span className="therapist-card__price-duration">/{t.intro_duration}min</span>
-            </div>
-          </div>
-        )}
+          <PriceCell price={t.intro_video_price} duration={t.intro_duration} />
+        </div>
 
         <div className="therapist-card__price-row">
           <div className="therapist-card__price-type">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.3" />
-              <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.3" />
-            </svg>
+            {audioIcon}
+            Introductory Audio
+          </div>
+          <PriceCell price={t.intro_audio_price} duration={t.intro_duration} />
+        </div>
+
+        <div className="therapist-card__price-row">
+          <div className="therapist-card__price-type">
+            {videoIcon}
             Video session
           </div>
-          <div className="therapist-card__price-amount">
-            &pound;{t.video_price}
-            <span className="therapist-card__price-duration">/{t.video_duration}min</span>
-          </div>
+          <PriceCell price={t.video_price} duration={t.video_duration} />
         </div>
 
         <div className="therapist-card__price-row">
           <div className="therapist-card__price-type">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 2v8M5 6v4m6-4v4M3 7v2m10-2v2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-            </svg>
+            {audioIcon}
             Audio session
           </div>
-          <div className="therapist-card__price-amount">
-            &pound;{t.audio_price}
-            <span className="therapist-card__price-duration">/{t.audio_duration}min</span>
-          </div>
+          <PriceCell price={t.audio_price} duration={t.audio_duration} />
         </div>
-      </div>
-
-      <div className="therapist-card__next">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.2" />
-          <path d="M7 4v3l2 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
-        Next available: {t.next_available}
       </div>
 
       <div className="therapist-card__actions">
-        <button className="btn btn--outline btn--sm" onClick={() => onViewProfile(t.id)}>View Profile</button>
-        <button className="btn btn--primary btn--sm" onClick={() => onBookNow(t.id)}>Book Now</button>
+        <button className="btn btn--outline btn--sm" onClick={() => onViewProfile(t.id)}>View profile</button>
+        <button className="btn btn--dark btn--sm" onClick={() => onBookNow(t.id)}>Book Now</button>
       </div>
     </div>
   );
