@@ -1,4 +1,4 @@
-// ============ FEELYA APP ============
+// ============ FEELYA FOR BUSINESS — APP ============
 
 let currentUser = null;
 let currentPage = '';
@@ -69,8 +69,8 @@ function navigate(page, pushState = true) {
   document.getElementById('sidebar').classList.remove('open');
 
   // Update title
-  const titles = { dashboard: 'Dashboard', therapists: 'Find a Therapist', sessions: 'Sessions', resources: 'Resources', notifications: 'Notifications', profile: 'My Profile', 'self-test': 'Self-Assessment' };
-  document.title = `${titles[page] || 'Dashboard'} | feelya`;
+  const titles = { dashboard: 'Dashboard', therapists: 'Therapist Network', sessions: 'Sessions', resources: 'Resources', notifications: 'Notifications', profile: 'My Profile', 'self-test': 'Team Wellbeing Check' };
+  document.title = `${titles[page] || 'Dashboard'} | feelya for Business`;
 
   // Render page
   const el = document.getElementById('pageContent');
@@ -94,6 +94,11 @@ function updateUserUI() {
   document.getElementById('sidebarName').textContent = `${currentUser.first_name} ${currentUser.last_name}`;
   const mobileAv = document.getElementById('mobileAvatar');
   if (mobileAv) { mobileAv.textContent = initial; mobileAv.style.background = currentUser.avatar_color; }
+  // Company name
+  const companyEl = document.getElementById('sidebarCompany');
+  if (companyEl && currentUser.company_name) {
+    companyEl.textContent = currentUser.company_name;
+  }
 }
 
 async function loadNotifCount() {
@@ -134,34 +139,44 @@ async function renderDashboard(el) {
     const data = await res.json();
 
     const greeting = getGreeting();
+    const companyName = currentUser.company_name || 'Your Organisation';
 
     el.innerHTML = `
       <div class="page-header">
         <div class="page-header__greeting">${greeting}</div>
-        <h1 class="page-header__title">Welcome back, ${currentUser.first_name}</h1>
+        <h1 class="page-header__title">${companyName} Wellbeing Dashboard</h1>
       </div>
 
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-card__icon stat-card__icon--primary">
-            <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M13 2v4M7 2v4M3 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M17 17v-1a4 4 0 00-3-3.87M13 3.13a4 4 0 010 7.75M9 9a4 4 0 100-8 4 4 0 000 8zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <div>
-            <div class="stat-card__value">${data.upcomingSessions}</div>
-            <div class="stat-card__label">Upcoming Sessions</div>
+            <div class="stat-card__value">87%</div>
+            <div class="stat-card__label">Employee Engagement</div>
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-card__icon stat-card__icon--success">
-            <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M6.5 10l2.5 2.5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M13 2v4M7 2v4M3 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </div>
           <div>
-            <div class="stat-card__value">${data.completedSessions}</div>
-            <div class="stat-card__label">Completed Sessions</div>
+            <div class="stat-card__value">${data.upcomingSessions + data.completedSessions}</div>
+            <div class="stat-card__label">Total Sessions Booked</div>
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-card__icon stat-card__icon--warning">
+            <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M3 3v14h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 13l3-3 3 3 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="stat-card__value">4.9/5</div>
+            <div class="stat-card__label">Avg. Session Rating</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--info">
             <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 00-6 6v3l-1.5 2.5h15L16 11V8a6 6 0 00-6-6z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 15.5a2.5 2.5 0 005 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </div>
           <div>
@@ -197,15 +212,15 @@ async function renderDashboard(el) {
             </div>
           ` : `
             <div class="empty-state" style="padding:30px 10px;">
-              <p class="empty-state__desc">No upcoming sessions. Find a therapist to get started.</p>
-              <button class="btn btn--primary btn--sm" onclick="navigate('therapists')">Find a Therapist</button>
+              <p class="empty-state__desc">No upcoming sessions. Browse our therapist network to book your first session.</p>
+              <button class="btn btn--primary btn--sm" onclick="navigate('therapists')">Browse Therapists</button>
             </div>
           `}
         </div>
 
         <div class="card">
           <div class="card__title">
-            Recent Notifications
+            Recent Activity
             <a href="#" onclick="navigate('notifications');return false;" style="font-size:13px;color:var(--primary);font-weight:500;">View All</a>
           </div>
           ${data.recentNotifications.length > 0 ? data.recentNotifications.slice(0, 4).map(n => `
@@ -218,15 +233,15 @@ async function renderDashboard(el) {
                 <div class="notif-item__time">${timeAgo(n.created_at)}</div>
               </div>
             </div>
-          `).join('') : '<p style="color:var(--text-muted);font-size:14px;">No notifications yet.</p>'}
+          `).join('') : '<p style="color:var(--text-muted);font-size:14px;">No activity yet.</p>'}
         </div>
       </div>
 
       <div style="margin-top:24px;">
         <div class="self-test-card">
-          <h3>How are you feeling?</h3>
-          <p>Take our free, confidential 5-minute mood assessment to better understand your emotional wellbeing.</p>
-          <button class="btn btn--white btn--md" onclick="navigate('self-test')">Take the Self-Test</button>
+          <h3>Team Wellbeing Check</h3>
+          <p>Encourage your employees to take our confidential 5-minute mood assessment to help track overall team wellbeing.</p>
+          <button class="btn btn--white btn--md" onclick="navigate('self-test')">Take the Assessment</button>
         </div>
       </div>
     `;
@@ -246,8 +261,8 @@ function getGreeting() {
 async function renderTherapists(el) {
   el.innerHTML = `
     <div class="page-header">
-      <h1 class="page-header__title">Find Your Therapist</h1>
-      <p class="page-header__subtitle">Browse our accredited, carefully vetted UK-based therapists and find the right match for you.</p>
+      <h1 class="page-header__title">Therapist Network</h1>
+      <p class="page-header__subtitle">Browse our accredited, carefully vetted UK-based therapists available to your team.</p>
     </div>
     <div class="content-with-filters">
       <div class="filters" id="filtersPanel">
@@ -295,13 +310,13 @@ async function renderTherapists(el) {
                 <option value="Anxiety">Anxiety</option>
                 <option value="Depression">Depression</option>
                 <option value="Stress">Stress</option>
+                <option value="Burnout">Burnout</option>
                 <option value="Relationships">Relationships</option>
                 <option value="Trauma">Trauma</option>
                 <option value="OCD">OCD</option>
                 <option value="Self-esteem">Self-esteem</option>
                 <option value="LGBTQ+">LGBTQ+</option>
                 <option value="Grief">Grief</option>
-                <option value="Burnout">Burnout</option>
               </select>
             </div>
           </div>
@@ -386,7 +401,6 @@ async function loadTherapists() {
 
 function renderTherapistCard(t) {
   const specs = t.specialisations.split(',');
-  const initials = t.name.split(' ').map(n => n[0]).join('').slice(0, 2);
 
   return `
     <div class="therapist-card">
@@ -634,8 +648,8 @@ function closeBookingModal() {
 async function renderSessions(el) {
   el.innerHTML = `
     <div class="page-header">
-      <h1 class="page-header__title">Your Sessions</h1>
-      <p class="page-header__subtitle">View and manage your therapy sessions.</p>
+      <h1 class="page-header__title">Sessions</h1>
+      <p class="page-header__subtitle">View and manage therapy sessions.</p>
     </div>
     <div class="sessions-tabs">
       <button class="sessions-tab active" data-tab="upcoming" onclick="filterSessions('upcoming')">Upcoming</button>
@@ -670,8 +684,8 @@ function filterSessions(tab) {
       <div class="empty-state">
         <svg width="48" height="48" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M13 2v4M7 2v4M3 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         <div class="empty-state__title">${msgs[tab]}</div>
-        <p class="empty-state__desc">${tab === 'upcoming' ? 'Find a therapist to book your first session.' : ''}</p>
-        ${tab === 'upcoming' ? '<button class="btn btn--primary btn--sm" onclick="navigate(\'therapists\')">Find a Therapist</button>' : ''}
+        <p class="empty-state__desc">${tab === 'upcoming' ? 'Browse the therapist network to book a session.' : ''}</p>
+        ${tab === 'upcoming' ? '<button class="btn btn--primary btn--sm" onclick="navigate(\'therapists\')">Browse Therapists</button>' : ''}
       </div>
     `;
     return;
@@ -717,25 +731,25 @@ async function cancelSession(id) {
 // ============ RESOURCES ============
 function renderResources(el) {
   const resources = [
-    { cat: 'Guide', title: 'What is Psychological Therapy?', desc: 'An introduction to the different types of therapy and how they can help you navigate life\'s challenges.', grad: 'linear-gradient(135deg, #ede9fe, #e0e7ff)', icon: '#6366f1' },
-    { cat: 'Self-Help', title: 'Managing Anxiety: Practical Tips', desc: 'Evidence-based strategies you can use today to better manage anxious thoughts and feelings.', grad: 'linear-gradient(135deg, #d1fae5, #e0f2fe)', icon: '#10b981' },
-    { cat: 'Wellbeing', title: 'Building Resilience in Everyday Life', desc: 'How to develop mental resilience and bounce back from life\'s setbacks with greater strength.', grad: 'linear-gradient(135deg, #fef3c7, #fce7f3)', icon: '#f59e0b' },
-    { cat: 'Guide', title: 'Understanding Depression', desc: 'Learn about the signs, symptoms, and treatment options for depression, and when to seek professional help.', grad: 'linear-gradient(135deg, #e0e7ff, #ede9fe)', icon: '#6366f1' },
-    { cat: 'Relationships', title: 'Communicating Better with Your Partner', desc: 'Expert advice on improving communication, resolving conflict, and strengthening your relationship.', grad: 'linear-gradient(135deg, #fce7f3, #fef3c7)', icon: '#ec4899' },
-    { cat: 'Workplace', title: 'Dealing with Burnout', desc: 'Recognise the signs of burnout and practical strategies for recovery and prevention.', grad: 'linear-gradient(135deg, #d1fae5, #ccfbf1)', icon: '#14b8a6' },
-    { cat: 'Self-Help', title: 'Mindfulness for Beginners', desc: 'A simple introduction to mindfulness practice and how it can improve your mental wellbeing.', grad: 'linear-gradient(135deg, #e0f2fe, #d1fae5)', icon: '#0ea5e9' },
-    { cat: 'Parenting', title: 'Supporting Your Child\'s Mental Health', desc: 'Guidance for parents on recognising and supporting children\'s emotional wellbeing.', grad: 'linear-gradient(135deg, #fef3c7, #e0e7ff)', icon: '#f59e0b' },
-    { cat: 'Wellbeing', title: 'Sleep and Mental Health', desc: 'Explore the connection between sleep quality and mental health, with tips for better rest.', grad: 'linear-gradient(135deg, #ede9fe, #fce7f3)', icon: '#8b5cf6' },
+    { cat: 'White Paper', title: 'The ROI of Employee Mental Health Support', desc: 'How investing in workplace therapy delivers measurable returns through reduced absence and increased productivity.', grad: 'linear-gradient(135deg, #ede9fe, #e0e7ff)', icon: '#6366f1' },
+    { cat: 'Guide', title: 'Building a Mental Health Strategy', desc: 'A step-by-step guide for HR leaders to design, implement, and measure an effective employee wellbeing programme.', grad: 'linear-gradient(135deg, #d1fae5, #e0f2fe)', icon: '#10b981' },
+    { cat: 'Workplace', title: 'Recognising and Preventing Burnout', desc: 'How to spot the signs of burnout in your team and create an environment that supports sustainable performance.', grad: 'linear-gradient(135deg, #fef3c7, #fce7f3)', icon: '#f59e0b' },
+    { cat: 'Case Study', title: 'How a 200-Person Agency Reduced Absence by 32%', desc: 'A real-world story of how one UK agency transformed employee wellbeing and saw measurable business impact.', grad: 'linear-gradient(135deg, #e0e7ff, #ede9fe)', icon: '#6366f1' },
+    { cat: 'Leadership', title: 'Mental Health Conversations for Managers', desc: 'Practical guidance for line managers on having supportive conversations about mental health with their team.', grad: 'linear-gradient(135deg, #fce7f3, #fef3c7)', icon: '#ec4899' },
+    { cat: 'Workplace', title: 'Creating a Psychologically Safe Workplace', desc: 'Evidence-based strategies for building a culture where employees feel safe to speak up and seek support.', grad: 'linear-gradient(135deg, #d1fae5, #ccfbf1)', icon: '#14b8a6' },
+    { cat: 'Guide', title: 'Your First 90 Days With Feelya', desc: 'A practical onboarding guide to maximise employee engagement and get the most from your wellbeing programme.', grad: 'linear-gradient(135deg, #e0f2fe, #d1fae5)', icon: '#0ea5e9' },
+    { cat: 'Research', title: 'Workplace Wellbeing Trends 2025', desc: 'Key findings from our annual survey of 5,000+ UK employees on mental health, work-life balance, and employer support.', grad: 'linear-gradient(135deg, #fef3c7, #e0e7ff)', icon: '#f59e0b' },
+    { cat: 'Self-Help', title: 'Mindfulness for Busy Teams', desc: 'Quick mindfulness exercises your team can do in 5 minutes to reduce stress and improve focus during the workday.', grad: 'linear-gradient(135deg, #ede9fe, #fce7f3)', icon: '#8b5cf6' },
   ];
 
   el.innerHTML = `
     <div class="page-header">
       <h1 class="page-header__title">Resources</h1>
-      <p class="page-header__subtitle">Expert articles and guides to support your mental health journey.</p>
+      <p class="page-header__subtitle">Expert guides, research, and tools to support your organisation's wellbeing strategy.</p>
     </div>
     <div class="resources-grid">
       ${resources.map(r => `
-        <div class="resource-card" onclick="showToast('Article coming soon!')">
+        <div class="resource-card" onclick="showToast('Resource coming soon!')">
           <div class="resource-card__img" style="background:${r.grad};">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 6.5a.5.5 0 11-1 0 .5.5 0 011 0zM12 12a.5.5 0 11-1 0 .5.5 0 011 0zM12 17.5a.5.5 0 11-1 0 .5.5 0 011 0z" stroke="${r.icon}" stroke-width="1.5"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="${r.icon}" stroke-width="1.5"/></svg>
           </div>
@@ -756,7 +770,7 @@ async function renderNotifications(el) {
     <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
       <div>
         <h1 class="page-header__title">Notifications</h1>
-        <p class="page-header__subtitle">Stay updated on your sessions and account activity.</p>
+        <p class="page-header__subtitle">Stay updated on sessions and account activity.</p>
       </div>
       <button class="btn btn--ghost btn--sm" onclick="markAllRead()">Mark all as read</button>
     </div>
@@ -810,7 +824,7 @@ async function renderProfile(el) {
   el.innerHTML = `
     <div class="page-header">
       <h1 class="page-header__title">My Profile</h1>
-      <p class="page-header__subtitle">Manage your account details and preferences.</p>
+      <p class="page-header__subtitle">Manage your account details and organisation settings.</p>
     </div>
 
     <div class="profile-header">
@@ -820,7 +834,7 @@ async function renderProfile(el) {
       <div class="profile-info">
         <div class="profile-info__name">${currentUser.first_name} ${currentUser.last_name}</div>
         <div class="profile-info__email">${currentUser.email}</div>
-        <div class="profile-info__since">Member since ${new Date(currentUser.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</div>
+        <div class="profile-info__since">${currentUser.company_name ? currentUser.company_name + ' &middot; ' : ''}Admin since ${new Date(currentUser.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</div>
       </div>
     </div>
 
@@ -839,12 +853,16 @@ async function renderProfile(el) {
             </div>
           </div>
           <div class="form-group">
+            <label class="form-label">Company Name</label>
+            <input class="form-input" type="text" id="profCompany" value="${currentUser.company_name || ''}" placeholder="Your organisation name">
+          </div>
+          <div class="form-group">
             <label class="form-label">Phone</label>
             <input class="form-input" type="tel" id="profPhone" value="${currentUser.phone || ''}" placeholder="+44 7XXX XXXXXX">
           </div>
           <div class="form-group">
-            <label class="form-label">About Me</label>
-            <textarea class="form-textarea" id="profDesc" placeholder="Tell your therapist a little about yourself...">${currentUser.description || ''}</textarea>
+            <label class="form-label">Role / Notes</label>
+            <textarea class="form-textarea" id="profDesc" placeholder="Your role, team size, or anything relevant...">${currentUser.description || ''}</textarea>
           </div>
           <button type="submit" class="btn btn--primary btn--md">Save Changes</button>
         </form>
@@ -867,8 +885,8 @@ async function renderProfile(el) {
         </div>
 
         <div class="self-test-card" style="cursor:pointer;" onclick="navigate('self-test')">
-          <h3>Take the Self-Test</h3>
-          <p>A free, confidential 5-minute mood assessment to understand how you've been feeling.</p>
+          <h3>Team Wellbeing Check</h3>
+          <p>Encourage employees to take our confidential 5-minute mood assessment to track team wellbeing trends.</p>
           <button class="btn btn--white btn--sm">Start Assessment</button>
         </div>
       </div>
@@ -884,6 +902,7 @@ async function renderProfile(el) {
         body: JSON.stringify({
           firstName: document.getElementById('profFirstName').value,
           lastName: document.getElementById('profLastName').value,
+          companyName: document.getElementById('profCompany').value,
           phone: document.getElementById('profPhone').value,
           description: document.getElementById('profDesc').value,
         })
@@ -940,8 +959,8 @@ function renderSelfTest(el) {
 
   el.innerHTML = `
     <div class="page-header">
-      <h1 class="page-header__title">Self-Assessment</h1>
-      <p class="page-header__subtitle">This confidential mood assessment takes about 5 minutes. Answer honestly — there are no right or wrong answers.</p>
+      <h1 class="page-header__title">Team Wellbeing Check</h1>
+      <p class="page-header__subtitle">This confidential assessment takes about 5 minutes. All responses are anonymous and contribute to aggregated team wellbeing insights.</p>
     </div>
     <div id="selfTestQuestions">
       ${selfTestQuestions.map((q, i) => `
@@ -1011,7 +1030,7 @@ async function submitSelfTest() {
       <h2 style="font-family:var(--font-serif);font-size:24px;margin-bottom:12px;">Your Score: ${score}/40</h2>
       <p style="font-size:16px;color:var(--text-sec);line-height:1.7;max-width:500px;margin:0 auto 24px;">${resultText}</p>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        ${score > 8 ? '<button class="btn btn--primary btn--md" onclick="navigate(\'therapists\')">Find a Therapist</button>' : ''}
+        ${score > 8 ? '<button class="btn btn--primary btn--md" onclick="navigate(\'therapists\')">Browse Therapists</button>' : ''}
         <button class="btn btn--ghost btn--md" onclick="navigate('self-test')">Take Again</button>
         <button class="btn btn--ghost btn--md" onclick="navigate('dashboard')">Back to Dashboard</button>
       </div>

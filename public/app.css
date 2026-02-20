@@ -70,6 +70,19 @@ button { font-family: var(--font); }
   margin-bottom: 32px;
 }
 
+.sidebar__company {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 8px;
+  margin-bottom: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .sidebar__nav { display: flex; flex-direction: column; gap: 4px; }
 
 .sidebar__link {

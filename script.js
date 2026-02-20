@@ -1,5 +1,5 @@
 // ========================================
-// feelya — Interactions
+// feelya for Business — Interactions
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Scroll-triggered animations ---
   const animateElements = document.querySelectorAll(
-    '.step, .feature-card, .pricing-card, .testimonial-card, .resource-card, .stat-card, .for-business__content, .self-test__inner'
+    '.step, .feature-card, .pricing-card, .testimonial-card, .resource-card, .stat-card, .solutions__content, .roi-cta__inner, .trust-bar__stat'
   );
 
   const observer = new IntersectionObserver((entries) => {
