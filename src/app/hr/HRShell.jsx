@@ -20,8 +20,8 @@ function SideLink({ to, label, icon: Icon, end }) {
       end={end}
       className={({ isActive }) =>
         cn(
-          'flex items-center gap-3 px-3 py-2 rounded-[10px] text-[14px] font-medium transition-colors no-underline hover:no-underline',
-          isActive ? 'text-primary bg-primary-50/60' : 'text-text-secondary hover:text-text-primary hover:bg-surface-dim'
+          'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-colors no-underline hover:no-underline',
+          isActive ? 'text-primary bg-primary-50' : 'text-text-secondary hover:text-text-primary hover:bg-surface-dim'
         )
       }
     >
@@ -54,7 +54,7 @@ export default function HRShell() {
         <div className="px-4 mb-2">
           <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted px-3">Platform</div>
         </div>
-        <nav className="flex-1 px-3 space-y-0.5">
+        <nav className="flex-1 px-3 space-y-1">
           {links.map((l) => <SideLink key={l.to} {...l} />)}
         </nav>
         <div className="p-3 border-t border-border-light">
