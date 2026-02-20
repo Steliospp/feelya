@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,36 +19,25 @@ const mockResources = [
   { id: 3, title: 'Mindfulness for Beginners', cat: 'Wellbeing', readTime: '6 min read' },
 ];
 
+const mockDashboard = {
+  upcomingSessions: 2,
+  completedSessions: 8,
+  nextSession: {
+    id: 1,
+    therapist_name: 'Dr. Sarah Mitchell',
+    therapist_title: 'Clinical Psychologist',
+    date: 'Mon 24 Feb',
+    time: '10:00 AM',
+    duration: 50,
+    session_format: 'video',
+    price: 85,
+  },
+};
+
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    async function fetchDashboard() {
-      try {
-        const res = await fetch('/api/dashboard');
-        const json = await res.json();
-        setData(json);
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchDashboard();
-  }, []);
-
-  if (loading) {
-    return <div style={{ textAlign: 'center', padding: 60, color: 'var(--text-muted)' }}>Loading...</div>;
-  }
-
-  if (error || !data) {
-    return <p>Error loading dashboard.</p>;
-  }
-
+  const data = mockDashboard;
   const greeting = getGreeting();
 
   return (

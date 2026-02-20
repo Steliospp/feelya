@@ -1,5 +1,50 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useModal } from '../context/ModalContext';
+
+const MOCK_THERAPISTS = [
+  {
+    id: 1, name: 'Dr. Sarah Mitchell', title: 'Clinical Psychologist', accreditation: 'BPS Chartered',
+    gender: 'Female', specialisations: 'Anxiety,Depression,Stress,Burnout', languages: 'English',
+    intro_video_price: 30, intro_audio_price: 20, intro_duration: 30,
+    video_price: 85, video_duration: 50, audio_price: 65, audio_duration: 50,
+    rating: 4.9, review_count: 127, next_available: 'Tomorrow',
+  },
+  {
+    id: 2, name: 'James Thompson', title: 'Counselling Psychologist', accreditation: 'BACP Accredited',
+    gender: 'Male', specialisations: 'Relationships,Trauma,Grief', languages: 'English,French',
+    intro_video_price: 25, intro_audio_price: null, intro_duration: 30,
+    video_price: 75, video_duration: 50, audio_price: 55, audio_duration: 50,
+    rating: 4.8, review_count: 94, next_available: 'Wed 26 Feb',
+  },
+  {
+    id: 3, name: 'Dr. Priya Sharma', title: 'Clinical Psychologist', accreditation: 'HCPC Registered',
+    gender: 'Female', specialisations: 'Anxiety,OCD,Self-esteem,LGBTQ+', languages: 'English,Hindi',
+    intro_video_price: 35, intro_audio_price: 25, intro_duration: 30,
+    video_price: 95, video_duration: 50, audio_price: 75, audio_duration: 50,
+    rating: 4.9, review_count: 156, next_available: 'Thu 27 Feb',
+  },
+  {
+    id: 4, name: 'Michael Chen', title: 'Integrative Therapist', accreditation: 'UKCP Registered',
+    gender: 'Male', specialisations: 'Stress,Burnout,Depression', languages: 'English,Mandarin',
+    intro_video_price: null, intro_audio_price: 15, intro_duration: 20,
+    video_price: 70, video_duration: 50, audio_price: 50, audio_duration: 50,
+    rating: 4.7, review_count: 68, next_available: 'Tomorrow',
+  },
+  {
+    id: 5, name: 'Dr. Emily Richards', title: 'Cognitive Behavioural Therapist', accreditation: 'BABCP Accredited',
+    gender: 'Female', specialisations: 'Anxiety,OCD,Depression,Stress', languages: 'English',
+    intro_video_price: 30, intro_audio_price: 20, intro_duration: 30,
+    video_price: 90, video_duration: 50, audio_price: 70, audio_duration: 50,
+    rating: 4.8, review_count: 112, next_available: 'Fri 28 Feb',
+  },
+  {
+    id: 6, name: 'David Okafor', title: 'Psychotherapist', accreditation: 'BACP Accredited',
+    gender: 'Male', specialisations: 'Trauma,Grief,Relationships,Self-esteem', languages: 'English',
+    intro_video_price: 20, intro_audio_price: null, intro_duration: 20,
+    video_price: 80, video_duration: 50, audio_price: 60, audio_duration: 50,
+    rating: 4.9, review_count: 89, next_available: 'Mon 3 Mar',
+  },
+];
 
 export default function Therapists() {
   const { openProfileModal, openBookingModal } = useModal();
@@ -12,10 +57,6 @@ export default function Therapists() {
     type: '',
   });
 
-  const [therapists, setTherapists] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
   const [openGroups, setOpenGroups] = useState({
     price: true,
     gender: true,
@@ -24,31 +65,17 @@ export default function Therapists() {
     type: true,
   });
 
-  const loadTherapists = useCallback(async (currentFilters) => {
-    setLoading(true);
-    setError(false);
-
-    const params = new URLSearchParams();
-    if (currentFilters.price) params.set('maxPrice', currentFilters.price);
-    if (currentFilters.gender) params.set('gender', currentFilters.gender);
-    if (currentFilters.spec) params.set('specialisation', currentFilters.spec);
-    if (currentFilters.lang) params.set('language', currentFilters.lang);
-    if (currentFilters.type) params.set('sessionType', currentFilters.type);
-
-    try {
-      const res = await fetch(`/api/therapists?${params}`);
-      const data = await res.json();
-      setTherapists(data);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadTherapists(filters);
-  }, [filters, loadTherapists]);
+  const therapists = useMemo(() => {
+    return MOCK_THERAPISTS.filter(t => {
+      if (filters.price && t.video_price > Number(filters.price)) return false;
+      if (filters.gender && t.gender !== filters.gender) return false;
+      if (filters.spec && !t.specialisations.includes(filters.spec)) return false;
+      if (filters.lang && !t.languages.includes(filters.lang)) return false;
+      if (filters.type === 'video' && !t.video_price) return false;
+      if (filters.type === 'audio' && !t.audio_price) return false;
+      return true;
+    });
+  }, [filters]);
 
   function handleFilterChange(key, value) {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -205,22 +232,12 @@ export default function Therapists() {
 
         {/* Therapists List */}
         <div id="therapistsList">
-          {loading && (
-            <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>Loading therapists...</div>
-          )}
-
-          {error && (
-            <p>Error loading therapists.</p>
-          )}
-
-          {!loading && !error && therapists.length === 0 && (
+          {therapists.length === 0 ? (
             <div className="empty-state">
               <div className="empty-state__title">No therapists found</div>
               <p className="empty-state__desc">Try adjusting your filters.</p>
             </div>
-          )}
-
-          {!loading && !error && therapists.length > 0 && (
+          ) : (
             <div className="therapist-grid">
               {therapists.map(t => (
                 <TherapistCard key={t.id} therapist={t} onViewProfile={openProfileModal} onBookNow={openBookingModal} />

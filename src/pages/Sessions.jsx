@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
 
 const formatIcons = {
@@ -16,43 +16,70 @@ const formatIcons = {
   ),
 };
 
+const MOCK_SESSIONS = [
+  {
+    id: 1, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
+    date: 'Mon 24 Feb', time: '10:00 AM', duration: 50, price: 85,
+    session_format: 'video', status: 'upcoming',
+  },
+  {
+    id: 2, therapist_name: 'James Thompson', therapist_title: 'Counselling Psychologist',
+    date: 'Wed 26 Feb', time: '2:00 PM', duration: 50, price: 75,
+    session_format: 'video', status: 'upcoming',
+  },
+  {
+    id: 3, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
+    date: 'Mon 17 Feb', time: '10:00 AM', duration: 50, price: 85,
+    session_format: 'video', status: 'completed',
+  },
+  {
+    id: 4, therapist_name: 'Dr. Priya Sharma', therapist_title: 'Clinical Psychologist',
+    date: 'Thu 13 Feb', time: '3:00 PM', duration: 50, price: 95,
+    session_format: 'audio', status: 'completed',
+  },
+  {
+    id: 5, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
+    date: 'Mon 10 Feb', time: '10:00 AM', duration: 50, price: 85,
+    session_format: 'video', status: 'completed',
+  },
+  {
+    id: 6, therapist_name: 'Michael Chen', therapist_title: 'Integrative Therapist',
+    date: 'Fri 7 Feb', time: '11:00 AM', duration: 50, price: 70,
+    session_format: 'video', status: 'completed',
+  },
+  {
+    id: 7, therapist_name: 'Dr. Emily Richards', therapist_title: 'CBT Therapist',
+    date: 'Mon 3 Feb', time: '9:00 AM', duration: 50, price: 90,
+    session_format: 'audio', status: 'completed',
+  },
+  {
+    id: 8, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
+    date: 'Wed 29 Jan', time: '10:00 AM', duration: 50, price: 85,
+    session_format: 'video', status: 'completed',
+  },
+  {
+    id: 9, therapist_name: 'James Thompson', therapist_title: 'Counselling Psychologist',
+    date: 'Tue 21 Jan', time: '2:00 PM', duration: 50, price: 75,
+    session_format: 'video', status: 'completed',
+  },
+  {
+    id: 10, therapist_name: 'Dr. Priya Sharma', therapist_title: 'Clinical Psychologist',
+    date: 'Mon 6 Jan', time: '4:00 PM', duration: 50, price: 95,
+    session_format: 'audio', status: 'cancelled',
+  },
+];
+
 export default function Sessions() {
   const navigate = useNavigate();
   const showToast = useToast();
-  const { loadNotifCount } = useOutletContext() || {};
 
-  const [sessions, setSessions] = useState([]);
+  const [sessions, setSessions] = useState(MOCK_SESSIONS);
   const [activeTab, setActiveTab] = useState('upcoming');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
-  useEffect(() => {
-    loadSessions();
-  }, []);
-
-  async function loadSessions() {
-    try {
-      const res = await fetch('/api/sessions');
-      const data = await res.json();
-      setSessions(data);
-      setError(false);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function cancelSession(id) {
+  function cancelSession(id) {
     if (!window.confirm('Are you sure you want to cancel this session?')) return;
-    try {
-      await fetch(`/api/sessions/${id}/cancel`, { method: 'PUT' });
-      showToast('Session cancelled');
-      if (loadNotifCount) loadNotifCount();
-      await loadSessions();
-    } catch {
-      showToast('Failed to cancel session', 'error');
-    }
+    setSessions(prev => prev.map(s => s.id === id ? { ...s, status: 'cancelled' } : s));
+    showToast('Session cancelled');
   }
 
   const filtered = sessions.filter(s => s.status === activeTab);
@@ -97,15 +124,7 @@ export default function Sessions() {
       </div>
 
       <div id="sessionsList">
-        {loading && (
-          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-            Loading sessions...
-          </div>
-        )}
-
-        {error && <p>Error loading sessions.</p>}
-
-        {!loading && !error && filtered.length === 0 && (
+        {filtered.length === 0 && (
           <div className="empty-state">
             <svg width="48" height="48" viewBox="0 0 20 20" fill="none">
               <rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
@@ -123,7 +142,7 @@ export default function Sessions() {
           </div>
         )}
 
-        {!loading && !error && filtered.map(s => (
+        {filtered.map(s => (
           <div className="session-item" key={s.id}>
             <div className="session-item__left">
               <div className="session-item__avatar">
