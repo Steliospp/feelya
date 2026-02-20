@@ -21,7 +21,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="px-4 pt-4 pb-8">
+    <div>
       <h1 className="text-[28px] font-semibold text-text-primary mb-5">Profile</h1>
 
       {/* Profile card */}

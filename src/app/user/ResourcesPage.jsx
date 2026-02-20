@@ -33,8 +33,8 @@ export default function ResourcesPage() {
   });
 
   return (
-    <div className="px-4 pt-6 pb-6">
-      <h1 className="text-[26px] font-semibold text-text-primary mb-1">Resources</h1>
+    <div>
+      <h1 className="text-[28px] font-semibold text-text-primary mb-1">Resources</h1>
       <p className="text-[14px] text-text-secondary mb-4">Articles, tools, and support when you need it.</p>
 
       {/* Search */}

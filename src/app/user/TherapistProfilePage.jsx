@@ -33,7 +33,7 @@ export default function TherapistProfilePage() {
   const [selectedSlot, setSelectedSlot] = useState(null);
 
   return (
-    <div className="px-4 pt-4 pb-8">
+    <div>
       {/* Back */}
       <button
         onClick={() => navigate(-1)}
