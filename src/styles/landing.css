@@ -59,6 +59,9 @@ body {
   overflow-x: hidden;
 }
 
+/* Scroll-triggered animation */
+.animate-in { opacity: 1 !important; transform: translateY(0) !important; }
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
