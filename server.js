@@ -21,10 +21,10 @@ db.exec(`
     last_name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
+    company_name TEXT DEFAULT '',
     phone TEXT DEFAULT '',
     description TEXT DEFAULT '',
     avatar_color TEXT DEFAULT '#6366f1',
-    company_name TEXT DEFAULT '',
     role TEXT DEFAULT 'admin',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
@@ -147,8 +147,8 @@ function authMiddleware(req, res, next) {
 
 // --- Auth Routes ---
 app.post('/api/signup', (req, res) => {
-  const { firstName, lastName, email, password, companyName } = req.body;
-  if (!firstName || !lastName || !email || !password) {
+  const { companyName, firstName, lastName, email, password } = req.body;
+  if (!companyName || !firstName || !lastName || !email || !password) {
     return res.status(400).json({ error: 'All fields are required' });
   }
   if (password.length < 8) {
@@ -165,13 +165,13 @@ app.post('/api/signup', (req, res) => {
   const color = colors[Math.floor(Math.random() * colors.length)];
 
   const result = db.prepare(
-    'INSERT INTO users (first_name, last_name, email, password, avatar_color, company_name) VALUES (?, ?, ?, ?, ?, ?)'
-  ).run(firstName, lastName, email, hash, color, companyName || '');
+    'INSERT INTO users (first_name, last_name, email, password, company_name, avatar_color) VALUES (?, ?, ?, ?, ?, ?)'
+  ).run(firstName, lastName, email, hash, companyName, color);
 
   // Welcome notification
   db.prepare(
     'INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)'
-  ).run(result.lastInsertRowid, 'Welcome to Feelya for Business!', 'Welcome to Feelya for Business! Your company account has been created. Start by browsing our therapist network for your team.', 'success');
+  ).run(result.lastInsertRowid, 'Welcome to Feelya for Business!', `Your ${companyName} admin account has been created. Start by exploring your therapist network and inviting your team.`, 'success');
 
   const token = jwt.sign({ id: result.lastInsertRowid, email }, JWT_SECRET, { expiresIn: '7d' });
   res.cookie('token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
@@ -201,15 +201,15 @@ app.post('/api/logout', (req, res) => {
 
 // --- User Routes ---
 app.get('/api/me', authMiddleware, (req, res) => {
-  const user = db.prepare('SELECT id, first_name, last_name, email, phone, description, avatar_color, company_name, role, created_at FROM users WHERE id = ?').get(req.user.id);
+  const user = db.prepare('SELECT id, first_name, last_name, email, company_name, phone, description, avatar_color, role, created_at FROM users WHERE id = ?').get(req.user.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json(user);
 });
 
 app.put('/api/me', authMiddleware, (req, res) => {
-  const { firstName, lastName, phone, description, companyName } = req.body;
-  db.prepare('UPDATE users SET first_name = ?, last_name = ?, phone = ?, description = ?, company_name = ? WHERE id = ?')
-    .run(firstName, lastName, phone || '', description || '', companyName || '', req.user.id);
+  const { firstName, lastName, companyName, phone, description } = req.body;
+  db.prepare('UPDATE users SET first_name = ?, last_name = ?, company_name = ?, phone = ?, description = ? WHERE id = ?')
+    .run(firstName, lastName, companyName || '', phone || '', description || '', req.user.id);
   res.json({ success: true });
 });
 

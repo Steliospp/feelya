@@ -79,6 +79,18 @@ a:hover { text-decoration: underline; }
   margin-bottom: 48px;
 }
 
+.auth__logo-badge {
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8);
+}
+
 .auth__hero-title {
   font-family: var(--font-serif);
   font-size: 36px;
