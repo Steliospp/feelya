@@ -1,4 +1,3 @@
-import Card from '../../components/ui/card';
 import Badge from '../../components/ui/badge';
 
 const monthlyData = [
@@ -19,68 +18,76 @@ const topTopics = [
   { name: 'Confidence', percentage: 8, count: 27 },
 ];
 
+const maxSessions = Math.max(...monthlyData.map((d) => d.sessions));
+
 export default function InsightsPage() {
   const latest = monthlyData[monthlyData.length - 1];
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-[28px] font-semibold text-text-primary">Insights</h1>
-        <p className="text-[15px] text-text-secondary mt-1">Engagement trends and programme analytics</p>
+      <div className="mb-10">
+        <h1 className="text-[32px] font-semibold text-neutral-900 tracking-tight">Insights</h1>
+        <p className="text-[15px] text-neutral-400 mt-1.5">Engagement trends and programme analytics</p>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <Card className="!p-5">
-          <div className="text-[13px] text-text-secondary mb-1">Sessions this month</div>
-          <div className="text-[28px] font-semibold text-text-primary">{latest.sessions}</div>
-          <div className="text-[13px] text-success font-medium mt-1">+18% vs last month</div>
-        </Card>
-        <Card className="!p-5">
-          <div className="text-[13px] text-text-secondary mb-1">Workshop attendance</div>
-          <div className="text-[28px] font-semibold text-text-primary">{latest.workshops}</div>
-          <div className="text-[13px] text-success font-medium mt-1">+21% vs last month</div>
-        </Card>
-        <Card className="!p-5">
-          <div className="text-[13px] text-text-secondary mb-1">Satisfaction score</div>
-          <div className="text-[28px] font-semibold text-text-primary">{latest.satisfaction}/5</div>
-          <div className="text-[13px] text-success font-medium mt-1">+0.1 vs last month</div>
-        </Card>
+      <div className="grid grid-cols-3 gap-6 mb-10">
+        {[
+          { label: 'Sessions this month', value: latest.sessions, change: '+18% vs last month' },
+          { label: 'Workshop attendance', value: latest.workshops, change: '+21% vs last month' },
+          { label: 'Satisfaction score', value: `${latest.satisfaction}/5`, change: '+0.1 vs last month' },
+        ].map((card) => (
+          <div key={card.label} className="bg-white rounded-2xl p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60">
+            <div className="text-[12px] font-medium text-neutral-400 uppercase tracking-wider mb-3">{card.label}</div>
+            <div className="text-[32px] font-semibold text-neutral-900 tracking-tight leading-none">{card.value}</div>
+            <div className="text-[12px] font-medium text-emerald-500 mt-2">{card.change}</div>
+          </div>
+        ))}
       </div>
 
       {/* Sessions over time */}
-      <Card className="mb-6 !p-5">
-        <h2 className="text-[16px] font-semibold text-text-primary mb-4">Sessions over time</h2>
-        <div className="flex items-end gap-3 h-[160px]">
-          {monthlyData.map((d) => {
-            const height = (d.sessions / 400) * 100;
-            return (
-              <div key={d.month} className="flex-1 flex flex-col items-center gap-1">
-                <div className="text-[12px] font-medium text-text-primary">{d.sessions}</div>
-                <div className="w-full rounded-t-[6px] bg-gradient-to-t from-primary to-violet transition-all" style={{ height: `${height}%` }} />
-                <div className="text-[12px] text-text-muted">{d.month}</div>
-              </div>
-            );
-          })}
+      <section className="mb-10">
+        <h2 className="text-[14px] font-semibold text-neutral-900 mb-4">Sessions over time</h2>
+        <div className="bg-white rounded-2xl p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60">
+          <div className="flex items-end gap-4 h-[180px]">
+            {monthlyData.map((d) => {
+              const height = (d.sessions / maxSessions) * 100;
+              return (
+                <div key={d.month} className="flex-1 flex flex-col items-center gap-2">
+                  <div className="text-[12px] font-medium text-neutral-900 tabular-nums">{d.sessions}</div>
+                  <div
+                    className="w-full rounded-md bg-neutral-900 transition-all"
+                    style={{ height: `${height}%` }}
+                  />
+                  <div className="text-[11px] font-medium text-neutral-400 uppercase">{d.month}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </Card>
+      </section>
 
       {/* Top topics */}
-      <Card className="!p-5">
-        <h2 className="text-[16px] font-semibold text-text-primary mb-4">Top topics</h2>
-        <div className="space-y-3">
-          {topTopics.map((t) => (
-            <div key={t.name} className="flex items-center gap-3">
-              <Badge>{t.name}</Badge>
-              <div className="flex-1 h-2 bg-surface-dim rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-primary to-violet rounded-full" style={{ width: `${t.percentage}%` }} />
+      <section>
+        <h2 className="text-[14px] font-semibold text-neutral-900 mb-4">Top topics</h2>
+        <div className="bg-white rounded-2xl p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60">
+          <div className="space-y-4">
+            {topTopics.map((t) => (
+              <div key={t.name} className="flex items-center gap-4">
+                <span className="text-[13px] font-medium text-neutral-900 w-28 shrink-0">{t.name}</span>
+                <div className="flex-1 h-2 bg-neutral-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-neutral-900 rounded-full transition-all"
+                    style={{ width: `${t.percentage}%` }}
+                  />
+                </div>
+                <span className="text-[13px] font-medium text-neutral-900 w-10 text-right tabular-nums">{t.percentage}%</span>
+                <span className="text-[12px] text-neutral-400 w-12 text-right tabular-nums">{t.count}</span>
               </div>
-              <span className="text-[13px] text-text-secondary w-12 text-right">{t.percentage}%</span>
-              <span className="text-[12px] text-text-muted w-12 text-right">{t.count}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </Card>
+      </section>
     </div>
   );
 }

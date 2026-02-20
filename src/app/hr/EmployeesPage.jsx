@@ -1,4 +1,3 @@
-import Card from '../../components/ui/card';
 import Badge from '../../components/ui/badge';
 import SearchInput from '../../components/ui/search-input';
 import { useState } from 'react';
@@ -22,37 +21,39 @@ export default function EmployeesPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-[28px] font-semibold text-text-primary">Employees</h1>
-        <p className="text-[15px] text-text-secondary mt-1">Aggregated activity &mdash; individual data is never visible</p>
+      <div className="mb-10">
+        <h1 className="text-[32px] font-semibold text-neutral-900 tracking-tight">Employees</h1>
+        <p className="text-[15px] text-neutral-400 mt-1.5">Aggregated activity &mdash; individual data is never visible</p>
       </div>
 
-      <SearchInput placeholder="Search by name or team..." value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4 max-w-[400px]" />
+      <div className="mb-6">
+        <SearchInput placeholder="Search by name or team..." value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-[360px]" />
+      </div>
 
-      <Card className="!p-0">
-        <table className="w-full text-[14px]">
+      <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60 overflow-hidden">
+        <table className="w-full text-[13.5px]">
           <thead>
-            <tr className="text-left border-b border-border-light">
-              <th className="px-5 py-3 text-text-secondary font-medium">Employee</th>
-              <th className="px-5 py-3 text-text-secondary font-medium">Team</th>
-              <th className="px-5 py-3 text-text-secondary font-medium">Last active</th>
-              <th className="px-5 py-3 text-text-secondary font-medium">Sessions</th>
-              <th className="px-5 py-3 text-text-secondary font-medium">Workshops</th>
+            <tr className="border-b border-neutral-100">
+              <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Employee</th>
+              <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Team</th>
+              <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Last active</th>
+              <th className="px-6 py-3.5 text-right text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Sessions</th>
+              <th className="px-6 py-3.5 text-right text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Workshops</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((e) => (
-              <tr key={e.id} className="border-t border-border-light hover:bg-surface-muted transition-colors cursor-pointer">
-                <td className="px-5 py-3 font-medium text-text-primary">{e.name}</td>
-                <td className="px-5 py-3"><Badge variant="muted">{e.team}</Badge></td>
-                <td className="px-5 py-3 text-text-secondary">{e.lastActive}</td>
-                <td className="px-5 py-3 text-text-secondary">{e.sessions}</td>
-                <td className="px-5 py-3 text-text-secondary">{e.workshops}</td>
+              <tr key={e.id} className="border-t border-neutral-50 hover:bg-neutral-50/50 transition-colors">
+                <td className="px-6 py-4 font-medium text-neutral-900">{e.name}</td>
+                <td className="px-6 py-4"><Badge variant="muted">{e.team}</Badge></td>
+                <td className="px-6 py-4 text-neutral-500">{e.lastActive}</td>
+                <td className="px-6 py-4 text-neutral-500 text-right tabular-nums">{e.sessions}</td>
+                <td className="px-6 py-4 text-neutral-500 text-right tabular-nums">{e.workshops}</td>
               </tr>
             ))}
           </tbody>
         </table>
-      </Card>
+      </div>
     </div>
   );
 }

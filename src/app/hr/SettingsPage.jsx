@@ -1,5 +1,4 @@
 import { useAuth } from '../../context/AuthContext';
-import Card from '../../components/ui/card';
 import Button from '../../components/ui/button';
 import Badge from '../../components/ui/badge';
 
@@ -8,71 +7,102 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-[28px] font-semibold text-text-primary">Settings</h1>
-        <p className="text-[15px] text-text-secondary mt-1">Organisation and billing settings</p>
+      <div className="mb-10">
+        <h1 className="text-[32px] font-semibold text-neutral-900 tracking-tight">Settings</h1>
+        <p className="text-[15px] text-neutral-400 mt-1.5">Organisation and billing settings</p>
       </div>
 
       {/* Org info */}
-      <Card className="!p-5 mb-4">
-        <h2 className="text-[16px] font-semibold text-text-primary mb-4">Organisation</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="text-[13px] text-text-secondary">Company name</label>
-            <input className="w-full mt-1 h-10 px-3 rounded-[12px] border border-border text-[14px] text-text-primary bg-surface focus:outline-none focus:border-primary" defaultValue={user?.companyName} />
+      <section className="mb-8">
+        <h2 className="text-[14px] font-semibold text-neutral-900 mb-4">Organisation</h2>
+        <div className="bg-white rounded-2xl p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60">
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <label className="text-[12px] font-medium text-neutral-400 uppercase tracking-wider">Company name</label>
+              <input
+                className="w-full mt-2 h-11 px-4 rounded-xl border border-neutral-200 text-[14px] text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-300 transition-all"
+                defaultValue={user?.companyName}
+              />
+            </div>
+            <div>
+              <label className="text-[12px] font-medium text-neutral-400 uppercase tracking-wider">Admin email</label>
+              <input
+                className="w-full mt-2 h-11 px-4 rounded-xl border border-neutral-200 text-[14px] text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-300 transition-all"
+                defaultValue={user?.email}
+              />
+            </div>
           </div>
-          <div>
-            <label className="text-[13px] text-text-secondary">Admin email</label>
-            <input className="w-full mt-1 h-10 px-3 rounded-[12px] border border-border text-[14px] text-text-primary bg-surface focus:outline-none focus:border-primary" defaultValue={user?.email} />
+          <div className="pt-5 mt-5 border-t border-neutral-100">
+            <Button variant="primary" size="md">Save changes</Button>
           </div>
         </div>
-        <Button variant="primary" size="md" className="mt-4">Save changes</Button>
-      </Card>
+      </section>
 
       {/* Billing */}
-      <Card className="!p-5 mb-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[16px] font-semibold text-text-primary">Billing plan</h2>
-          <Badge variant="success">Active</Badge>
+      <section className="mb-8">
+        <h2 className="text-[14px] font-semibold text-neutral-900 mb-4">Billing plan</h2>
+        <div className="bg-white rounded-2xl p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-[32px] font-semibold text-neutral-900 tracking-tight">&pound;799</span>
+                <span className="text-[14px] text-neutral-400">/ month</span>
+              </div>
+              <p className="text-[14px] text-neutral-500 mt-1">Growth plan &mdash; Up to 500 employees</p>
+            </div>
+            <Badge variant="success">Active</Badge>
+          </div>
+          <div className="pt-5 border-t border-neutral-100">
+            <Button variant="outline" size="md">Manage billing</Button>
+          </div>
         </div>
-        <div className="flex items-baseline gap-1 mb-1">
-          <span className="text-[28px] font-semibold text-text-primary">&pound;799</span>
-          <span className="text-[14px] text-text-secondary">/ month</span>
-        </div>
-        <p className="text-[14px] text-text-secondary">Growth plan &mdash; Up to 500 employees</p>
-        <Button variant="outline" size="md" className="mt-4">Manage billing</Button>
-      </Card>
+      </section>
 
       {/* Workshop defaults */}
-      <Card className="!p-5 mb-4">
-        <h2 className="text-[16px] font-semibold text-text-primary mb-4">Workshop defaults</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="text-[13px] text-text-secondary">Default seat cap</label>
-            <input type="number" className="w-full mt-1 h-10 px-3 rounded-[12px] border border-border text-[14px] text-text-primary bg-surface focus:outline-none focus:border-primary" defaultValue="50" />
+      <section className="mb-8">
+        <h2 className="text-[14px] font-semibold text-neutral-900 mb-4">Workshop defaults</h2>
+        <div className="bg-white rounded-2xl p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60">
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <label className="text-[12px] font-medium text-neutral-400 uppercase tracking-wider">Default seat cap</label>
+              <input
+                type="number"
+                className="w-full mt-2 h-11 px-4 rounded-xl border border-neutral-200 text-[14px] text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-300 transition-all"
+                defaultValue="50"
+              />
+            </div>
+            <div>
+              <label className="text-[12px] font-medium text-neutral-400 uppercase tracking-wider">Reminder before event</label>
+              <select className="w-full mt-2 h-11 px-4 rounded-xl border border-neutral-200 text-[14px] text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-300 transition-all appearance-none">
+                <option>1 hour</option>
+                <option>24 hours</option>
+                <option>48 hours</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label className="text-[13px] text-text-secondary">Reminder before event</label>
-            <select className="w-full mt-1 h-10 px-3 rounded-[12px] border border-border text-[14px] text-text-primary bg-surface focus:outline-none focus:border-primary">
-              <option>1 hour</option>
-              <option>24 hours</option>
-              <option>48 hours</option>
-            </select>
+          <div className="pt-5 mt-5 border-t border-neutral-100">
+            <Button variant="primary" size="md">Save defaults</Button>
           </div>
         </div>
-        <Button variant="primary" size="md" className="mt-4">Save defaults</Button>
-      </Card>
+      </section>
 
       {/* Notifications */}
-      <Card className="!p-5">
-        <h2 className="text-[16px] font-semibold text-text-primary mb-4">Notification rules</h2>
-        {['New employee requests', 'Workshop reminders', 'Weekly engagement digest', 'Billing updates'].map((rule) => (
-          <label key={rule} className="flex items-center justify-between py-2.5 border-b border-border-light last:border-none cursor-pointer">
-            <span className="text-[14px] text-text-primary">{rule}</span>
-            <input type="checkbox" defaultChecked className="w-5 h-5 accent-primary cursor-pointer" />
-          </label>
-        ))}
-      </Card>
+      <section>
+        <h2 className="text-[14px] font-semibold text-neutral-900 mb-4">Notification rules</h2>
+        <div className="bg-white rounded-2xl p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60">
+          {['New employee requests', 'Workshop reminders', 'Weekly engagement digest', 'Billing updates'].map((rule, i, arr) => (
+            <label
+              key={rule}
+              className={`flex items-center justify-between py-4 cursor-pointer ${
+                i < arr.length - 1 ? 'border-b border-neutral-100' : ''
+              }`}
+            >
+              <span className="text-[14px] text-neutral-900">{rule}</span>
+              <input type="checkbox" defaultChecked className="w-5 h-5 accent-neutral-900 cursor-pointer rounded" />
+            </label>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
