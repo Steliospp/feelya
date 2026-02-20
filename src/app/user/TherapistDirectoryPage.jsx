@@ -61,8 +61,7 @@ export default function TherapistDirectoryPage() {
           {filtered.map((t) => (
             <Card
               key={t.id}
-              elevation={1}
-              className="!p-5 cursor-pointer hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-200"
+              className="!p-5 cursor-pointer hover:shadow-elevated transition-all duration-200"
               onClick={() => navigate(`/app/therapist/${t.id}`)}
             >
               <div className="flex items-center gap-4">
@@ -89,7 +88,7 @@ export default function TherapistDirectoryPage() {
               </div>
               <div className="flex flex-wrap gap-1.5 mt-4">
                 {t.specialties.map((s) => (
-                  <span key={s} className="text-[12px] font-medium text-primary bg-primary-50 border border-primary/10 px-2.5 py-0.5 rounded-full">{s}</span>
+                  <span key={s} className="text-[12px] font-medium text-primary bg-primary-50 px-2.5 py-0.5 rounded-full">{s}</span>
                 ))}
               </div>
             </Card>

@@ -47,7 +47,7 @@ export default function SessionsPage() {
           ) : (
             <div className="space-y-4">
               {upcoming.map((s) => (
-                <Card key={s.id} elevation={1} className="!p-5">
+                <Card key={s.id} className="!p-5">
                   <div className="flex items-center gap-4">
                     <Avatar name={s.therapist} color={s.color} size="lg" />
                     <div className="flex-1 min-w-0">
@@ -59,8 +59,8 @@ export default function SessionsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-5 mt-4 text-[13px] text-text-secondary">
-                    <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-primary/60" /> {s.date}</span>
-                    <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-primary/60" /> {s.time}</span>
+                    <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-text-muted" /> {s.date}</span>
+                    <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-text-muted" /> {s.time}</span>
                     <span>{s.duration}</span>
                   </div>
                   <div className="flex gap-3 mt-4">
@@ -90,7 +90,7 @@ export default function SessionsPage() {
           ) : (
             <div className="space-y-4">
               {past.map((s) => (
-                <Card key={s.id} elevation={1} className="!p-5">
+                <Card key={s.id} className="!p-5">
                   <div className="flex items-center gap-4">
                     <Avatar name={s.therapist} color={s.color} size="md" />
                     <div className="flex-1">

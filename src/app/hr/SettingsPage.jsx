@@ -12,7 +12,7 @@ export default function SettingsPage() {
       <PageHeader title="Settings" description="Organisation and billing settings" />
 
       {/* Org info */}
-      <Card elevation={1} className="!p-6 mb-6">
+      <Card className="!p-6 mb-6">
         <h2 className="text-[16px] font-semibold text-text-primary mb-4">Organisation</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -28,7 +28,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* Billing */}
-      <Card elevation={1} className="!p-6 mb-6">
+      <Card className="!p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-[16px] font-semibold text-text-primary">Billing plan</h2>
           <Badge variant="success">Active</Badge>
@@ -42,7 +42,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* Workshop defaults */}
-      <Card elevation={1} className="!p-6 mb-6">
+      <Card className="!p-6 mb-6">
         <h2 className="text-[16px] font-semibold text-text-primary mb-4">Workshop defaults</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -62,7 +62,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* Notifications */}
-      <Card elevation={1} className="!p-6">
+      <Card className="!p-6">
         <h2 className="text-[16px] font-semibold text-text-primary mb-4">Notification rules</h2>
         {['New employee requests', 'Workshop reminders', 'Weekly engagement digest', 'Billing updates'].map((rule) => (
           <label key={rule} className="flex items-center justify-between py-3 border-b border-border-light last:border-none cursor-pointer">

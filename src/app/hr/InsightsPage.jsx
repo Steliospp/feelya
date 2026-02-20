@@ -33,21 +33,18 @@ export default function InsightsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <StatCard
           icon={<CalendarDays className="w-5 h-5" />}
-          iconClassName="text-primary bg-primary-50"
           label="Sessions this month"
           value={String(latest.sessions)}
           change="+18%"
         />
         <StatCard
           icon={<Users className="w-5 h-5" />}
-          iconClassName="text-violet bg-violet/10"
           label="Workshop attendance"
           value={String(latest.workshops)}
           change="+21%"
         />
         <StatCard
           icon={<Star className="w-5 h-5" />}
-          iconClassName="text-warning bg-warning-bg"
           label="Satisfaction score"
           value={`${latest.satisfaction}/5`}
           change="+0.1"
@@ -75,7 +72,7 @@ export default function InsightsPage() {
         <div className="space-y-3.5">
           {topTopics.map((t) => (
             <div key={t.name} className="flex items-center gap-3">
-              <span className="text-[13px] font-medium text-primary bg-primary-50 border border-primary/10 px-2.5 py-0.5 rounded-full">{t.name}</span>
+              <span className="text-[12px] font-medium text-primary bg-primary-50 px-2.5 py-0.5 rounded-full">{t.name}</span>
               <div className="flex-1 h-2 bg-surface-dim rounded-full overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-primary to-violet rounded-full" style={{ width: `${t.percentage}%` }} />
               </div>

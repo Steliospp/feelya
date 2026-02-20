@@ -43,8 +43,8 @@ export default function TherapistProfilePage() {
       </button>
 
       {/* Hero card */}
-      <Card elevation={2} className="!p-0 overflow-hidden mb-6">
-        <div className="bg-gradient-to-r from-primary-50 via-primary-50/60 to-transparent px-6 py-5">
+      <Card className="!p-0 overflow-hidden mb-6">
+        <div className="bg-surface-muted px-6 py-5">
           <div className="flex items-center gap-4">
             <Avatar name={therapist.name} color={therapist.color} size="xl" />
             <div>
@@ -77,23 +77,23 @@ export default function TherapistProfilePage() {
       </Card>
 
       {/* About */}
-      <Card elevation={1} className="mb-4 !p-5">
+      <Card className="mb-4 !p-5">
         <h2 className="text-[16px] font-semibold text-text-primary mb-2">About</h2>
         <p className="text-[14px] text-text-secondary leading-relaxed">{therapist.about}</p>
       </Card>
 
       {/* Specialties */}
-      <Card elevation={1} className="mb-4 !p-5">
+      <Card className="mb-4 !p-5">
         <h2 className="text-[16px] font-semibold text-text-primary mb-3">Specialties</h2>
         <div className="flex flex-wrap gap-2">
           {therapist.specialties.map((s) => (
-            <span key={s} className="text-[13px] font-medium text-primary bg-primary-50 border border-primary/10 px-3 py-1 rounded-full">{s}</span>
+            <span key={s} className="text-[12px] font-medium text-primary bg-primary-50 px-2.5 py-0.5 rounded-full">{s}</span>
           ))}
         </div>
       </Card>
 
       {/* Approach */}
-      <Card elevation={1} className="mb-4 !p-5">
+      <Card className="mb-4 !p-5">
         <h2 className="text-[16px] font-semibold text-text-primary mb-3">Approach</h2>
         <ul className="space-y-2">
           {therapist.approach.map((a) => (
@@ -106,7 +106,7 @@ export default function TherapistProfilePage() {
       </Card>
 
       {/* Availability */}
-      <Card elevation={1} id="availability" className="!p-5">
+      <Card id="availability" className="!p-5">
         <h2 className="text-[16px] font-semibold text-text-primary mb-4">Availability</h2>
         <div className="space-y-5">
           {therapist.availability.map((day) => (

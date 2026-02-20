@@ -1,17 +1,10 @@
 import { cn } from '../../lib/utils';
 
-const elevations = {
-  1: 'shadow-card border border-border-light',
-  2: 'shadow-elevated border border-border-light',
-  3: 'shadow-hero',
-};
-
-export default function Card({ className, elevation = 1, children, ...props }) {
+export default function Card({ className, children, ...props }) {
   return (
     <div
       className={cn(
-        'bg-surface rounded-[16px] p-4',
-        elevations[elevation],
+        'bg-surface rounded-[16px] border border-border-light p-4',
         className
       )}
       {...props}

@@ -59,7 +59,7 @@ export default function ResourcesPage() {
       {(filter === 'Crisis' || filter === 'All') && (
         <section className="mb-8">
           <h2 className="text-[16px] font-semibold text-text-primary mb-3">Crisis support</h2>
-          <Card elevation={1} className="!p-0 overflow-hidden">
+          <Card className="!p-0 overflow-hidden">
             {crisisResources.map((r, i) => (
               <div key={r.id}>
                 {i > 0 && <div className="border-t border-border-light" />}
@@ -88,14 +88,14 @@ export default function ResourcesPage() {
               <p className="text-[14px] text-text-muted">No resources found.</p>
             </div>
           ) : (
-            <Card elevation={1} className="!p-0 overflow-hidden">
+            <Card className="!p-0 overflow-hidden">
               {filtered.map((r, i) => {
                 const Icon = r.icon;
                 return (
                   <div key={r.id}>
                     {i > 0 && <div className="border-t border-border-light" />}
                     <div className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-surface-dim transition-colors">
-                      <div className="w-9 h-9 rounded-[10px] bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center text-primary shrink-0">
+                      <div className="w-9 h-9 rounded-[10px] bg-primary-50 flex items-center justify-center text-primary shrink-0">
                         <Icon className="w-[18px] h-[18px]" />
                       </div>
                       <div className="flex-1 min-w-0">

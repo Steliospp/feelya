@@ -6,12 +6,13 @@ const variants = {
   warning: 'bg-warning-bg text-warning',
   danger: 'bg-danger-bg text-danger',
   muted: 'bg-surface-dim text-text-secondary',
+  outline: 'bg-transparent border border-border text-text-secondary',
 };
 
 export default function Badge({ variant = 'default', className, children }) {
   return (
     <span className={cn(
-      'inline-flex items-center h-6 px-2.5 rounded-full text-[12px] font-medium',
+      'inline-flex items-center h-6 px-2.5 rounded-full text-[12px] font-medium whitespace-nowrap',
       variants[variant],
       className
     )}>

@@ -48,13 +48,13 @@ export default function SchedulePage() {
       </ChipRow>
 
       {sessions.length === 0 ? (
-        <Card elevation={1} className="!p-8 text-center">
+        <Card className="!p-8 text-center">
           <p className="text-[14px] text-text-muted">No sessions scheduled for this day.</p>
         </Card>
       ) : (
         <div className="space-y-4">
           {sessions.map((s) => (
-            <Card key={s.id} elevation={1} className="!p-5">
+            <Card key={s.id} className="!p-5">
               <div className="flex items-center gap-4">
                 <Avatar name={s.client} color={s.color} size="md" />
                 <div className="flex-1 min-w-0">
@@ -62,14 +62,14 @@ export default function SchedulePage() {
                     <span className="text-[15px] font-semibold text-text-primary">{s.client}</span>
                     {s.isWorkshop && <Badge variant="default">Workshop</Badge>}
                   </div>
-                  <span className="inline-block text-[12px] font-medium text-primary bg-primary-50 border border-primary/10 px-2.5 py-0.5 rounded-full mt-1.5">{s.topic}</span>
+                  <span className="inline-block text-[12px] font-medium text-primary bg-primary-50 px-2.5 py-0.5 rounded-full mt-1.5">{s.topic}</span>
                 </div>
               </div>
               <div className="flex items-center gap-5 mt-3 text-[13px] text-text-secondary">
-                <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-primary/60" /> {s.time}</span>
+                <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-text-muted" /> {s.time}</span>
                 <span>{s.duration}</span>
                 <span className="flex items-center gap-1.5">
-                  {s.mode === 'video' ? <Video className="w-3.5 h-3.5 text-primary/60" /> : <MessageCircle className="w-3.5 h-3.5 text-primary/60" />}
+                  {s.mode === 'video' ? <Video className="w-3.5 h-3.5 text-text-muted" /> : <MessageCircle className="w-3.5 h-3.5 text-text-muted" />}
                   {s.mode}
                 </span>
               </div>

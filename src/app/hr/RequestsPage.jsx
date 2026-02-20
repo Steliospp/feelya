@@ -22,16 +22,16 @@ export default function RequestsPage() {
         <table className="w-full text-[14px]">
           <thead>
             <tr className="text-left border-b border-border-light">
-              <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Topic</th>
-              <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Employees</th>
-              <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Notes</th>
-              <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Status</th>
-              <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Actions</th>
+              <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Topic</th>
+              <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Employees</th>
+              <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Notes</th>
+              <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Status</th>
+              <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {requests.map((r, i) => (
-              <tr key={r.id} className={`border-t border-border-light hover:bg-surface-muted/60 transition-colors ${i % 2 === 1 ? 'bg-surface-muted/30' : ''}`}>
+            {requests.map((r) => (
+              <tr key={r.id} className={"border-t border-border-light hover:bg-surface-muted/60 transition-colors"}>
                 <td className="px-5 py-3.5 font-medium text-text-primary">{r.topic}</td>
                 <td className="px-5 py-3.5 text-text-secondary">{r.employees}</td>
                 <td className="px-5 py-3.5 text-text-secondary max-w-[300px] truncate">{r.notes}</td>

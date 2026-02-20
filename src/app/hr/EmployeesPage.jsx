@@ -31,16 +31,16 @@ export default function EmployeesPage() {
         <table className="w-full text-[14px]">
           <thead>
             <tr className="text-left border-b border-border-light">
-              <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Employee</th>
-              <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Team</th>
-              <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Last active</th>
-              <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Sessions</th>
-              <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Workshops</th>
+              <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Employee</th>
+              <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Team</th>
+              <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Last active</th>
+              <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Sessions</th>
+              <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Workshops</th>
             </tr>
           </thead>
           <tbody>
-            {filtered.map((e, i) => (
-              <tr key={e.id} className={`border-t border-border-light hover:bg-surface-muted/60 transition-colors cursor-pointer ${i % 2 === 1 ? 'bg-surface-muted/30' : ''}`}>
+            {filtered.map((e) => (
+              <tr key={e.id} className={"border-t border-border-light hover:bg-surface-muted/60 transition-colors cursor-pointer"}>
                 <td className="px-5 py-3.5 font-medium text-text-primary">{e.name}</td>
                 <td className="px-5 py-3.5"><Badge variant="muted">{e.team}</Badge></td>
                 <td className="px-5 py-3.5 text-text-secondary">{e.lastActive}</td>

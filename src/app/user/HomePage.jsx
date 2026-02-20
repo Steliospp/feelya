@@ -49,9 +49,8 @@ export default function HomePage() {
         description="Here's your wellbeing space."
       />
 
-      {/* Two-column layout: 8 / 4 on desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        {/* Left column — primary content */}
+        {/* Left column */}
         <div className="lg:col-span-2 space-y-8">
           {/* Hero Upcoming Session */}
           <section>
@@ -62,7 +61,7 @@ export default function HomePage() {
                 onReschedule={() => navigate(`/app/therapist/${upcomingSession.id}`)}
               />
             ) : (
-              <Card elevation={2} className="!p-6">
+              <Card className="!p-6">
                 <p className="text-[15px] text-text-secondary mb-3">No upcoming sessions.</p>
                 <Button variant="primary" size="md" onClick={() => navigate('/app/therapists')}>
                   Book a session
@@ -71,12 +70,12 @@ export default function HomePage() {
             )}
           </section>
 
-          {/* Book a Session — secondary action card */}
+          {/* Book a Session */}
           <section>
-            <Card elevation={1} className="!p-6">
+            <Card className="!p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-[14px] bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center text-primary shrink-0">
-                  <Calendar className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-[12px] bg-primary-50 flex items-center justify-center text-primary shrink-0">
+                  <Calendar className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-[16px] font-semibold text-text-primary">Book a session</h3>
@@ -91,13 +90,13 @@ export default function HomePage() {
             </Card>
           </section>
 
-          {/* Workshops — card grid */}
+          {/* Workshops */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-[18px] font-semibold text-text-primary">Upcoming workshops</h2>
+              <h2 className="text-[15px] font-semibold text-text-primary">Upcoming workshops</h2>
               <button
                 onClick={() => navigate('/app/workshops')}
-                className="text-[14px] font-medium text-primary cursor-pointer bg-transparent border-none hover:underline"
+                className="text-[13px] font-medium text-primary cursor-pointer bg-transparent border-none hover:underline"
               >
                 View all
               </button>
@@ -106,14 +105,13 @@ export default function HomePage() {
               {upcomingWorkshops.map((w) => (
                 <Card
                   key={w.id}
-                  elevation={1}
-                  className="!p-5 cursor-pointer hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-200"
+                  className="!p-5 cursor-pointer hover:bg-surface-muted/40 transition-colors"
                   onClick={() => navigate('/app/workshops')}
                 >
-                  <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center text-primary mb-3">
-                    <Users className="w-5 h-5" />
+                  <div className="w-9 h-9 rounded-[10px] bg-primary-50 flex items-center justify-center text-primary mb-3">
+                    <Users className="w-[18px] h-[18px]" />
                   </div>
-                  <div className="text-[15px] font-medium text-text-primary">{w.title}</div>
+                  <div className="text-[14px] font-medium text-text-primary">{w.title}</div>
                   <div className="text-[13px] text-text-secondary mt-1.5">{w.date}, {w.time}</div>
                   <Badge variant="muted" className="mt-2">{w.seats} seats left</Badge>
                 </Card>
@@ -122,7 +120,7 @@ export default function HomePage() {
           </section>
         </div>
 
-        {/* Right column — sidebar content */}
+        {/* Right column */}
         <div className="space-y-8">
           {/* Quick Resources */}
           <section>
@@ -143,8 +141,8 @@ export default function HomePage() {
                 return (
                   <div key={r.id}>
                     {i > 0 && <div className="border-t border-border-light" />}
-                    <div className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-surface-dim transition-colors">
-                      <div className="w-9 h-9 rounded-[10px] bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center text-primary shrink-0">
+                    <div className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-surface-muted/40 transition-colors">
+                      <div className="w-9 h-9 rounded-[10px] bg-primary-50 flex items-center justify-center text-primary shrink-0">
                         <Icon className="w-[18px] h-[18px]" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -172,7 +170,7 @@ export default function HomePage() {
                     {i > 0 && <div className="border-t border-border-light -mx-5 my-0" />}
                     <div className="flex items-center justify-between pt-1">
                       <span className="text-[14px] text-text-secondary">{stat.label}</span>
-                      <span className="text-[18px] font-semibold text-text-primary">{stat.value}</span>
+                      <span className="text-[18px] font-semibold text-primary">{stat.value}</span>
                     </div>
                   </div>
                 ))}

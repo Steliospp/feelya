@@ -26,8 +26,8 @@ export default function ProfilePage() {
       <PageHeader title="Profile" />
 
       {/* Profile card */}
-      <Card elevation={2} className="!p-0 overflow-hidden mb-6">
-        <div className="bg-gradient-to-r from-primary-50 via-primary-50/60 to-transparent px-6 py-5">
+      <Card className="!p-0 overflow-hidden mb-6">
+        <div className="bg-surface-muted px-6 py-5">
           <div className="flex items-center gap-4">
             <Avatar name={`${user?.first_name} ${user?.last_name}`} color={user?.avatar_color} size="xl" />
             <div>
@@ -42,7 +42,7 @@ export default function ProfilePage() {
       {/* Stats row */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         {stats.map((s) => (
-          <Card key={s.label} elevation={1} className="text-center !p-4">
+          <Card key={s.label} className="text-center !p-4">
             <div className="text-[22px] font-semibold text-text-primary">{s.value}</div>
             <div className="text-[12px] text-text-secondary flex items-center justify-center gap-1 mt-1">
               {s.icon} {s.label}
@@ -52,7 +52,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Settings */}
-      <Card elevation={1} className="!p-0 overflow-hidden">
+      <Card className="!p-0 overflow-hidden">
         <ListRow icon={<Shield className="w-5 h-5" />} label="Safety & resources" desc="Crisis lines and support" onClick={() => {}} />
         <div className="border-t border-border-light" />
         <ListRow icon={<CreditCard className="w-5 h-5" />} label="Payment" desc="Manage your plan" onClick={() => {}} />

@@ -46,8 +46,7 @@ export default function ClientsPage() {
         {filtered.map((c) => (
           <Card
             key={c.id}
-            elevation={1}
-            className="!p-5 cursor-pointer hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-200"
+            className="!p-5 cursor-pointer hover:shadow-elevated transition-all duration-200"
           >
             <div className="flex items-center gap-4">
               <Avatar name={c.name} color={c.color} size="md" />
@@ -66,7 +65,7 @@ export default function ClientsPage() {
             </div>
             <div className="flex flex-wrap gap-1.5 mt-3">
               {c.topics.map((t) => (
-                <span key={t} className="text-[12px] font-medium text-primary bg-primary-50 border border-primary/10 px-2.5 py-0.5 rounded-full">{t}</span>
+                <span key={t} className="text-[12px] font-medium text-primary bg-primary-50 px-2.5 py-0.5 rounded-full">{t}</span>
               ))}
             </div>
           </Card>

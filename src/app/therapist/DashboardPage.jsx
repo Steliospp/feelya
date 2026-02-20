@@ -1,5 +1,5 @@
 import { useAuth } from '../../context/AuthContext';
-import { Calendar, Clock, Video, Users, Star, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, Video, Users, Star } from 'lucide-react';
 import Card from '../../components/ui/card';
 import Button from '../../components/ui/button';
 import Badge from '../../components/ui/badge';
@@ -47,24 +47,19 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Main column */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Today's sessions — hero */}
+          {/* Today's sessions */}
           <section>
-            <Card elevation={2} className="!p-0 overflow-hidden">
-              <div className="bg-gradient-to-r from-primary-50 via-primary-50/60 to-transparent px-6 py-4">
-                <div className="text-[12px] font-semibold uppercase tracking-wider text-primary/70">
-                  Today's schedule
-                </div>
-              </div>
+            <SectionCard title="Today's schedule" noPadding>
               <div className="divide-y divide-border-light">
                 {todaySessions.map((s) => (
-                  <div key={s.id} className="flex items-center gap-4 px-6 py-4 hover:bg-surface-muted/40 transition-colors">
+                  <div key={s.id} className="flex items-center gap-4 px-5 py-4 hover:bg-surface-muted/40 transition-colors">
                     <Avatar name={s.client} color={s.color} size="md" />
                     <div className="flex-1 min-w-0">
-                      <div className="text-[14px] font-semibold text-text-primary">{s.client}</div>
+                      <div className="text-[14px] font-medium text-text-primary">{s.client}</div>
                       <div className="flex items-center gap-3 mt-0.5 text-[13px] text-text-secondary">
-                        <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-primary/60" /> {s.time}</span>
+                        <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-text-muted" /> {s.time}</span>
                         <span>{s.duration}</span>
-                        <span className="text-[12px] font-medium text-primary bg-primary-50 border border-primary/10 px-2 py-0.5 rounded-full">{s.topic}</span>
+                        <Badge variant="default">{s.topic}</Badge>
                       </div>
                     </div>
                     <Button variant="primary" size="sm">
@@ -73,21 +68,21 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-            </Card>
+            </SectionCard>
           </section>
 
           {/* Upcoming workshops */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-[18px] font-semibold text-text-primary">Your workshops</h2>
+              <h2 className="text-[15px] font-semibold text-text-primary">Your workshops</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {upcomingWorkshops.map((w) => (
-                <Card key={w.id} elevation={1} className="!p-5 hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-200">
-                  <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center text-primary mb-3">
-                    <Users className="w-5 h-5" />
+                <Card key={w.id} className="!p-5 hover:bg-surface-muted/40 transition-colors">
+                  <div className="w-9 h-9 rounded-[10px] bg-primary-50 flex items-center justify-center text-primary mb-3">
+                    <Users className="w-[18px] h-[18px]" />
                   </div>
-                  <div className="text-[15px] font-medium text-text-primary">{w.title}</div>
+                  <div className="text-[14px] font-medium text-text-primary">{w.title}</div>
                   <div className="text-[13px] text-text-secondary mt-1.5">{w.date}, {w.time}</div>
                   <Badge variant="muted" className="mt-2">{w.registrations} registered</Badge>
                 </Card>
@@ -111,7 +106,7 @@ export default function DashboardPage() {
                   {i > 0 && <div className="border-t border-border-light -mx-5 my-0" />}
                   <div className="flex items-center justify-between pt-1">
                     <span className="text-[14px] text-text-secondary">{stat.label}</span>
-                    <span className="text-[18px] font-semibold text-text-primary">{stat.value}</span>
+                    <span className="text-[18px] font-semibold text-primary">{stat.value}</span>
                   </div>
                 </div>
               ))}

@@ -35,7 +35,7 @@ export default function WorkshopsPage() {
       {tab === 'Upcoming' && (
         <div className="space-y-4">
           {upcoming.map((w) => (
-            <Card key={w.id} elevation={1} className="!p-5">
+            <Card key={w.id} className="!p-5">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-[15px] font-semibold text-text-primary">{w.title}</div>
@@ -44,8 +44,8 @@ export default function WorkshopsPage() {
                 <Badge variant="default">{w.registrations}/{w.capacity}</Badge>
               </div>
               <div className="flex items-center gap-5 mt-3 text-[13px] text-text-secondary">
-                <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-primary/60" /> {w.date}</span>
-                <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-primary/60" /> {w.time}</span>
+                <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-text-muted" /> {w.date}</span>
+                <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-text-muted" /> {w.time}</span>
                 <span>{w.duration}</span>
               </div>
               <div className="flex gap-3 mt-4">
@@ -60,7 +60,7 @@ export default function WorkshopsPage() {
       {tab === 'Past' && (
         <div className="space-y-4">
           {past.map((w) => (
-            <Card key={w.id} elevation={1} className="!p-5">
+            <Card key={w.id} className="!p-5">
               <div className="text-[15px] font-semibold text-text-primary">{w.title}</div>
               <div className="text-[13px] text-text-secondary mt-0.5">{w.company}</div>
               <div className="flex items-center gap-4 mt-3 text-[13px] text-text-secondary">

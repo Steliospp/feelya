@@ -35,19 +35,19 @@ export default function WorkshopsPage() {
           <table className="w-full text-[14px]">
             <thead>
               <tr className="text-left border-b border-border-light">
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Title</th>
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Topic</th>
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Date</th>
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Host</th>
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Seats</th>
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Actions</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Title</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Topic</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Date</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Host</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Seats</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {upcoming.map((w, i) => (
-                <tr key={w.id} className={`border-t border-border-light hover:bg-surface-muted/60 transition-colors ${i % 2 === 1 ? 'bg-surface-muted/30' : ''}`}>
+              {upcoming.map((w) => (
+                <tr key={w.id} className={"border-t border-border-light hover:bg-surface-muted/60 transition-colors"}>
                   <td className="px-5 py-3.5 font-medium text-text-primary">{w.title}</td>
-                  <td className="px-5 py-3.5"><span className="text-[12px] font-medium text-primary bg-primary-50 border border-primary/10 px-2.5 py-0.5 rounded-full">{w.topic}</span></td>
+                  <td className="px-5 py-3.5"><span className="text-[12px] font-medium text-primary bg-primary-50 px-2.5 py-0.5 rounded-full">{w.topic}</span></td>
                   <td className="px-5 py-3.5 text-text-secondary">{w.date}</td>
                   <td className="px-5 py-3.5 text-text-secondary">{w.host}</td>
                   <td className="px-5 py-3.5 text-text-secondary">{w.seats}</td>
@@ -67,16 +67,16 @@ export default function WorkshopsPage() {
           <table className="w-full text-[14px]">
             <thead>
               <tr className="text-left border-b border-border-light">
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Title</th>
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Date</th>
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Host</th>
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Attended</th>
-                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Rating</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Title</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Date</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Host</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Attended</th>
+                <th className="px-5 py-3 text-[13px] text-text-secondary font-medium">Rating</th>
               </tr>
             </thead>
             <tbody>
-              {past.map((w, i) => (
-                <tr key={w.id} className={`border-t border-border-light hover:bg-surface-muted/60 transition-colors ${i % 2 === 1 ? 'bg-surface-muted/30' : ''}`}>
+              {past.map((w) => (
+                <tr key={w.id} className={"border-t border-border-light hover:bg-surface-muted/60 transition-colors"}>
                   <td className="px-5 py-3.5 font-medium text-text-primary">{w.title}</td>
                   <td className="px-5 py-3.5 text-text-secondary">{w.date}</td>
                   <td className="px-5 py-3.5 text-text-secondary">{w.host}</td>
