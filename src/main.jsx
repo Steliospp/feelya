@@ -10,24 +10,25 @@ import BookDemo from './pages/BookDemo';
 import AppLayout from './components/AppLayout';
 import Dashboard from './pages/Dashboard';
 import Therapists from './pages/Therapists';
-import Employees from './pages/Employees';
 import Sessions from './pages/Sessions';
+import Workshops from './pages/Workshops';
 import Resources from './pages/Resources';
-import Notifications from './pages/Notifications';
 import Profile from './pages/Profile';
-import SelfTest from './pages/SelfTest';
-import OrgDashboard from './pages/OrgDashboard';
-import Team from './pages/Team';
 import HRLayout from './components/HRLayout';
 import HRDashboard from './pages/HRDashboard';
+import HRTherapists from './pages/HRTherapists';
+import HRWorkshops from './pages/HRWorkshops';
+import HRRequests from './pages/HRRequests';
 import HREmployees from './pages/HREmployees';
-import AdminLayout from './components/AdminLayout';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminDemos from './pages/AdminDemos';
+import HRInsights from './pages/HRInsights';
+import HRSettings from './pages/HRSettings';
 import TherapistLayout from './components/TherapistLayout';
 import TherapistDashboard from './pages/TherapistDashboard';
 import TherapistSessions from './pages/TherapistSessions';
 import TherapistProfile from './pages/TherapistProfile';
+import AdminLayout from './components/AdminLayout';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminDemos from './pages/AdminDemos';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -40,25 +41,26 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/book-demo" element={<BookDemo />} />
           <Route path="/signup" element={<BookDemo />} />
 
-          {/* Employee app (any authenticated user) */}
+          {/* Employee app */}
           <Route path="/app" element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="therapists" element={<Therapists />} />
-            <Route path="employees" element={<Employees />} />
             <Route path="sessions" element={<Sessions />} />
+            <Route path="workshops" element={<Workshops />} />
             <Route path="resources" element={<Resources />} />
-            <Route path="notifications" element={<Notifications />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="self-test" element={<SelfTest />} />
-            <Route path="org" element={<OrgDashboard />} />
-            <Route path="team" element={<Team />} />
           </Route>
 
           {/* HR Admin routes */}
           <Route path="/app/hr" element={<RequireAuth roles={['HR_ADMIN', 'SUPER_ADMIN']}><HRLayout /></RequireAuth>}>
             <Route index element={<HRDashboard />} />
+            <Route path="therapists" element={<HRTherapists />} />
+            <Route path="workshops" element={<HRWorkshops />} />
+            <Route path="requests" element={<HRRequests />} />
             <Route path="employees" element={<HREmployees />} />
+            <Route path="insights" element={<HRInsights />} />
+            <Route path="settings" element={<HRSettings />} />
           </Route>
 
           {/* Therapist portal routes */}

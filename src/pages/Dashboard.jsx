@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useOutletContext, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function getGreeting() {
@@ -9,20 +9,19 @@ function getGreeting() {
   return 'Good evening';
 }
 
-function timeAgo(dateStr) {
-  const now = new Date();
-  const d = new Date(dateStr);
-  const diff = Math.floor((now - d) / 1000);
-  if (diff < 60) return 'Just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-}
+const mockWorkshops = [
+  { id: 1, title: 'Managing Stress at Work', date: 'Tue 25 Feb', time: '12:00 PM', spots: 8 },
+  { id: 2, title: 'Building Resilience', date: 'Thu 27 Feb', time: '1:00 PM', spots: 12 },
+];
+
+const mockResources = [
+  { id: 1, title: 'Dealing with Burnout at Work', cat: 'Workplace' },
+  { id: 2, title: 'Managing Anxiety: Practical Tips', cat: 'Self-Help' },
+  { id: 3, title: 'Mindfulness for Beginners', cat: 'Wellbeing' },
+];
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { loadNotifCount } = useOutletContext() || {};
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,11 +40,10 @@ export default function Dashboard() {
       }
     }
     fetchDashboard();
-    if (loadNotifCount) loadNotifCount();
-  }, [loadNotifCount]);
+  }, []);
 
   if (loading) {
-    return <div className="page-loading">Loading...</div>;
+    return <div style={{ textAlign: 'center', padding: 60, color: 'var(--text-muted)' }}>Loading...</div>;
   }
 
   if (error || !data) {
@@ -53,49 +51,16 @@ export default function Dashboard() {
   }
 
   const greeting = getGreeting();
-  const isAdmin = user?.role === 'admin';
 
   return (
     <>
-      {/* Page Header */}
       <div className="page-header">
         <div className="page-header__greeting">{greeting}</div>
         <h1 className="page-header__title">Welcome back, {user?.first_name}</h1>
-        {user?.org_name && (
-          <p className="page-header__subtitle">
-            {user.org_name}{isAdmin ? ' \u00B7 Admin' : ''}
-          </p>
-        )}
+        <p className="page-header__subtitle">Your personal wellbeing hub</p>
       </div>
 
-      {/* Admin Card */}
-      {isAdmin && (
-        <div style={{ marginBottom: 24 }}>
-          <div
-            className="card"
-            style={{
-              background: 'linear-gradient(135deg, var(--primary-50), #ede9fe)',
-              borderColor: 'var(--primary-100)',
-              cursor: 'pointer',
-            }}
-            onClick={() => navigate('org')}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 4 }}>Organisation Dashboard</div>
-                <div style={{ fontSize: 14, color: 'var(--text-sec)' }}>
-                  View team analytics, engagement metrics, and wellbeing trends
-                </div>
-              </div>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Stats Grid */}
+      {/* Personal Stats */}
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-card__icon stat-card__icon--primary">
@@ -124,20 +89,18 @@ export default function Dashboard() {
         <div className="stat-card">
           <div className="stat-card__icon stat-card__icon--warning">
             <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
-              <path d="M10 2a6 6 0 00-6 6v3l-1.5 2.5h15L16 11V8a6 6 0 00-6-6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M8 15.5a2.5 2.5 0 005 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M14 17v-1a3 3 0 00-3-3H6a3 3 0 00-3 3v1m15-1v-1a3 3 0 00-2.25-2.9M11.5 3.1a3 3 0 010 5.8M8.5 9a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
           <div>
-            <div className="stat-card__value">{data.unreadNotifications}</div>
-            <div className="stat-card__label">Unread Notifications</div>
+            <div className="stat-card__value">{mockWorkshops.length}</div>
+            <div className="stat-card__label">Upcoming Workshops</div>
           </div>
         </div>
       </div>
 
-      {/* Dashboard Grid */}
+      {/* Top Row: Next Session + Book Session CTA */}
       <div className="dash-grid">
-        {/* Next Session Card */}
         <div className="card">
           <div className="card__title">
             Next Session
@@ -169,62 +132,84 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="empty-state" style={{ padding: '30px 10px' }}>
-              <p className="empty-state__desc">No upcoming sessions. Find a therapist to get started.</p>
+              <p className="empty-state__desc">No upcoming sessions scheduled.</p>
               <button className="btn btn--primary btn--sm" onClick={() => navigate('/app/therapists')}>
-                Find a Therapist
+                Book a Session
               </button>
+            </div>
+          )}
+          {data.nextSession && (
+            <div style={{ marginTop: 16 }}>
+              <Link to="/app/sessions" className="btn btn--outline btn--xs">View All Sessions</Link>
             </div>
           )}
         </div>
 
-        {/* Recent Notifications Card */}
-        <div className="card">
-          <div className="card__title">
-            Recent Notifications
-            <Link to="/app/notifications" style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 500 }}>
-              View All
-            </Link>
-          </div>
-          {data.recentNotifications && data.recentNotifications.length > 0 ? (
-            data.recentNotifications.slice(0, 4).map((n) => (
-              <div
-                key={n.id || n.created_at}
-                className={`notif-item ${n.read ? '' : 'unread'}`}
-                style={{
-                  marginBottom: 6,
-                  border: 'none',
-                  background: n.read ? 'var(--bg)' : 'var(--primary-50)',
-                }}
-              >
-                <div
-                  className={`notif-item__icon notif-item__icon--${
-                    n.type === 'success' ? 'success' : n.type === 'warning' ? 'warning' : 'info'
-                  }`}
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M4 8l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-                <div className="notif-item__content">
-                  <div className="notif-item__title">{n.title}</div>
-                  <div className="notif-item__time">{timeAgo(n.created_at)}</div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>No notifications yet.</p>
-          )}
+        <div className="self-test-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <h3>Book a Session</h3>
+          <p>Browse your company's approved therapists and schedule a confidential session.</p>
+          <button className="btn btn--white btn--md" onClick={() => navigate('/app/therapists')}>
+            Find a Therapist
+          </button>
         </div>
       </div>
 
-      {/* Self-Test CTA */}
-      <div style={{ marginTop: 24 }}>
-        <div className="self-test-card">
-          <h3>How are you feeling?</h3>
-          <p>Take our free, confidential 5-minute mood assessment to better understand your emotional wellbeing.</p>
-          <button className="btn btn--white btn--md" onClick={() => navigate('/app/self-test')}>
-            Take the Self-Test
-          </button>
+      {/* Bottom Row: Workshops Preview + Resources Preview */}
+      <div className="dash-grid" style={{ marginTop: 24 }}>
+        <div className="card">
+          <div className="card__title">
+            Upcoming Workshops
+            <Link to="/app/workshops" style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 500 }}>
+              View All
+            </Link>
+          </div>
+          {mockWorkshops.map((w) => (
+            <div key={w.id} style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '12px 16px',
+              background: 'var(--bg)',
+              borderRadius: 'var(--radius)',
+              marginBottom: 8,
+            }}>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 14 }}>{w.title}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-sec)', marginTop: 2 }}>{w.date} at {w.time}</div>
+              </div>
+              <span className="tag">{w.spots} spots</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="card">
+          <div className="card__title">
+            Resources
+            <Link to="/app/resources" style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 500 }}>
+              View All
+            </Link>
+          </div>
+          {mockResources.map((r) => (
+            <div key={r.id} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              padding: '12px 16px',
+              background: 'var(--bg)',
+              borderRadius: 'var(--radius)',
+              marginBottom: 8,
+              cursor: 'pointer',
+            }} onClick={() => navigate('/app/resources')}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="3" stroke="var(--primary)" strokeWidth="1.5" />
+                <path d="M8 8h8M8 12h8M8 16h4" stroke="var(--primary)" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              <div>
+                <div style={{ fontWeight: 500, fontSize: 14 }}>{r.title}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{r.cat}</div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </>
