@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
-import Signup from './pages/Signup';
 import AppLayout from './components/AppLayout';
 import Dashboard from './pages/Dashboard';
 import Therapists from './pages/Therapists';
@@ -17,6 +16,18 @@ import SelfTest from './pages/SelfTest';
 import OrgDashboard from './pages/OrgDashboard';
 import Team from './pages/Team';
 
+function BookDemoRedirect() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate('/', { replace: true });
+    setTimeout(() => {
+      const el = document.getElementById('get-started');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }, [navigate]);
+  return null;
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -24,7 +35,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/book-demo" element={<BookDemoRedirect />} />
+          <Route path="/signup" element={<BookDemoRedirect />} />
           <Route path="/app" element={<AppLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />

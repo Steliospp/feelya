@@ -120,7 +120,7 @@ export default function Login() {
               {loading && <span className="spinner"></span>}
             </button>
           </form>
-          <p className="auth__switch">Don't have an account? <Link to="/signup">Sign up your organisation</Link></p>
+          <p className="auth__switch">Don't have an account? <Link to="/book-demo">Book a demo</Link></p>
         </div>
       </div>
     </div>

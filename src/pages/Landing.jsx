@@ -302,7 +302,7 @@ const Landing = () => {
         'Basic engagement analytics',
         'Self-assessment tools',
       ],
-      cta: 'Get Started',
+      cta: 'Book a Demo',
       ctaClass: 'btn btn--outline btn--lg btn--full',
       featured: false,
     },
@@ -339,10 +339,9 @@ const Landing = () => {
         'Unlimited workshops',
         'Priority SLA & 24/7 support',
       ],
-      cta: 'Contact Sales',
+      cta: 'Book a Demo',
       ctaClass: 'btn btn--outline btn--lg btn--full',
       featured: false,
-      isCustom: true,
     },
   ];
 
@@ -734,11 +733,7 @@ const Landing = () => {
                     </li>
                   ))}
                 </ul>
-                {plan.isCustom ? (
-                  <a href="mailto:enterprise@feelya.com" className={plan.ctaClass}>{plan.cta}</a>
-                ) : (
-                  <a href="#get-started" className={plan.ctaClass} onClick={(e) => scrollToSection(e, 'get-started')}>{plan.cta}</a>
-                )}
+                <a href={`#get-started?plan=${plan.name.toLowerCase()}`} className={plan.ctaClass} onClick={(e) => scrollToSection(e, 'get-started')}>{plan.cta}</a>
               </div>
             ))}
           </div>
