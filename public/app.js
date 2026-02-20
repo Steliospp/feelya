@@ -1,4 +1,4 @@
-// ============ FEELYA APP ============
+// ============ FEELYA FOR BUSINESS — APP ============
 
 let currentUser = null;
 let currentPage = '';
@@ -15,27 +15,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = '/login';
   }
 
-  // Sidebar nav
   document.querySelectorAll('.sidebar__link[data-page]').forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
-      const page = link.dataset.page;
-      navigate(page);
+      navigate(link.dataset.page);
     });
   });
 
-  // Logout
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await fetch('/api/logout', { method: 'POST' });
     window.location.href = '/login';
   });
 
-  // Mobile sidebar toggle
   document.getElementById('sidebarToggle')?.addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('open');
   });
 
-  // Close sidebar on overlay click (mobile)
   document.addEventListener('click', (e) => {
     const sidebar = document.getElementById('sidebar');
     const toggle = document.getElementById('sidebarToggle');
@@ -44,10 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Popstate
   window.addEventListener('popstate', navigateFromURL);
-
-  // Load unread count
   loadNotifCount();
 });
 
@@ -60,23 +52,29 @@ function navigate(page, pushState = true) {
   currentPage = page;
   if (pushState) history.pushState(null, '', `/app/${page}`);
 
-  // Update sidebar active
   document.querySelectorAll('.sidebar__link[data-page]').forEach(l => {
     l.classList.toggle('active', l.dataset.page === page);
   });
 
-  // Close mobile sidebar
   document.getElementById('sidebar').classList.remove('open');
 
-  // Update title
-  const titles = { dashboard: 'Dashboard', therapists: 'Find a Therapist', sessions: 'Sessions', resources: 'Resources', notifications: 'Notifications', profile: 'My Profile', 'self-test': 'Self-Assessment' };
-  document.title = `${titles[page] || 'Dashboard'} | feelya`;
+  const titles = {
+    dashboard: 'Dashboard',
+    therapists: 'Therapist Network',
+    employees: 'Employees',
+    sessions: 'Sessions',
+    resources: 'Resources',
+    notifications: 'Notifications',
+    profile: 'Company Settings',
+    'self-test': 'Workplace Wellbeing Assessment'
+  };
+  document.title = `${titles[page] || 'Dashboard'} | feelya for Business`;
 
-  // Render page
   const el = document.getElementById('pageContent');
   switch(page) {
     case 'dashboard': renderDashboard(el); break;
     case 'therapists': renderTherapists(el); break;
+    case 'employees': renderEmployees(el); break;
     case 'sessions': renderSessions(el); break;
     case 'resources': renderResources(el); break;
     case 'notifications': renderNotifications(el); break;
@@ -88,10 +86,10 @@ function navigate(page, pushState = true) {
 
 function updateUserUI() {
   if (!currentUser) return;
-  const initial = currentUser.first_name[0].toUpperCase();
+  const initial = (currentUser.company_name || currentUser.first_name)[0].toUpperCase();
   document.getElementById('sidebarAvatar').textContent = initial;
   document.getElementById('sidebarAvatar').style.background = currentUser.avatar_color;
-  document.getElementById('sidebarName').textContent = `${currentUser.first_name} ${currentUser.last_name}`;
+  document.getElementById('sidebarName').textContent = currentUser.company_name || `${currentUser.first_name} ${currentUser.last_name}`;
   const mobileAv = document.getElementById('mobileAvatar');
   if (mobileAv) { mobileAv.textContent = initial; mobileAv.style.background = currentUser.avatar_color; }
 }
@@ -132,13 +130,14 @@ async function renderDashboard(el) {
   try {
     const res = await fetch('/api/dashboard');
     const data = await res.json();
-
     const greeting = getGreeting();
+    const companyName = currentUser.company_name || 'your company';
 
     el.innerHTML = `
       <div class="page-header">
         <div class="page-header__greeting">${greeting}</div>
-        <h1 class="page-header__title">Welcome back, ${currentUser.first_name}</h1>
+        <h1 class="page-header__title">${companyName} Dashboard</h1>
+        <p class="page-header__subtitle">Overview of your employee mental health programme.</p>
       </div>
 
       <div class="stats-grid">
@@ -161,12 +160,21 @@ async function renderDashboard(el) {
           </div>
         </div>
         <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--info">
+            <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M2 10a8 8 0 1116 0 8 8 0 01-16 0z" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="stat-card__value">${data.totalEmployeeSessions || 0}</div>
+            <div class="stat-card__label">Total Sessions Booked</div>
+          </div>
+        </div>
+        <div class="stat-card">
           <div class="stat-card__icon stat-card__icon--warning">
             <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 00-6 6v3l-1.5 2.5h15L16 11V8a6 6 0 00-6-6z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 15.5a2.5 2.5 0 005 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </div>
           <div>
-            <div class="stat-card__value">${data.unreadNotifications}</div>
-            <div class="stat-card__label">Unread Notifications</div>
+            <div class="stat-card__value">&pound;${(data.sessionBudgetUsed || 0).toLocaleString()}</div>
+            <div class="stat-card__label">Budget Utilised</div>
           </div>
         </div>
       </div>
@@ -174,8 +182,8 @@ async function renderDashboard(el) {
       <div class="dash-grid">
         <div class="card">
           <div class="card__title">
-            Next Session
-            ${data.nextSession ? `<span class="tag tag--success">Confirmed</span>` : ''}
+            Next Employee Session
+            ${data.nextSession ? '<span class="tag tag--success">Confirmed</span>' : ''}
           </div>
           ${data.nextSession ? `
             <div class="session-item" style="border:none;padding:0;">
@@ -197,15 +205,15 @@ async function renderDashboard(el) {
             </div>
           ` : `
             <div class="empty-state" style="padding:30px 10px;">
-              <p class="empty-state__desc">No upcoming sessions. Find a therapist to get started.</p>
-              <button class="btn btn--primary btn--sm" onclick="navigate('therapists')">Find a Therapist</button>
+              <p class="empty-state__desc">No upcoming sessions. Browse our therapist network to book sessions for your team.</p>
+              <button class="btn btn--primary btn--sm" onclick="navigate('therapists')">Browse Therapists</button>
             </div>
           `}
         </div>
 
         <div class="card">
           <div class="card__title">
-            Recent Notifications
+            Recent Activity
             <a href="#" onclick="navigate('notifications');return false;" style="font-size:13px;color:var(--primary);font-weight:500;">View All</a>
           </div>
           ${data.recentNotifications.length > 0 ? data.recentNotifications.slice(0, 4).map(n => `
@@ -218,15 +226,15 @@ async function renderDashboard(el) {
                 <div class="notif-item__time">${timeAgo(n.created_at)}</div>
               </div>
             </div>
-          `).join('') : '<p style="color:var(--text-muted);font-size:14px;">No notifications yet.</p>'}
+          `).join('') : '<p style="color:var(--text-muted);font-size:14px;">No activity yet.</p>'}
         </div>
       </div>
 
       <div style="margin-top:24px;">
         <div class="self-test-card">
-          <h3>How are you feeling?</h3>
-          <p>Take our free, confidential 5-minute mood assessment to better understand your emotional wellbeing.</p>
-          <button class="btn btn--white btn--md" onclick="navigate('self-test')">Take the Self-Test</button>
+          <h3>Workplace Wellbeing Assessment</h3>
+          <p>Run a quick wellbeing check to understand how your employees might be feeling and identify areas for support.</p>
+          <button class="btn btn--white btn--md" onclick="navigate('self-test')">Start Assessment</button>
         </div>
       </div>
     `;
@@ -246,8 +254,8 @@ function getGreeting() {
 async function renderTherapists(el) {
   el.innerHTML = `
     <div class="page-header">
-      <h1 class="page-header__title">Find Your Therapist</h1>
-      <p class="page-header__subtitle">Browse our accredited, carefully vetted UK-based therapists and find the right match for you.</p>
+      <h1 class="page-header__title">Therapist Network</h1>
+      <p class="page-header__subtitle">Browse our accredited UK-based therapists available for your employees. Book sessions on behalf of your team.</p>
     </div>
     <div class="content-with-filters">
       <div class="filters" id="filtersPanel">
@@ -294,14 +302,14 @@ async function renderTherapists(el) {
                 <option value="">All</option>
                 <option value="Anxiety">Anxiety</option>
                 <option value="Depression">Depression</option>
-                <option value="Stress">Stress</option>
+                <option value="Stress">Workplace Stress</option>
+                <option value="Burnout">Burnout</option>
                 <option value="Relationships">Relationships</option>
                 <option value="Trauma">Trauma</option>
                 <option value="OCD">OCD</option>
                 <option value="Self-esteem">Self-esteem</option>
                 <option value="LGBTQ+">LGBTQ+</option>
                 <option value="Grief">Grief</option>
-                <option value="Burnout">Burnout</option>
               </select>
             </div>
           </div>
@@ -346,7 +354,6 @@ async function renderTherapists(el) {
     </div>
   `;
 
-  // Attach filter listeners
   ['filterPrice', 'filterGender', 'filterSpec', 'filterLang', 'filterType'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', loadTherapists);
   });
@@ -386,8 +393,6 @@ async function loadTherapists() {
 
 function renderTherapistCard(t) {
   const specs = t.specialisations.split(',');
-  const initials = t.name.split(' ').map(n => n[0]).join('').slice(0, 2);
-
   return `
     <div class="therapist-card">
       <div class="therapist-card__header">
@@ -501,7 +506,7 @@ async function viewTherapistProfile(id) {
         <div class="therapist-card__price-row"><span style="color:var(--text-sec);font-size:14px;">Audio Session</span><strong>&pound;${t.audio_price}/${t.audio_duration}min</strong></div>
       </div>
     </div>
-    <button class="btn btn--primary btn--lg btn--full" onclick="closeProfileModal();openBookingModal(${t.id})">Book a Session</button>
+    <button class="btn btn--primary btn--lg btn--full" onclick="closeProfileModal();openBookingModal(${t.id})">Book for Employee</button>
   `;
 
   document.getElementById('profileModal').style.display = 'flex';
@@ -573,7 +578,7 @@ async function openBookingModal(id) {
         </div>
       </div>
       <button type="submit" class="btn btn--primary btn--lg btn--full">Confirm Booking</button>
-      <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:12px;">Free cancellation up to 48 hours before your session.</p>
+      <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:12px;">Session will be charged to your company account. Free cancellation up to 48 hours before.</p>
     </form>
   `;
 
@@ -630,12 +635,97 @@ function closeBookingModal() {
   document.getElementById('bookingModal').style.display = 'none';
 }
 
+// ============ EMPLOYEES ============
+function renderEmployees(el) {
+  const employees = [
+    { name: 'Anonymous Employee #1', dept: 'Engineering', sessions: 4, status: 'Active', lastSession: '2026-02-05' },
+    { name: 'Anonymous Employee #2', dept: 'Marketing', sessions: 2, status: 'Active', lastSession: '2026-02-07' },
+    { name: 'Anonymous Employee #3', dept: 'Sales', sessions: 6, status: 'Active', lastSession: '2026-02-08' },
+    { name: 'Anonymous Employee #4', dept: 'Operations', sessions: 1, status: 'New', lastSession: '2026-02-01' },
+    { name: 'Anonymous Employee #5', dept: 'HR', sessions: 3, status: 'Active', lastSession: '2026-02-06' },
+    { name: 'Anonymous Employee #6', dept: 'Finance', sessions: 0, status: 'Invited', lastSession: '-' },
+  ];
+
+  el.innerHTML = `
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h1 class="page-header__title">Employees</h1>
+        <p class="page-header__subtitle">Anonymous overview of employee engagement with therapy sessions. Individual identities are never revealed.</p>
+      </div>
+      <button class="btn btn--primary btn--sm" onclick="showToast('Invite link copied to clipboard!')">Invite Employees</button>
+    </div>
+
+    <div class="stats-grid" style="margin-bottom:24px;">
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--primary">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M17 17v-1a4 4 0 00-3-3.87M13 3.13a4 4 0 010 7.75M9 9a4 4 0 100-8 4 4 0 000 8zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="stat-card__value">${employees.length}</div>
+          <div class="stat-card__label">Total Employees</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--success">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M6.5 10l2.5 2.5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/></svg>
+          </div>
+        <div>
+          <div class="stat-card__value">${employees.filter(e => e.status === 'Active').length}</div>
+          <div class="stat-card__label">Actively Engaged</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--warning">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="stat-card__value">${employees.reduce((a, e) => a + e.sessions, 0)}</div>
+          <div class="stat-card__label">Total Sessions Used</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card--no-hover">
+      <div class="card__title">Employee Engagement (Anonymous)</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border);text-align:left;">
+              <th style="padding:12px 16px;font-weight:600;color:var(--text);">Employee</th>
+              <th style="padding:12px 16px;font-weight:600;color:var(--text);">Department</th>
+              <th style="padding:12px 16px;font-weight:600;color:var(--text);">Sessions</th>
+              <th style="padding:12px 16px;font-weight:600;color:var(--text);">Status</th>
+              <th style="padding:12px 16px;font-weight:600;color:var(--text);">Last Session</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${employees.map(emp => `
+              <tr style="border-bottom:1px solid var(--border-light);">
+                <td style="padding:12px 16px;color:var(--text-sec);">${emp.name}</td>
+                <td style="padding:12px 16px;color:var(--text-sec);">${emp.dept}</td>
+                <td style="padding:12px 16px;font-weight:600;">${emp.sessions}</td>
+                <td style="padding:12px 16px;">
+                  <span class="tag ${emp.status === 'Active' ? 'tag--success' : emp.status === 'New' ? '' : 'tag--warning'}">${emp.status}</span>
+                </td>
+                <td style="padding:12px 16px;color:var(--text-muted);">${emp.lastSession}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:12px;text-align:center;">
+      All employee data is anonymised. Feelya does not share individual employee session details with employers.
+    </p>
+  `;
+}
+
 // ============ SESSIONS ============
 async function renderSessions(el) {
   el.innerHTML = `
     <div class="page-header">
-      <h1 class="page-header__title">Your Sessions</h1>
-      <p class="page-header__subtitle">View and manage your therapy sessions.</p>
+      <h1 class="page-header__title">Company Sessions</h1>
+      <p class="page-header__subtitle">View and manage therapy sessions booked under your company account.</p>
     </div>
     <div class="sessions-tabs">
       <button class="sessions-tab active" data-tab="upcoming" onclick="filterSessions('upcoming')">Upcoming</button>
@@ -670,8 +760,8 @@ function filterSessions(tab) {
       <div class="empty-state">
         <svg width="48" height="48" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M13 2v4M7 2v4M3 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         <div class="empty-state__title">${msgs[tab]}</div>
-        <p class="empty-state__desc">${tab === 'upcoming' ? 'Find a therapist to book your first session.' : ''}</p>
-        ${tab === 'upcoming' ? '<button class="btn btn--primary btn--sm" onclick="navigate(\'therapists\')">Find a Therapist</button>' : ''}
+        <p class="empty-state__desc">${tab === 'upcoming' ? 'Browse our therapist network to book sessions for your employees.' : ''}</p>
+        ${tab === 'upcoming' ? '<button class="btn btn--primary btn--sm" onclick="navigate(\'therapists\')">Browse Therapists</button>' : ''}
       </div>
     `;
     return;
@@ -717,21 +807,21 @@ async function cancelSession(id) {
 // ============ RESOURCES ============
 function renderResources(el) {
   const resources = [
-    { cat: 'Guide', title: 'What is Psychological Therapy?', desc: 'An introduction to the different types of therapy and how they can help you navigate life\'s challenges.', grad: 'linear-gradient(135deg, #ede9fe, #e0e7ff)', icon: '#6366f1' },
-    { cat: 'Self-Help', title: 'Managing Anxiety: Practical Tips', desc: 'Evidence-based strategies you can use today to better manage anxious thoughts and feelings.', grad: 'linear-gradient(135deg, #d1fae5, #e0f2fe)', icon: '#10b981' },
-    { cat: 'Wellbeing', title: 'Building Resilience in Everyday Life', desc: 'How to develop mental resilience and bounce back from life\'s setbacks with greater strength.', grad: 'linear-gradient(135deg, #fef3c7, #fce7f3)', icon: '#f59e0b' },
-    { cat: 'Guide', title: 'Understanding Depression', desc: 'Learn about the signs, symptoms, and treatment options for depression, and when to seek professional help.', grad: 'linear-gradient(135deg, #e0e7ff, #ede9fe)', icon: '#6366f1' },
-    { cat: 'Relationships', title: 'Communicating Better with Your Partner', desc: 'Expert advice on improving communication, resolving conflict, and strengthening your relationship.', grad: 'linear-gradient(135deg, #fce7f3, #fef3c7)', icon: '#ec4899' },
-    { cat: 'Workplace', title: 'Dealing with Burnout', desc: 'Recognise the signs of burnout and practical strategies for recovery and prevention.', grad: 'linear-gradient(135deg, #d1fae5, #ccfbf1)', icon: '#14b8a6' },
-    { cat: 'Self-Help', title: 'Mindfulness for Beginners', desc: 'A simple introduction to mindfulness practice and how it can improve your mental wellbeing.', grad: 'linear-gradient(135deg, #e0f2fe, #d1fae5)', icon: '#0ea5e9' },
-    { cat: 'Parenting', title: 'Supporting Your Child\'s Mental Health', desc: 'Guidance for parents on recognising and supporting children\'s emotional wellbeing.', grad: 'linear-gradient(135deg, #fef3c7, #e0e7ff)', icon: '#f59e0b' },
-    { cat: 'Wellbeing', title: 'Sleep and Mental Health', desc: 'Explore the connection between sleep quality and mental health, with tips for better rest.', grad: 'linear-gradient(135deg, #ede9fe, #fce7f3)', icon: '#8b5cf6' },
+    { cat: 'Guide', title: 'The Business Case for Employee Mental Health', desc: 'How investing in employee wellbeing drives productivity, retention, and your bottom line.', grad: 'linear-gradient(135deg, #ede9fe, #e0e7ff)', icon: '#6366f1' },
+    { cat: 'Research', title: 'Reducing Burnout: Strategies for HR Leaders', desc: 'Evidence-based approaches to prevent and address employee burnout across your organisation.', grad: 'linear-gradient(135deg, #d1fae5, #e0f2fe)', icon: '#10b981' },
+    { cat: 'Wellbeing', title: 'Building a Culture of Psychological Safety', desc: 'How to create an environment where employees feel safe to speak up about mental health.', grad: 'linear-gradient(135deg, #fef3c7, #fce7f3)', icon: '#f59e0b' },
+    { cat: 'Guide', title: 'Implementing an EAP: Step by Step', desc: 'A comprehensive guide to setting up an Employee Assistance Programme that actually gets used.', grad: 'linear-gradient(135deg, #e0e7ff, #ede9fe)', icon: '#6366f1' },
+    { cat: 'Research', title: 'The ROI of Workplace Therapy', desc: 'Data-driven analysis showing the return on investment from providing employee therapy access.', grad: 'linear-gradient(135deg, #fce7f3, #fef3c7)', icon: '#ec4899' },
+    { cat: 'Workplace', title: 'Managing Remote Team Wellbeing', desc: 'Strategies for supporting the mental health of distributed and hybrid workforces.', grad: 'linear-gradient(135deg, #d1fae5, #ccfbf1)', icon: '#14b8a6' },
+    { cat: 'Guide', title: 'Mental Health First Aid Training', desc: 'How to train managers as mental health first aiders and create a supportive line management culture.', grad: 'linear-gradient(135deg, #e0f2fe, #d1fae5)', icon: '#0ea5e9' },
+    { cat: 'Leadership', title: 'Leading with Empathy', desc: 'How senior leaders can model vulnerability and normalise conversations about mental health at work.', grad: 'linear-gradient(135deg, #fef3c7, #e0e7ff)', icon: '#f59e0b' },
+    { cat: 'Research', title: 'Absenteeism & Mental Health: The Data', desc: 'Understanding the link between untreated mental health conditions and workplace absence.', grad: 'linear-gradient(135deg, #ede9fe, #fce7f3)', icon: '#8b5cf6' },
   ];
 
   el.innerHTML = `
     <div class="page-header">
       <h1 class="page-header__title">Resources</h1>
-      <p class="page-header__subtitle">Expert articles and guides to support your mental health journey.</p>
+      <p class="page-header__subtitle">Expert guides and research to help you build a mentally healthy workplace.</p>
     </div>
     <div class="resources-grid">
       ${resources.map(r => `
@@ -756,7 +846,7 @@ async function renderNotifications(el) {
     <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
       <div>
         <h1 class="page-header__title">Notifications</h1>
-        <p class="page-header__subtitle">Stay updated on your sessions and account activity.</p>
+        <p class="page-header__subtitle">Stay updated on sessions, employee activity, and account updates.</p>
       </div>
       <button class="btn btn--ghost btn--sm" onclick="markAllRead()">Mark all as read</button>
     </div>
@@ -805,46 +895,50 @@ async function markAllRead() {
   showToast('All notifications marked as read');
 }
 
-// ============ PROFILE ============
+// ============ PROFILE (COMPANY SETTINGS) ============
 async function renderProfile(el) {
   el.innerHTML = `
     <div class="page-header">
-      <h1 class="page-header__title">My Profile</h1>
-      <p class="page-header__subtitle">Manage your account details and preferences.</p>
+      <h1 class="page-header__title">Company Settings</h1>
+      <p class="page-header__subtitle">Manage your company account, contact details, and admin preferences.</p>
     </div>
 
     <div class="profile-header">
       <div class="profile-avatar" style="background:${currentUser.avatar_color};">
-        ${currentUser.first_name[0].toUpperCase()}
+        ${(currentUser.company_name || currentUser.first_name)[0].toUpperCase()}
       </div>
       <div class="profile-info">
-        <div class="profile-info__name">${currentUser.first_name} ${currentUser.last_name}</div>
+        <div class="profile-info__name">${currentUser.company_name || 'Your Company'}</div>
         <div class="profile-info__email">${currentUser.email}</div>
-        <div class="profile-info__since">Member since ${new Date(currentUser.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</div>
+        <div class="profile-info__since">Account created ${new Date(currentUser.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</div>
       </div>
     </div>
 
     <div class="profile-grid">
       <div class="card card--no-hover">
-        <div class="card__title">Personal Information</div>
+        <div class="card__title">Company Information</div>
         <form id="profileForm">
+          <div class="form-group">
+            <label class="form-label">Company Name</label>
+            <input class="form-input" type="text" id="profCompanyName" value="${currentUser.company_name || ''}" placeholder="Your Company Ltd">
+          </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
             <div class="form-group">
-              <label class="form-label">First Name</label>
+              <label class="form-label">Admin First Name</label>
               <input class="form-input" type="text" id="profFirstName" value="${currentUser.first_name}" required>
             </div>
             <div class="form-group">
-              <label class="form-label">Last Name</label>
+              <label class="form-label">Admin Last Name</label>
               <input class="form-input" type="text" id="profLastName" value="${currentUser.last_name}" required>
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">Phone</label>
-            <input class="form-input" type="tel" id="profPhone" value="${currentUser.phone || ''}" placeholder="+44 7XXX XXXXXX">
+            <input class="form-input" type="tel" id="profPhone" value="${currentUser.phone || ''}" placeholder="+44 20 XXXX XXXX">
           </div>
           <div class="form-group">
-            <label class="form-label">About Me</label>
-            <textarea class="form-textarea" id="profDesc" placeholder="Tell your therapist a little about yourself...">${currentUser.description || ''}</textarea>
+            <label class="form-label">Company Description</label>
+            <textarea class="form-textarea" id="profDesc" placeholder="Brief description of your organisation and wellbeing goals...">${currentUser.description || ''}</textarea>
           </div>
           <button type="submit" class="btn btn--primary btn--md">Save Changes</button>
         </form>
@@ -867,8 +961,8 @@ async function renderProfile(el) {
         </div>
 
         <div class="self-test-card" style="cursor:pointer;" onclick="navigate('self-test')">
-          <h3>Take the Self-Test</h3>
-          <p>A free, confidential 5-minute mood assessment to understand how you've been feeling.</p>
+          <h3>Workplace Wellbeing Assessment</h3>
+          <p>Run a quick assessment to identify areas where your team might benefit from additional support.</p>
           <button class="btn btn--white btn--sm">Start Assessment</button>
         </div>
       </div>
@@ -886,15 +980,16 @@ async function renderProfile(el) {
           lastName: document.getElementById('profLastName').value,
           phone: document.getElementById('profPhone').value,
           description: document.getElementById('profDesc').value,
+          companyName: document.getElementById('profCompanyName').value,
         })
       });
       if (res.ok) {
         const meRes = await fetch('/api/me');
         currentUser = await meRes.json();
         updateUserUI();
-        showToast('Profile updated!');
+        showToast('Company settings updated!');
       }
-    } catch { showToast('Failed to update profile', 'error'); }
+    } catch { showToast('Failed to update settings', 'error'); }
   });
 
   document.getElementById('passwordForm').addEventListener('submit', async (e) => {
@@ -919,18 +1014,18 @@ async function renderProfile(el) {
   });
 }
 
-// ============ SELF-TEST ============
+// ============ SELF-TEST (WORKPLACE WELLBEING ASSESSMENT) ============
 const selfTestQuestions = [
-  { q: 'How often have you felt down, depressed, or hopeless?', options: ['Not at all', 'Several days', 'More than half', 'Nearly every day'] },
-  { q: 'How often have you felt nervous, anxious, or on edge?', options: ['Not at all', 'Several days', 'More than half', 'Nearly every day'] },
-  { q: 'How often have you had trouble relaxing?', options: ['Not at all', 'Several days', 'More than half', 'Nearly every day'] },
-  { q: 'How often have you felt little interest or pleasure in doing things?', options: ['Not at all', 'Several days', 'More than half', 'Nearly every day'] },
-  { q: 'How often have you had trouble sleeping (too much or too little)?', options: ['Not at all', 'Several days', 'More than half', 'Nearly every day'] },
-  { q: 'How often have you felt tired or had little energy?', options: ['Not at all', 'Several days', 'More than half', 'Nearly every day'] },
-  { q: 'How often have you had difficulty concentrating on things?', options: ['Not at all', 'Several days', 'More than half', 'Nearly every day'] },
-  { q: 'How often have you felt bad about yourself, or that you\'ve let yourself or your family down?', options: ['Not at all', 'Several days', 'More than half', 'Nearly every day'] },
-  { q: 'How often have you been bothered by worrying too much about different things?', options: ['Not at all', 'Several days', 'More than half', 'Nearly every day'] },
-  { q: 'How would you rate your overall emotional wellbeing right now?', options: ['Very good', 'Good', 'Fair', 'Poor'] },
+  { q: 'How often do employees report feeling overwhelmed by their workload?', options: ['Rarely', 'Sometimes', 'Often', 'Very often'] },
+  { q: 'How would you rate the overall stress levels in your workplace?', options: ['Low', 'Moderate', 'High', 'Very high'] },
+  { q: 'How often do team members take unplanned sick days?', options: ['Rarely', 'Monthly', 'Weekly', 'Multiple times per week'] },
+  { q: 'How comfortable are employees discussing mental health at work?', options: ['Very comfortable', 'Somewhat', 'Uncomfortable', 'Very uncomfortable'] },
+  { q: 'Does your organisation currently provide mental health support?', options: ['Comprehensive', 'Basic EAP', 'Minimal', 'None'] },
+  { q: 'How would you rate employee engagement and morale?', options: ['Excellent', 'Good', 'Fair', 'Poor'] },
+  { q: 'How often do managers check in on their team\'s wellbeing?', options: ['Weekly', 'Monthly', 'Quarterly', 'Rarely'] },
+  { q: 'How high is employee turnover in your organisation?', options: ['Very low', 'Average', 'Above average', 'High'] },
+  { q: 'Do employees have access to flexible working to support their wellbeing?', options: ['Fully flexible', 'Mostly', 'Limited', 'Not at all'] },
+  { q: 'How would you rate your organisation\'s culture around work-life balance?', options: ['Excellent', 'Good', 'Needs improvement', 'Poor'] },
 ];
 
 let selfTestAnswers = [];
@@ -940,8 +1035,8 @@ function renderSelfTest(el) {
 
   el.innerHTML = `
     <div class="page-header">
-      <h1 class="page-header__title">Self-Assessment</h1>
-      <p class="page-header__subtitle">This confidential mood assessment takes about 5 minutes. Answer honestly — there are no right or wrong answers.</p>
+      <h1 class="page-header__title">Workplace Wellbeing Assessment</h1>
+      <p class="page-header__subtitle">This assessment helps identify areas where your organisation could better support employee mental health. It takes about 5 minutes.</p>
     </div>
     <div id="selfTestQuestions">
       ${selfTestQuestions.map((q, i) => `
@@ -956,7 +1051,7 @@ function renderSelfTest(el) {
       `).join('')}
       <button class="btn btn--primary btn--lg btn--full" onclick="submitSelfTest()" style="margin-top:16px;">Submit Assessment</button>
       <p style="font-size:13px;color:var(--text-muted);text-align:center;margin-top:12px;line-height:1.6;">
-        This is a screening tool, not a clinical diagnosis. If you're in crisis, please contact the Samaritans at 116 123 (UK) or your local emergency services.
+        This is a high-level screening tool to help guide your employee wellbeing strategy. It is not a clinical assessment.
       </p>
     </div>
     <div id="selfTestResult" style="display:none;"></div>
@@ -979,16 +1074,16 @@ async function submitSelfTest() {
   let resultText, resultClass;
 
   if (score <= 8) {
-    resultText = 'Your results suggest you\'re doing well. Keep prioritising your mental health!';
+    resultText = 'Your workplace appears to have strong wellbeing foundations. Consider Feelya to maintain and enhance your existing support.';
     resultClass = 'success';
   } else if (score <= 16) {
-    resultText = 'Your results suggest mild difficulties. Speaking with a therapist could provide helpful support and strategies.';
+    resultText = 'There are opportunities to strengthen your employee mental health support. Feelya can help fill gaps in your current programme.';
     resultClass = 'warning';
   } else if (score <= 24) {
-    resultText = 'Your results suggest moderate difficulties. We recommend speaking with a professional therapist who can help.';
+    resultText = 'Your workplace would significantly benefit from professional mental health support. We recommend implementing a structured therapy programme.';
     resultClass = 'warning';
   } else {
-    resultText = 'Your results suggest significant difficulties. We strongly recommend connecting with a therapist for professional support.';
+    resultText = 'Urgent action is recommended. Your employees would greatly benefit from immediate access to professional therapy and mental health resources.';
     resultClass = 'danger';
   }
 
@@ -1008,17 +1103,13 @@ async function submitSelfTest() {
       <div style="width:80px;height:80px;border-radius:50%;background:var(--${resultClass === 'success' ? 'success-bg' : resultClass === 'warning' ? 'warning-bg' : 'danger-bg'});display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
         <span style="font-size:36px;font-weight:700;color:var(--${resultClass === 'success' ? 'success' : resultClass === 'warning' ? 'warning' : 'danger'});">${score}</span>
       </div>
-      <h2 style="font-family:var(--font-serif);font-size:24px;margin-bottom:12px;">Your Score: ${score}/40</h2>
+      <h2 style="font-family:var(--font-serif);font-size:24px;margin-bottom:12px;">Wellbeing Score: ${score}/30</h2>
       <p style="font-size:16px;color:var(--text-sec);line-height:1.7;max-width:500px;margin:0 auto 24px;">${resultText}</p>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        ${score > 8 ? '<button class="btn btn--primary btn--md" onclick="navigate(\'therapists\')">Find a Therapist</button>' : ''}
+        <button class="btn btn--primary btn--md" onclick="navigate('therapists')">Browse Therapist Network</button>
         <button class="btn btn--ghost btn--md" onclick="navigate('self-test')">Take Again</button>
         <button class="btn btn--ghost btn--md" onclick="navigate('dashboard')">Back to Dashboard</button>
       </div>
-      <p style="font-size:12px;color:var(--text-muted);margin-top:24px;line-height:1.6;">
-        This assessment is for informational purposes only and is not a clinical diagnosis.<br>
-        If you're experiencing a mental health emergency, please contact the Samaritans at 116 123 or your local emergency services.
-      </p>
     </div>
   `;
 }
