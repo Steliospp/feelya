@@ -412,15 +412,15 @@ button { font-family: var(--font); }
 /* ============ THERAPIST CARDS ============ */
 .therapist-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
 .therapist-card {
   background: var(--bg-white);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 32px 28px 28px;
+  border-radius: var(--radius-lg);
+  padding: 20px 18px 18px;
   transition: all 0.25s;
   display: flex;
   flex-direction: column;
@@ -430,13 +430,13 @@ button { font-family: var(--font); }
 
 .therapist-card:hover {
   box-shadow: var(--shadow-lg);
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   border-color: var(--primary-100);
 }
 
 .therapist-card__avatar {
-  width: 88px;
-  height: 88px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--violet));
   display: flex;
@@ -444,40 +444,40 @@ button { font-family: var(--font); }
   justify-content: center;
   flex-shrink: 0;
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .therapist-card__avatar svg { color: #fff; }
 
 .therapist-card__status {
   position: absolute;
-  bottom: 4px;
-  right: 4px;
-  width: 14px;
-  height: 14px;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: var(--success);
-  border: 2.5px solid var(--bg-white);
+  border: 2px solid var(--bg-white);
 }
 
 .therapist-card__name {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .therapist-card__title {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-sec);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .therapist-card__accreditation {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--primary);
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .therapist-card__pricing {
@@ -486,8 +486,8 @@ button { font-family: var(--font); }
   gap: 0;
   width: 100%;
   border-top: 1px solid var(--border-light);
-  padding-top: 16px;
-  margin-bottom: 20px;
+  padding-top: 10px;
+  margin-bottom: 14px;
   flex: 1;
 }
 
@@ -495,8 +495,8 @@ button { font-family: var(--font); }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  padding: 8px 0;
+  font-size: 12px;
+  padding: 5px 0;
   border-bottom: 1px solid var(--border-light);
 }
 
@@ -507,26 +507,26 @@ button { font-family: var(--font); }
 .therapist-card__price-type {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: var(--text-sec);
 }
 
-.therapist-card__price-type svg { color: var(--text-muted); flex-shrink: 0; }
+.therapist-card__price-type svg { color: var(--text-muted); flex-shrink: 0; width: 14px; height: 14px; }
 
 .therapist-card__price-amount {
   font-weight: 700;
   color: var(--text);
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .therapist-card__price-amount--na {
   font-weight: 400;
   color: var(--text-muted);
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .therapist-card__price-duration {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
   font-weight: 400;
 }
@@ -534,8 +534,12 @@ button { font-family: var(--font); }
 .therapist-card__actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
+}
+
+@media (max-width: 640px) {
+  .therapist-grid { grid-template-columns: 1fr; }
 }
 
 .btn--dark {
