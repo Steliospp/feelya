@@ -1,4 +1,4 @@
-// ============ FEELYA APP ============
+// ============ FEELYA APP — B2B ============
 
 let currentUser = null;
 let currentPage = '';
@@ -69,7 +69,11 @@ function navigate(page, pushState = true) {
   document.getElementById('sidebar').classList.remove('open');
 
   // Update title
-  const titles = { dashboard: 'Dashboard', therapists: 'Find a Therapist', sessions: 'Sessions', resources: 'Resources', notifications: 'Notifications', profile: 'My Profile', 'self-test': 'Self-Assessment' };
+  const titles = {
+    dashboard: 'Dashboard', therapists: 'Find a Therapist', sessions: 'Sessions',
+    resources: 'Resources', notifications: 'Notifications', profile: 'My Profile',
+    'self-test': 'Self-Assessment', org: 'Organisation Dashboard', team: 'Team Management'
+  };
   document.title = `${titles[page] || 'Dashboard'} | feelya`;
 
   // Render page
@@ -82,6 +86,8 @@ function navigate(page, pushState = true) {
     case 'notifications': renderNotifications(el); break;
     case 'profile': renderProfile(el); break;
     case 'self-test': renderSelfTest(el); break;
+    case 'org': renderOrgDashboard(el); break;
+    case 'team': renderTeam(el); break;
     default: renderDashboard(el);
   }
 }
@@ -94,6 +100,24 @@ function updateUserUI() {
   document.getElementById('sidebarName').textContent = `${currentUser.first_name} ${currentUser.last_name}`;
   const mobileAv = document.getElementById('mobileAvatar');
   if (mobileAv) { mobileAv.textContent = initial; mobileAv.style.background = currentUser.avatar_color; }
+
+  // Show org badge and admin section if applicable
+  if (currentUser.org_name) {
+    const orgEl = document.getElementById('sidebarOrg');
+    const orgNameEl = document.getElementById('sidebarOrgName');
+    if (orgEl) { orgEl.style.display = 'block'; orgNameEl.textContent = currentUser.org_name; }
+  }
+
+  if (currentUser.role === 'admin') {
+    const adminSection = document.getElementById('adminSection');
+    if (adminSection) adminSection.style.display = 'block';
+  }
+
+  // Show "Personal" label only if admin (to distinguish sections)
+  const personalLabel = document.getElementById('personalLabel');
+  if (personalLabel) {
+    personalLabel.style.display = currentUser.role === 'admin' ? 'block' : 'none';
+  }
 }
 
 async function loadNotifCount() {
@@ -126,6 +150,153 @@ function timeAgo(dateStr) {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 }
 
+// ============ ORG DASHBOARD (ADMIN) ============
+async function renderOrgDashboard(el) {
+  if (currentUser.role !== 'admin') {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state__title">Access Denied</div><p class="empty-state__desc">You need admin access to view the organisation dashboard.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = '<div class="page-loading">Loading organisation data...</div>';
+
+  try {
+    const res = await fetch('/api/org/dashboard');
+    const data = await res.json();
+
+    el.innerHTML = `
+      <div class="page-header">
+        <h1 class="page-header__title">${data.org.name}</h1>
+        <p class="page-header__subtitle">Organisation wellbeing dashboard &middot; ${data.org.plan.charAt(0).toUpperCase() + data.org.plan.slice(1)} plan</p>
+      </div>
+
+      <div class="invite-box">
+        <div class="invite-box__label">Team Invite Code</div>
+        <div class="invite-box__code">${data.org.invite_code}</div>
+        <div class="invite-box__hint">Share this code with employees to join your organisation</div>
+      </div>
+
+      <div class="org-stats-grid">
+        <div class="org-stat">
+          <div class="org-stat__label">Total Employees</div>
+          <div class="org-stat__value">${data.totalEmployees}</div>
+        </div>
+        <div class="org-stat">
+          <div class="org-stat__label">Active Users</div>
+          <div class="org-stat__value">${data.activeEmployees}</div>
+        </div>
+        <div class="org-stat">
+          <div class="org-stat__label">Engagement Rate</div>
+          <div class="org-stat__value">${data.engagementRate}%</div>
+          <div class="org-stat__change org-stat__change--up">Healthy</div>
+        </div>
+        <div class="org-stat">
+          <div class="org-stat__label">Total Sessions</div>
+          <div class="org-stat__value">${data.totalSessions}</div>
+        </div>
+        <div class="org-stat">
+          <div class="org-stat__label">Upcoming Sessions</div>
+          <div class="org-stat__value">${data.upcomingSessions}</div>
+        </div>
+        <div class="org-stat">
+          <div class="org-stat__label">Completed Sessions</div>
+          <div class="org-stat__value">${data.completedSessions}</div>
+        </div>
+      </div>
+
+      <div class="org-charts">
+        <div class="org-chart-card">
+          <div class="org-chart-card__title">Top Specialisations Used</div>
+          <div class="org-bar-chart">
+            ${data.topSpecialisations.map((spec, i) => {
+              const widths = [85, 72, 60, 45, 35];
+              return `
+                <div class="org-bar">
+                  <div class="org-bar__label">${spec}</div>
+                  <div class="org-bar__track"><div class="org-bar__fill" style="width:${widths[i] || 30}%"></div></div>
+                  <div class="org-bar__value">${widths[i] || 30}%</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+        <div class="org-chart-card">
+          <div class="org-chart-card__title">Team Wellbeing Score</div>
+          <div class="org-wellbeing-ring">
+            <div class="org-wellbeing-ring__circle" style="border-color: ${data.avgWellbeing >= 70 ? '#d1fae5' : data.avgWellbeing >= 50 ? '#fef3c7' : '#fee2e2'}; background: linear-gradient(135deg, ${data.avgWellbeing >= 70 ? '#d1fae5' : data.avgWellbeing >= 50 ? '#fef3c7' : '#fee2e2'}, #fff);">
+              <div class="org-wellbeing-ring__value">${data.avgWellbeing}</div>
+            </div>
+            <div class="org-wellbeing-ring__label">out of 100 &middot; ${data.avgWellbeing >= 70 ? 'Good' : data.avgWellbeing >= 50 ? 'Fair' : 'Needs Attention'}</div>
+          </div>
+        </div>
+      </div>
+
+      ${data.recentActivity.length > 0 ? `
+        <div class="card card--no-hover">
+          <div class="card__title">Recent Team Activity (Anonymised)</div>
+          <div class="activity-list">
+            ${data.recentActivity.map(a => `
+              <div class="activity-item">
+                <div class="activity-item__dot activity-item__dot--${a.status === 'upcoming' ? 'booked' : a.status === 'completed' ? 'completed' : 'cancelled'}"></div>
+                <span>${a.session_format} session ${a.status === 'upcoming' ? 'booked' : a.status} &middot; ${a.date} at ${a.time}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+    `;
+  } catch {
+    el.innerHTML = '<p>Error loading organisation dashboard.</p>';
+  }
+}
+
+// ============ TEAM MANAGEMENT (ADMIN) ============
+async function renderTeam(el) {
+  if (currentUser.role !== 'admin') {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state__title">Access Denied</div><p class="empty-state__desc">You need admin access to manage the team.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = '<div class="page-loading">Loading team...</div>';
+
+  try {
+    const res = await fetch('/api/org/team');
+    const team = await res.json();
+
+    el.innerHTML = `
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <h1 class="page-header__title">Team Management</h1>
+          <p class="page-header__subtitle">${team.length} member${team.length !== 1 ? 's' : ''} in your organisation</p>
+        </div>
+      </div>
+
+      <div class="invite-box" style="margin-bottom:32px;">
+        <div class="invite-box__label">Invite employees to join</div>
+        <div class="invite-box__code">${currentUser.org_invite_code || 'N/A'}</div>
+        <div class="invite-box__hint">Employees can join at signup or from their profile settings</div>
+      </div>
+
+      <div class="team-list">
+        ${team.map(m => `
+          <div class="team-member">
+            <div class="team-member__avatar" style="background:${m.avatar_color};">
+              ${m.first_name[0].toUpperCase()}
+            </div>
+            <div class="team-member__info">
+              <div class="team-member__name">${m.first_name} ${m.last_name}</div>
+              <div class="team-member__email">${m.email}</div>
+            </div>
+            <span class="team-member__role team-member__role--${m.role}">${m.role === 'admin' ? 'Admin' : 'Employee'}</span>
+            <div class="team-member__date">${new Date(m.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } catch {
+    el.innerHTML = '<p>Error loading team data.</p>';
+  }
+}
+
 // ============ DASHBOARD ============
 async function renderDashboard(el) {
   el.innerHTML = '<div class="page-loading">Loading...</div>';
@@ -134,12 +305,28 @@ async function renderDashboard(el) {
     const data = await res.json();
 
     const greeting = getGreeting();
+    const isAdmin = currentUser.role === 'admin';
 
     el.innerHTML = `
       <div class="page-header">
         <div class="page-header__greeting">${greeting}</div>
         <h1 class="page-header__title">Welcome back, ${currentUser.first_name}</h1>
+        ${currentUser.org_name ? `<p class="page-header__subtitle">${currentUser.org_name}${isAdmin ? ' &middot; Admin' : ''}</p>` : ''}
       </div>
+
+      ${isAdmin ? `
+        <div style="margin-bottom:24px;">
+          <div class="card" style="background:linear-gradient(135deg, var(--primary-50), #ede9fe); border-color:var(--primary-100); cursor:pointer;" onclick="navigate('org')">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-weight:600;font-size:16px;margin-bottom:4px;">Organisation Dashboard</div>
+                <div style="font-size:14px;color:var(--text-sec);">View team analytics, engagement metrics, and wellbeing trends</div>
+              </div>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </div>
+      ` : ''}
 
       <div class="stats-grid">
         <div class="stat-card">
@@ -295,13 +482,13 @@ async function renderTherapists(el) {
                 <option value="Anxiety">Anxiety</option>
                 <option value="Depression">Depression</option>
                 <option value="Stress">Stress</option>
+                <option value="Burnout">Burnout</option>
                 <option value="Relationships">Relationships</option>
                 <option value="Trauma">Trauma</option>
                 <option value="OCD">OCD</option>
                 <option value="Self-esteem">Self-esteem</option>
                 <option value="LGBTQ+">LGBTQ+</option>
                 <option value="Grief">Grief</option>
-                <option value="Burnout">Burnout</option>
               </select>
             </div>
           </div>
@@ -346,7 +533,6 @@ async function renderTherapists(el) {
     </div>
   `;
 
-  // Attach filter listeners
   ['filterPrice', 'filterGender', 'filterSpec', 'filterLang', 'filterType'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', loadTherapists);
   });
@@ -386,7 +572,6 @@ async function loadTherapists() {
 
 function renderTherapistCard(t) {
   const specs = t.specialisations.split(',');
-  const initials = t.name.split(' ').map(n => n[0]).join('').slice(0, 2);
 
   return `
     <div class="therapist-card">
@@ -571,6 +756,10 @@ async function openBookingModal(id) {
           <span style="color:var(--text-sec);">Duration</span>
           <span id="bookingDuration" style="font-weight:700;">${bookingTherapist.intro_video_price ? bookingTherapist.intro_duration : bookingTherapist.video_duration} min</span>
         </div>
+        ${currentUser.org_name ? `<div style="display:flex;justify-content:space-between;font-size:14px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+          <span style="color:var(--text-sec);">Covered by</span>
+          <span style="font-weight:600;color:var(--primary);">${currentUser.org_name}</span>
+        </div>` : ''}
       </div>
       <button type="submit" class="btn btn--primary btn--lg btn--full">Confirm Booking</button>
       <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:12px;">Free cancellation up to 48 hours before your session.</p>
@@ -717,21 +906,21 @@ async function cancelSession(id) {
 // ============ RESOURCES ============
 function renderResources(el) {
   const resources = [
-    { cat: 'Guide', title: 'What is Psychological Therapy?', desc: 'An introduction to the different types of therapy and how they can help you navigate life\'s challenges.', grad: 'linear-gradient(135deg, #ede9fe, #e0e7ff)', icon: '#6366f1' },
+    { cat: 'Workplace', title: 'Dealing with Burnout at Work', desc: 'Recognise the signs of burnout and practical strategies for recovery and prevention in the workplace.', grad: 'linear-gradient(135deg, #ede9fe, #e0e7ff)', icon: '#6366f1' },
     { cat: 'Self-Help', title: 'Managing Anxiety: Practical Tips', desc: 'Evidence-based strategies you can use today to better manage anxious thoughts and feelings.', grad: 'linear-gradient(135deg, #d1fae5, #e0f2fe)', icon: '#10b981' },
     { cat: 'Wellbeing', title: 'Building Resilience in Everyday Life', desc: 'How to develop mental resilience and bounce back from life\'s setbacks with greater strength.', grad: 'linear-gradient(135deg, #fef3c7, #fce7f3)', icon: '#f59e0b' },
     { cat: 'Guide', title: 'Understanding Depression', desc: 'Learn about the signs, symptoms, and treatment options for depression, and when to seek professional help.', grad: 'linear-gradient(135deg, #e0e7ff, #ede9fe)', icon: '#6366f1' },
-    { cat: 'Relationships', title: 'Communicating Better with Your Partner', desc: 'Expert advice on improving communication, resolving conflict, and strengthening your relationship.', grad: 'linear-gradient(135deg, #fce7f3, #fef3c7)', icon: '#ec4899' },
-    { cat: 'Workplace', title: 'Dealing with Burnout', desc: 'Recognise the signs of burnout and practical strategies for recovery and prevention.', grad: 'linear-gradient(135deg, #d1fae5, #ccfbf1)', icon: '#14b8a6' },
+    { cat: 'Workplace', title: 'Healthy Work-Life Balance', desc: 'Practical tips for setting boundaries, managing your time, and maintaining wellbeing alongside a demanding job.', grad: 'linear-gradient(135deg, #fce7f3, #fef3c7)', icon: '#ec4899' },
+    { cat: 'Workplace', title: 'Stress Management Techniques', desc: 'Simple, evidence-based tools you can use anywhere to reduce stress and regain calm during busy periods.', grad: 'linear-gradient(135deg, #d1fae5, #ccfbf1)', icon: '#14b8a6' },
     { cat: 'Self-Help', title: 'Mindfulness for Beginners', desc: 'A simple introduction to mindfulness practice and how it can improve your mental wellbeing.', grad: 'linear-gradient(135deg, #e0f2fe, #d1fae5)', icon: '#0ea5e9' },
-    { cat: 'Parenting', title: 'Supporting Your Child\'s Mental Health', desc: 'Guidance for parents on recognising and supporting children\'s emotional wellbeing.', grad: 'linear-gradient(135deg, #fef3c7, #e0e7ff)', icon: '#f59e0b' },
     { cat: 'Wellbeing', title: 'Sleep and Mental Health', desc: 'Explore the connection between sleep quality and mental health, with tips for better rest.', grad: 'linear-gradient(135deg, #ede9fe, #fce7f3)', icon: '#8b5cf6' },
+    { cat: 'Relationships', title: 'Communicating Better at Work', desc: 'Expert advice on improving workplace communication, resolving conflict, and building stronger professional relationships.', grad: 'linear-gradient(135deg, #fef3c7, #e0e7ff)', icon: '#f59e0b' },
   ];
 
   el.innerHTML = `
     <div class="page-header">
       <h1 class="page-header__title">Resources</h1>
-      <p class="page-header__subtitle">Expert articles and guides to support your mental health journey.</p>
+      <p class="page-header__subtitle">Expert articles and guides to support your mental health and workplace wellbeing.</p>
     </div>
     <div class="resources-grid">
       ${resources.map(r => `
@@ -820,7 +1009,10 @@ async function renderProfile(el) {
       <div class="profile-info">
         <div class="profile-info__name">${currentUser.first_name} ${currentUser.last_name}</div>
         <div class="profile-info__email">${currentUser.email}</div>
-        <div class="profile-info__since">Member since ${new Date(currentUser.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</div>
+        <div class="profile-info__since">
+          ${currentUser.org_name ? `${currentUser.org_name} &middot; ${currentUser.role === 'admin' ? 'Admin' : 'Employee'} &middot; ` : ''}
+          Member since ${new Date(currentUser.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        </div>
       </div>
     </div>
 
@@ -941,7 +1133,7 @@ function renderSelfTest(el) {
   el.innerHTML = `
     <div class="page-header">
       <h1 class="page-header__title">Self-Assessment</h1>
-      <p class="page-header__subtitle">This confidential mood assessment takes about 5 minutes. Answer honestly — there are no right or wrong answers.</p>
+      <p class="page-header__subtitle">This confidential mood assessment takes about 5 minutes. Answer honestly — there are no right or wrong answers.${currentUser.org_name ? ' Your responses are completely private and never shared with your employer.' : ''}</p>
     </div>
     <div id="selfTestQuestions">
       ${selfTestQuestions.map((q, i) => `
@@ -1016,7 +1208,7 @@ async function submitSelfTest() {
         <button class="btn btn--ghost btn--md" onclick="navigate('dashboard')">Back to Dashboard</button>
       </div>
       <p style="font-size:12px;color:var(--text-muted);margin-top:24px;line-height:1.6;">
-        This assessment is for informational purposes only and is not a clinical diagnosis.<br>
+        This assessment is for informational purposes only and is not a clinical diagnosis.${currentUser.org_name ? ' Your results are completely private and never shared with your employer.' : ''}<br>
         If you're experiencing a mental health emergency, please contact the Samaritans at 116 123 or your local emergency services.
       </p>
     </div>
