@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import RequireAuth from './components/RequireAuth';
 import DevRoleSwitcher from './components/DevRoleSwitcher';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
-import BookDemo from './pages/BookDemo';
 import AppLayout from './components/AppLayout';
 import Dashboard from './pages/Dashboard';
 import Therapists from './pages/Therapists';
@@ -25,6 +24,18 @@ import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDemos from './pages/AdminDemos';
 
+function BookDemoRedirect() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate('/', { replace: true });
+    setTimeout(() => {
+      const el = document.getElementById('get-started');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }, [navigate]);
+  return null;
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -33,8 +44,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           {/* Public routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/book-demo" element={<BookDemo />} />
-          <Route path="/signup" element={<BookDemo />} />
+          <Route path="/book-demo" element={<BookDemoRedirect />} />
+          <Route path="/signup" element={<BookDemoRedirect />} />
 
           {/* Employee app (any authenticated user) */}
           <Route path="/app" element={<RequireAuth><AppLayout /></RequireAuth>}>

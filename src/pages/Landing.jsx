@@ -849,6 +849,15 @@ const Landing = () => {
                       <option value="1000+">1,000+ employees</option>
                     </select>
                   </div>
+                  <div className="final-cta__form-group">
+                    <select className="final-cta__input" defaultValue="">
+                      <option value="" disabled>Plan interest</option>
+                      <option value="pilot">Pilot &mdash; &pound;299/mo</option>
+                      <option value="growth">Growth &mdash; &pound;799/mo</option>
+                      <option value="custom">Custom pricing</option>
+                      <option value="not-sure">Not sure yet</option>
+                    </select>
+                  </div>
                   <button type="submit" className="btn btn--white btn--lg btn--full" disabled={formSubmitting}>
                     {formSubmitting ? 'Submitting...' : (
                       <>
