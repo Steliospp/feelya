@@ -279,7 +279,7 @@ function TherapistCard({ therapist: t, onViewProfile, onBookNow }) {
   return (
     <div className="therapist-card">
       <div className="therapist-card__avatar">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
           <path d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12zm0 2c-3 0-9 1.5-9 4.5V21h18v-2.5c0-3-6-4.5-9-4.5z" fill="white" />
         </svg>
         <div className="therapist-card__status"></div>
@@ -324,8 +324,8 @@ function TherapistCard({ therapist: t, onViewProfile, onBookNow }) {
       </div>
 
       <div className="therapist-card__actions">
-        <button className="btn btn--outline btn--sm" onClick={() => onViewProfile(t.id)}>View profile</button>
-        <button className="btn btn--dark btn--sm" onClick={() => onBookNow(t.id)}>Book Now</button>
+        <button className="btn btn--outline btn--xs" onClick={() => onViewProfile(t.id)}>View profile</button>
+        <button className="btn btn--dark btn--xs" onClick={() => onBookNow(t.id)}>Book Now</button>
       </div>
     </div>
   );
