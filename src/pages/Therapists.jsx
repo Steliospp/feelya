@@ -77,8 +77,26 @@ export default function Therapists() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-header__title">Find Your Therapist</h1>
-        <p className="page-header__subtitle">Browse our accredited, carefully vetted UK-based therapists and find the right match for you.</p>
+        <h1 className="page-header__title">Therapists</h1>
+        <p className="page-header__subtitle">Browse your company's approved, licensed professionals. All therapists are accredited and vetted by Feelya.</p>
+        <div style={{ marginTop: 12 }}>
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '6px 14px',
+            background: 'var(--success-bg)',
+            color: '#059669',
+            borderRadius: 9999,
+            fontSize: 12,
+            fontWeight: 600,
+          }}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M4 8l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Company-Approved Programme
+          </span>
+        </div>
       </div>
 
       <div className="content-with-filters">

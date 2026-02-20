@@ -45,7 +45,7 @@ export default function Sessions() {
 
   const emptyMessages = {
     upcoming: 'No upcoming sessions',
-    completed: 'No completed sessions yet',
+    completed: 'No past sessions yet',
     cancelled: 'No cancelled sessions'
   };
 
@@ -67,7 +67,7 @@ export default function Sessions() {
           className={`sessions-tab${activeTab === 'completed' ? ' active' : ''}`}
           onClick={() => setActiveTab('completed')}
         >
-          Completed
+          Past
         </button>
         <button
           className={`sessions-tab${activeTab === 'cancelled' ? ' active' : ''}`}
