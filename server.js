@@ -130,18 +130,8 @@ if (therapistCount.count === 0) {
 // --- Middleware ---
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Serve landing page
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-app.get('/styles.css', (req, res) => {
-  res.sendFile(path.join(__dirname, 'styles.css'));
-});
-app.get('/script.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'script.js'));
-});
+// Serve React build output
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Auth middleware
 function authMiddleware(req, res, next) {
@@ -543,16 +533,10 @@ app.get('/api/dashboard', authMiddleware, (req, res) => {
   });
 });
 
-// --- Serve App Pages ---
-const appPages = ['dashboard', 'therapists', 'sessions', 'resources', 'notifications', 'profile', 'self-test', 'org', 'team', 'employees'];
-appPages.forEach(page => {
-  app.get(`/app/${page}`, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'app.html'));
-  });
+// --- SPA Fallback: all non-API routes serve React index.html ---
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
-app.get('/app', (req, res) => res.redirect('/app/dashboard'));
-app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
-app.get('/signup', (req, res) => res.sendFile(path.join(__dirname, 'public', 'signup.html')));
 
 app.listen(PORT, () => {
   console.log(`Feelya server running at http://localhost:${PORT}`);
