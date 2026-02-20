@@ -6,7 +6,7 @@ import { Calendar, Clock, Video } from 'lucide-react';
 
 export default function HeroSessionCard({ session, onJoin, onReschedule }) {
   return (
-    <Card className="!p-0 overflow-hidden">
+    <Card className="!p-0 overflow-hidden !border-border/70 shadow-sm">
       <div className="px-6 py-5">
         <div className="text-[12px] font-medium uppercase tracking-wider text-text-muted mb-4">
           Next session

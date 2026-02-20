@@ -117,7 +117,7 @@ export default function UserShell() {
         </header>
 
         <main className="flex-1 overflow-y-auto app-atmosphere">
-          <div className="max-w-[1100px] mx-auto p-6 lg:py-8 lg:px-10">
+          <div className="max-w-6xl mx-auto px-4 py-8 lg:px-8">
             <Outlet />
           </div>
         </main>
