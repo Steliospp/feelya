@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import Card from '../../components/ui/card';
 import Badge from '../../components/ui/badge';
 import Button from '../../components/ui/button';
+import { Chip, ChipRow } from '../../components/ui/chip';
 
 const upcoming = [
   { id: 1, title: 'Managing Workplace Anxiety', topic: 'Anxiety', date: 'Mon 24 Feb, 2:00 PM', host: 'Dr Sarah Chen', seats: '42/50', status: 'confirmed' },
@@ -13,97 +15,81 @@ const past = [
   { id: 5, title: 'Communication Skills', topic: 'Relationships', date: 'Fri 7 Feb', host: 'Tom Williams', attended: 29, rating: 4.6 },
 ];
 
-const tabs = ['Upcoming', 'Past'];
-
 export default function WorkshopsPage() {
   const [tab, setTab] = useState('Upcoming');
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-[32px] font-semibold text-neutral-900 tracking-tight">Workshops</h1>
-          <p className="text-[15px] text-neutral-400 mt-1.5">Manage team workshops and events</p>
+          <h1 className="text-[28px] font-semibold text-text-primary">Workshops</h1>
+          <p className="text-[15px] text-text-secondary mt-1">Manage team workshops and events</p>
         </div>
         <Button>Create workshop</Button>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 mb-6">
-        {tabs.map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-2 text-[13px] font-medium rounded-lg transition-colors cursor-pointer border-none no-underline ${
-              tab === t
-                ? 'bg-neutral-900 text-white'
-                : 'bg-transparent text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100'
-            }`}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
+      <ChipRow className="mb-6 !mx-0 !px-0">
+        <Chip active={tab === 'Upcoming'} onClick={() => setTab('Upcoming')}>Upcoming</Chip>
+        <Chip active={tab === 'Past'} onClick={() => setTab('Past')}>Past</Chip>
+      </ChipRow>
 
       {tab === 'Upcoming' && (
-        <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60 overflow-hidden">
-          <table className="w-full text-[13.5px]">
+        <Card className="!p-0">
+          <table className="w-full text-[14px]">
             <thead>
-              <tr className="border-b border-neutral-100">
-                <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Topic</th>
-                <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Host</th>
-                <th className="px-6 py-3.5 text-right text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Seats</th>
-                <th className="px-6 py-3.5 text-right text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Actions</th>
+              <tr className="text-left border-b border-border-light">
+                <th className="px-5 py-3 text-text-secondary font-medium">Title</th>
+                <th className="px-5 py-3 text-text-secondary font-medium">Topic</th>
+                <th className="px-5 py-3 text-text-secondary font-medium">Date</th>
+                <th className="px-5 py-3 text-text-secondary font-medium">Host</th>
+                <th className="px-5 py-3 text-text-secondary font-medium">Seats</th>
+                <th className="px-5 py-3 text-text-secondary font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
               {upcoming.map((w) => (
-                <tr key={w.id} className="border-t border-neutral-50 hover:bg-neutral-50/50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-neutral-900">{w.title}</td>
-                  <td className="px-6 py-4"><Badge variant="muted">{w.topic}</Badge></td>
-                  <td className="px-6 py-4 text-neutral-500">{w.date}</td>
-                  <td className="px-6 py-4 text-neutral-500">{w.host}</td>
-                  <td className="px-6 py-4 text-neutral-500 text-right tabular-nums">{w.seats}</td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button variant="ghost" size="sm">View</Button>
-                      <Button variant="ghost" size="sm">Edit</Button>
-                    </div>
+                <tr key={w.id} className="border-t border-border-light hover:bg-surface-muted transition-colors">
+                  <td className="px-5 py-3 font-medium text-text-primary">{w.title}</td>
+                  <td className="px-5 py-3"><Badge>{w.topic}</Badge></td>
+                  <td className="px-5 py-3 text-text-secondary">{w.date}</td>
+                  <td className="px-5 py-3 text-text-secondary">{w.host}</td>
+                  <td className="px-5 py-3 text-text-secondary">{w.seats}</td>
+                  <td className="px-5 py-3 flex gap-2">
+                    <Button variant="ghost" size="sm">View</Button>
+                    <Button variant="ghost" size="sm">Edit</Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </Card>
       )}
 
       {tab === 'Past' && (
-        <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60 overflow-hidden">
-          <table className="w-full text-[13.5px]">
+        <Card className="!p-0">
+          <table className="w-full text-[14px]">
             <thead>
-              <tr className="border-b border-neutral-100">
-                <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Host</th>
-                <th className="px-6 py-3.5 text-right text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Attended</th>
-                <th className="px-6 py-3.5 text-right text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Rating</th>
+              <tr className="text-left border-b border-border-light">
+                <th className="px-5 py-3 text-text-secondary font-medium">Title</th>
+                <th className="px-5 py-3 text-text-secondary font-medium">Date</th>
+                <th className="px-5 py-3 text-text-secondary font-medium">Host</th>
+                <th className="px-5 py-3 text-text-secondary font-medium">Attended</th>
+                <th className="px-5 py-3 text-text-secondary font-medium">Rating</th>
               </tr>
             </thead>
             <tbody>
               {past.map((w) => (
-                <tr key={w.id} className="border-t border-neutral-50 hover:bg-neutral-50/50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-neutral-900">{w.title}</td>
-                  <td className="px-6 py-4 text-neutral-500">{w.date}</td>
-                  <td className="px-6 py-4 text-neutral-500">{w.host}</td>
-                  <td className="px-6 py-4 text-neutral-500 text-right tabular-nums">{w.attended}</td>
-                  <td className="px-6 py-4 text-neutral-500 text-right tabular-nums">{w.rating}/5</td>
+                <tr key={w.id} className="border-t border-border-light hover:bg-surface-muted transition-colors">
+                  <td className="px-5 py-3 font-medium text-text-primary">{w.title}</td>
+                  <td className="px-5 py-3 text-text-secondary">{w.date}</td>
+                  <td className="px-5 py-3 text-text-secondary">{w.host}</td>
+                  <td className="px-5 py-3 text-text-secondary">{w.attended}</td>
+                  <td className="px-5 py-3 text-text-secondary">{w.rating}/5</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </Card>
       )}
     </div>
   );

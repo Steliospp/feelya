@@ -1,3 +1,4 @@
+import Card from '../../components/ui/card';
 import Badge from '../../components/ui/badge';
 import Button from '../../components/ui/button';
 
@@ -14,32 +15,30 @@ const statusVariant = { new: 'warning', reviewed: 'default', approved: 'success'
 export default function RequestsPage() {
   return (
     <div>
-      <div className="mb-10">
-        <h1 className="text-[32px] font-semibold text-neutral-900 tracking-tight">Requests</h1>
-        <p className="text-[15px] text-neutral-400 mt-1.5">Workshop and topic requests from employees</p>
+      <div className="mb-6">
+        <h1 className="text-[28px] font-semibold text-text-primary">Requests</h1>
+        <p className="text-[15px] text-text-secondary mt-1">Workshop and topic requests from employees</p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-neutral-200/60 overflow-hidden">
-        <table className="w-full text-[13.5px]">
+      <Card className="!p-0">
+        <table className="w-full text-[14px]">
           <thead>
-            <tr className="border-b border-neutral-100">
-              <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Topic</th>
-              <th className="px-6 py-3.5 text-right text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Employees</th>
-              <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Notes</th>
-              <th className="px-6 py-3.5 text-left text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3.5 text-right text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Actions</th>
+            <tr className="text-left border-b border-border-light">
+              <th className="px-5 py-3 text-text-secondary font-medium">Topic</th>
+              <th className="px-5 py-3 text-text-secondary font-medium">Employees</th>
+              <th className="px-5 py-3 text-text-secondary font-medium">Notes</th>
+              <th className="px-5 py-3 text-text-secondary font-medium">Status</th>
+              <th className="px-5 py-3 text-text-secondary font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             {requests.map((r) => (
-              <tr key={r.id} className="border-t border-neutral-50 hover:bg-neutral-50/50 transition-colors">
-                <td className="px-6 py-4 font-medium text-neutral-900">{r.topic}</td>
-                <td className="px-6 py-4 text-neutral-500 text-right tabular-nums">{r.employees}</td>
-                <td className="px-6 py-4 text-neutral-400 max-w-[320px]">
-                  <span className="line-clamp-1">{r.notes}</span>
-                </td>
-                <td className="px-6 py-4"><Badge variant={statusVariant[r.status]}>{r.status}</Badge></td>
-                <td className="px-6 py-4 text-right">
+              <tr key={r.id} className="border-t border-border-light hover:bg-surface-muted transition-colors">
+                <td className="px-5 py-3 font-medium text-text-primary">{r.topic}</td>
+                <td className="px-5 py-3 text-text-secondary">{r.employees}</td>
+                <td className="px-5 py-3 text-text-secondary max-w-[300px] truncate">{r.notes}</td>
+                <td className="px-5 py-3"><Badge variant={statusVariant[r.status]}>{r.status}</Badge></td>
+                <td className="px-5 py-3">
                   {r.status === 'new' && <Button variant="secondary" size="sm">Review</Button>}
                   {r.status === 'reviewed' && <Button variant="primary" size="sm">Approve</Button>}
                   {r.status === 'approved' && <Button variant="outline" size="sm">Schedule</Button>}
@@ -48,7 +47,7 @@ export default function RequestsPage() {
             ))}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }
