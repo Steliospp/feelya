@@ -1,9 +1,9 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Home, Users, Plus, Clock, User } from 'lucide-react';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
-import BottomSheet from '@/components/ui/bottom-sheet';
-import ListRow from '@/components/ui/list-row';
+import { cn } from '../../lib/utils';
+import BottomSheet from '../../components/ui/bottom-sheet';
+import ListRow from '../../components/ui/list-row';
 import { Zap, Calendar, Search as SearchIcon, MessageSquare } from 'lucide-react';
 
 function TabLink({ to, icon: Icon, label }) {

@@ -1,8 +1,8 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, CalendarDays, Inbox, Users, BarChart3, Settings, LogOut } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import Avatar from '@/components/ui/avatar';
-import { cn } from '@/lib/utils';
+import { useAuth } from '../../context/AuthContext';
+import Avatar from '../../components/ui/avatar';
+import { cn } from '../../lib/utils';
 
 const links = [
   { to: '/hr', label: 'Overview', icon: LayoutDashboard, end: true },

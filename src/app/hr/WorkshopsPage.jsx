@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import Card from '@/components/ui/card';
-import Badge from '@/components/ui/badge';
-import Button from '@/components/ui/button';
-import { Chip, ChipRow } from '@/components/ui/chip';
+import Card from '../../components/ui/card';
+import Badge from '../../components/ui/badge';
+import Button from '../../components/ui/button';
+import { Chip, ChipRow } from '../../components/ui/chip';
 
 const upcoming = [
   { id: 1, title: 'Managing Workplace Anxiety', topic: 'Anxiety', date: 'Mon 24 Feb, 2:00 PM', host: 'Dr Sarah Chen', seats: '42/50', status: 'confirmed' },

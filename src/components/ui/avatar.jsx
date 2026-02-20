@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 const sizes = {
   sm: 'w-8 h-8 text-[12px]',

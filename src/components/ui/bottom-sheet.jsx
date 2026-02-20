@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 export default function BottomSheet({ open, onClose, title, children, className }) {
   const overlayRef = useRef(null);

@@ -1,6 +1,6 @@
-import { useAuth } from '@/context/AuthContext';
-import Card from '@/components/ui/card';
-import Badge from '@/components/ui/badge';
+import { useAuth } from '../../context/AuthContext';
+import Card from '../../components/ui/card';
+import Badge from '../../components/ui/badge';
 import { Users, CalendarDays, BarChart3, TrendingUp } from 'lucide-react';
 
 const stats = [

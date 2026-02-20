@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { BookOpen, Wind, ArrowRight, Star, MessageCircle } from 'lucide-react';
-import Avatar from '@/components/ui/avatar';
-import Card from '@/components/ui/card';
-import SearchInput from '@/components/ui/search-input';
-import { Chip, ChipRow } from '@/components/ui/chip';
-import Button from '@/components/ui/button';
-import Badge from '@/components/ui/badge';
+import Avatar from '../../components/ui/avatar';
+import Card from '../../components/ui/card';
+import SearchInput from '../../components/ui/search-input';
+import { Chip, ChipRow } from '../../components/ui/chip';
+import Button from '../../components/ui/button';
+import Badge from '../../components/ui/badge';
 import { useState } from 'react';
 
 const topics = ['Anxiety', 'Confidence', 'Career', 'Relationships', 'Stress', 'Burnout', 'Fitness', 'Sleep'];

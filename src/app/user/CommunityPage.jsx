@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MessageSquare, Heart, Plus } from 'lucide-react';
-import SearchInput from '@/components/ui/search-input';
-import { Chip, ChipRow } from '@/components/ui/chip';
-import Card from '@/components/ui/card';
-import Button from '@/components/ui/button';
+import SearchInput from '../../components/ui/search-input';
+import { Chip, ChipRow } from '../../components/ui/chip';
+import Card from '../../components/ui/card';
+import Button from '../../components/ui/button';
 
 const communityTopics = ['All', 'Anxiety', 'Confidence', 'Relationships', 'Career', 'Burnout', 'Parenting'];
 

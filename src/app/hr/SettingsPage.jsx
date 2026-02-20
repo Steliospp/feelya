@@ -1,7 +1,7 @@
-import { useAuth } from '@/context/AuthContext';
-import Card from '@/components/ui/card';
-import Button from '@/components/ui/button';
-import Badge from '@/components/ui/badge';
+import { useAuth } from '../../context/AuthContext';
+import Card from '../../components/ui/card';
+import Button from '../../components/ui/button';
+import Badge from '../../components/ui/badge';
 
 export default function SettingsPage() {
   const { user } = useAuth();

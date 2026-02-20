@@ -1,6 +1,6 @@
-import Card from '@/components/ui/card';
-import Badge from '@/components/ui/badge';
-import Button from '@/components/ui/button';
+import Card from '../../components/ui/card';
+import Badge from '../../components/ui/badge';
+import Button from '../../components/ui/button';
 
 const requests = [
   { id: 1, topic: 'Financial wellbeing workshop', employees: 12, notes: 'Employees want guidance on budgeting, pensions, and financial stress.', status: 'new' },

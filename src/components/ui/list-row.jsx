@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 export default function ListRow({ icon, label, desc, onClick, right, className }) {
   return (

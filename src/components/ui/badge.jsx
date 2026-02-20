@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 const variants = {
   default: 'bg-primary-50 text-primary',

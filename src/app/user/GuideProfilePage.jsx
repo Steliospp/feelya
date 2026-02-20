@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Star, MessageCircle, Calendar, Shield } from 'lucide-react';
-import Avatar from '@/components/ui/avatar';
-import Badge from '@/components/ui/badge';
-import Button from '@/components/ui/button';
-import Card from '@/components/ui/card';
-import { Chip } from '@/components/ui/chip';
+import Avatar from '../../components/ui/avatar';
+import Badge from '../../components/ui/badge';
+import Button from '../../components/ui/button';
+import Card from '../../components/ui/card';
+import { Chip } from '../../components/ui/chip';
 
 const guide = {
   id: 'g1',

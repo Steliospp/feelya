@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Star, Video, MessageCircle } from 'lucide-react';
-import { Chip, ChipRow } from '@/components/ui/chip';
-import Card from '@/components/ui/card';
-import Badge from '@/components/ui/badge';
-import Button from '@/components/ui/button';
-import Avatar from '@/components/ui/avatar';
-import EmptyState from '@/components/ui/empty-state';
+import { Chip, ChipRow } from '../../components/ui/chip';
+import Card from '../../components/ui/card';
+import Badge from '../../components/ui/badge';
+import Button from '../../components/ui/button';
+import Avatar from '../../components/ui/avatar';
+import EmptyState from '../../components/ui/empty-state';
 
 const tabs = ['Active', 'Scheduled', 'Past'];
 

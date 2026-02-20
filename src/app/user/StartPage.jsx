@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Phone, Video, MessageCircle, Loader2 } from 'lucide-react';
-import { Chip, ChipRow } from '@/components/ui/chip';
-import Button from '@/components/ui/button';
-import Card from '@/components/ui/card';
-import SearchInput from '@/components/ui/search-input';
-import { cn } from '@/lib/utils';
+import { Chip, ChipRow } from '../../components/ui/chip';
+import Button from '../../components/ui/button';
+import Card from '../../components/ui/card';
+import SearchInput from '../../components/ui/search-input';
+import { cn } from '../../lib/utils';
 
 const categories = [
   { name: 'Anxiety', emoji: '😰' },

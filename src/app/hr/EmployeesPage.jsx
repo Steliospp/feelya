@@ -1,6 +1,6 @@
-import Card from '@/components/ui/card';
-import Badge from '@/components/ui/badge';
-import SearchInput from '@/components/ui/search-input';
+import Card from '../../components/ui/card';
+import Badge from '../../components/ui/badge';
+import SearchInput from '../../components/ui/search-input';
 import { useState } from 'react';
 
 const employees = [

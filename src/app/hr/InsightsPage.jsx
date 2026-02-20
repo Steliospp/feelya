@@ -1,5 +1,5 @@
-import Card from '@/components/ui/card';
-import Badge from '@/components/ui/badge';
+import Card from '../../components/ui/card';
+import Badge from '../../components/ui/badge';
 
 const monthlyData = [
   { month: 'Sep', sessions: 180, workshops: 45, satisfaction: 4.5 },

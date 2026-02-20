@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { MessageCircle, Clock, Users, Shield, CreditCard, Bell, HelpCircle, RotateCcw, ChevronRight, LogOut } from 'lucide-react';
-import Avatar from '@/components/ui/avatar';
-import Card from '@/components/ui/card';
-import ListRow from '@/components/ui/list-row';
+import Avatar from '../../components/ui/avatar';
+import Card from '../../components/ui/card';
+import ListRow from '../../components/ui/list-row';
 
 const stats = [
   { label: 'Chats', value: 24, icon: <MessageCircle className="w-4 h-4" /> },

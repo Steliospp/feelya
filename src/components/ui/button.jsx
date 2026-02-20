@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 const variants = {
   primary: 'bg-gradient-to-br from-primary to-violet text-white shadow-card hover:shadow-elevated active:scale-[0.98]',
