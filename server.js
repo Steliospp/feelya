@@ -15,18 +15,29 @@ db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
 db.exec(`
+  CREATE TABLE IF NOT EXISTS organisations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    size TEXT DEFAULT '',
+    plan TEXT DEFAULT 'starter',
+    invite_code TEXT UNIQUE NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    company_name TEXT DEFAULT '',
     phone TEXT DEFAULT '',
     description TEXT DEFAULT '',
     avatar_color TEXT DEFAULT '#6366f1',
-    role TEXT DEFAULT 'admin',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    role TEXT DEFAULT 'employee',
+    job_title TEXT DEFAULT '',
+    org_id INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (org_id) REFERENCES organisations(id)
   );
 
   CREATE TABLE IF NOT EXISTS therapists (
@@ -145,10 +156,18 @@ function authMiddleware(req, res, next) {
   }
 }
 
+// --- Helper: Generate invite code ---
+function generateInviteCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
 // --- Auth Routes ---
 app.post('/api/signup', (req, res) => {
-  const { companyName, firstName, lastName, email, password } = req.body;
-  if (!companyName || !firstName || !lastName || !email || !password) {
+  const { firstName, lastName, email, password, companyName, companySize, role } = req.body;
+  if (!firstName || !lastName || !email || !password) {
     return res.status(400).json({ error: 'All fields are required' });
   }
   if (password.length < 8) {
@@ -164,14 +183,31 @@ app.post('/api/signup', (req, res) => {
   const colors = ['#6366f1', '#8b5cf6', '#ec4899', '#14b8a6', '#f59e0b', '#10b981'];
   const color = colors[Math.floor(Math.random() * colors.length)];
 
+  let orgId = null;
+  let userRole = 'employee';
+
+  // If company name is provided, create an organisation and make user admin
+  if (companyName) {
+    const inviteCode = generateInviteCode();
+    const orgResult = db.prepare(
+      'INSERT INTO organisations (name, size, invite_code) VALUES (?, ?, ?)'
+    ).run(companyName, companySize || '', inviteCode);
+    orgId = orgResult.lastInsertRowid;
+    userRole = 'admin';
+  }
+
   const result = db.prepare(
-    'INSERT INTO users (first_name, last_name, email, password, company_name, avatar_color) VALUES (?, ?, ?, ?, ?, ?)'
-  ).run(firstName, lastName, email, hash, companyName, color);
+    'INSERT INTO users (first_name, last_name, email, password, avatar_color, role, job_title, org_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run(firstName, lastName, email, hash, color, userRole, role || '', orgId);
 
   // Welcome notification
+  const welcomeMsg = orgId
+    ? `Welcome to Feelya! Your organisation "${companyName}" is set up and ready. Share your invite link to onboard your team.`
+    : 'Welcome to Feelya! Your account has been created. Start by finding a therapist that suits your needs.';
+
   db.prepare(
     'INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)'
-  ).run(result.lastInsertRowid, 'Welcome to Feelya for Business!', `Your ${companyName} admin account has been created. Start by exploring your therapist network and inviting your team.`, 'success');
+  ).run(result.lastInsertRowid, 'Welcome to Feelya!', welcomeMsg, 'success');
 
   const token = jwt.sign({ id: result.lastInsertRowid, email }, JWT_SECRET, { expiresIn: '7d' });
   res.cookie('token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
@@ -199,17 +235,39 @@ app.post('/api/logout', (req, res) => {
   res.json({ success: true });
 });
 
+// --- Join Org via Invite Code ---
+app.post('/api/join-org', authMiddleware, (req, res) => {
+  const { inviteCode } = req.body;
+  if (!inviteCode) return res.status(400).json({ error: 'Invite code is required' });
+
+  const org = db.prepare('SELECT * FROM organisations WHERE invite_code = ?').get(inviteCode.toUpperCase());
+  if (!org) return res.status(404).json({ error: 'Invalid invite code' });
+
+  db.prepare('UPDATE users SET org_id = ?, role = ? WHERE id = ?').run(org.id, 'employee', req.user.id);
+
+  db.prepare('INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)')
+    .run(req.user.id, 'Organisation Joined', `You've joined ${org.name}. You now have access to your company's wellbeing programme.`, 'success');
+
+  res.json({ success: true, orgName: org.name });
+});
+
 // --- User Routes ---
 app.get('/api/me', authMiddleware, (req, res) => {
-  const user = db.prepare('SELECT id, first_name, last_name, email, company_name, phone, description, avatar_color, role, created_at FROM users WHERE id = ?').get(req.user.id);
+  const user = db.prepare(`
+    SELECT u.id, u.first_name, u.last_name, u.email, u.phone, u.description, u.avatar_color, u.role, u.job_title, u.org_id, u.created_at,
+           o.name as org_name, o.size as org_size, o.plan as org_plan, o.invite_code as org_invite_code
+    FROM users u
+    LEFT JOIN organisations o ON u.org_id = o.id
+    WHERE u.id = ?
+  `).get(req.user.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json(user);
 });
 
 app.put('/api/me', authMiddleware, (req, res) => {
-  const { firstName, lastName, companyName, phone, description } = req.body;
-  db.prepare('UPDATE users SET first_name = ?, last_name = ?, company_name = ?, phone = ?, description = ? WHERE id = ?')
-    .run(firstName, lastName, companyName || '', phone || '', description || '', req.user.id);
+  const { firstName, lastName, phone, description } = req.body;
+  db.prepare('UPDATE users SET first_name = ?, last_name = ?, phone = ?, description = ? WHERE id = ?')
+    .run(firstName, lastName, phone || '', description || '', req.user.id);
   res.json({ success: true });
 });
 
@@ -224,6 +282,116 @@ app.put('/api/me/password', authMiddleware, (req, res) => {
   }
   const hash = bcrypt.hashSync(newPassword, 12);
   db.prepare('UPDATE users SET password = ? WHERE id = ?').run(hash, req.user.id);
+  res.json({ success: true });
+});
+
+// --- Organisation / Admin Routes ---
+app.get('/api/org/dashboard', authMiddleware, (req, res) => {
+  const user = db.prepare('SELECT org_id, role FROM users WHERE id = ?').get(req.user.id);
+  if (!user || !user.org_id || user.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+
+  const org = db.prepare('SELECT * FROM organisations WHERE id = ?').get(user.org_id);
+  const totalEmployees = db.prepare('SELECT COUNT(*) as count FROM users WHERE org_id = ?').get(user.org_id);
+  const activeEmployees = db.prepare(`
+    SELECT COUNT(DISTINCT user_id) as count FROM sessions
+    WHERE user_id IN (SELECT id FROM users WHERE org_id = ?)
+  `).get(user.org_id);
+
+  const totalSessions = db.prepare(`
+    SELECT COUNT(*) as count FROM sessions
+    WHERE user_id IN (SELECT id FROM users WHERE org_id = ?)
+  `).get(user.org_id);
+
+  const completedSessions = db.prepare(`
+    SELECT COUNT(*) as count FROM sessions
+    WHERE user_id IN (SELECT id FROM users WHERE org_id = ?) AND status = 'completed'
+  `).get(user.org_id);
+
+  const upcomingSessions = db.prepare(`
+    SELECT COUNT(*) as count FROM sessions
+    WHERE user_id IN (SELECT id FROM users WHERE org_id = ?) AND status = 'upcoming'
+  `).get(user.org_id);
+
+  // Avg wellbeing from self-test scores
+  const avgWellbeing = db.prepare(`
+    SELECT AVG(40 - score) * 2.5 as avg_score FROM self_test_results
+    WHERE user_id IN (SELECT id FROM users WHERE org_id = ?)
+  `).get(user.org_id);
+
+  // Top specialisations used
+  const sessionsWithSpecs = db.prepare(`
+    SELECT t.specialisations FROM sessions s
+    JOIN therapists t ON s.therapist_id = t.id
+    WHERE s.user_id IN (SELECT id FROM users WHERE org_id = ?)
+  `).all(user.org_id);
+
+  const specCounts = {};
+  sessionsWithSpecs.forEach(s => {
+    s.specialisations.split(',').forEach(spec => {
+      const trimmed = spec.trim();
+      specCounts[trimmed] = (specCounts[trimmed] || 0) + 1;
+    });
+  });
+  const topSpecs = Object.entries(specCounts).sort((a, b) => b[1] - a[1]).slice(0, 5).map(s => s[0]);
+
+  // Recent team activity (anonymised)
+  const recentActivity = db.prepare(`
+    SELECT s.session_format, s.date, s.time, s.status, t.name as therapist_name, t.specialisations
+    FROM sessions s
+    JOIN therapists t ON s.therapist_id = t.id
+    WHERE s.user_id IN (SELECT id FROM users WHERE org_id = ?)
+    ORDER BY s.created_at DESC LIMIT 10
+  `).all(user.org_id);
+
+  const engagementRate = totalEmployees.count > 0
+    ? Math.round((activeEmployees.count / totalEmployees.count) * 100)
+    : 0;
+
+  res.json({
+    org,
+    totalEmployees: totalEmployees.count,
+    activeEmployees: activeEmployees.count,
+    engagementRate,
+    totalSessions: totalSessions.count,
+    completedSessions: completedSessions.count,
+    upcomingSessions: upcomingSessions.count,
+    avgWellbeing: Math.round(avgWellbeing.avg_score || 72),
+    topSpecialisations: topSpecs.length > 0 ? topSpecs : ['Anxiety', 'Stress', 'Burnout'],
+    recentActivity
+  });
+});
+
+app.get('/api/org/team', authMiddleware, (req, res) => {
+  const user = db.prepare('SELECT org_id, role FROM users WHERE id = ?').get(req.user.id);
+  if (!user || !user.org_id || user.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+
+  // Return anonymised team data — names and emails but NOT session details
+  const team = db.prepare(`
+    SELECT id, first_name, last_name, email, role, job_title, avatar_color, created_at
+    FROM users WHERE org_id = ?
+    ORDER BY created_at ASC
+  `).all(user.org_id);
+
+  res.json(team);
+});
+
+app.put('/api/org/team/:id/role', authMiddleware, (req, res) => {
+  const admin = db.prepare('SELECT org_id, role FROM users WHERE id = ?').get(req.user.id);
+  if (!admin || admin.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+
+  const targetUser = db.prepare('SELECT * FROM users WHERE id = ? AND org_id = ?').get(req.params.id, admin.org_id);
+  if (!targetUser) return res.status(404).json({ error: 'User not found' });
+
+  const { role } = req.body;
+  if (!['admin', 'employee'].includes(role)) return res.status(400).json({ error: 'Invalid role' });
+
+  db.prepare('UPDATE users SET role = ? WHERE id = ?').run(role, req.params.id);
   res.json({ success: true });
 });
 
@@ -351,22 +519,32 @@ app.get('/api/dashboard', authMiddleware, (req, res) => {
 
   const recentNotifications = db.prepare('SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 5').all(req.user.id);
 
-  const totalEmployeeSessions = db.prepare("SELECT COUNT(*) as count FROM sessions WHERE user_id = ?").get(req.user.id);
-  const sessionBudgetUsed = db.prepare("SELECT COALESCE(SUM(price), 0) as total FROM sessions WHERE user_id = ?").get(req.user.id);
+  // Total sessions across all org employees (for B2B dashboard)
+  const user = db.prepare('SELECT org_id, role FROM users WHERE id = ?').get(req.user.id);
+  let totalEmployeeSessions = 0;
+  let sessionBudgetUsed = 0;
+  if (user && user.org_id) {
+    const empSessions = db.prepare(`
+      SELECT COUNT(*) as count, COALESCE(SUM(price), 0) as total_cost FROM sessions
+      WHERE user_id IN (SELECT id FROM users WHERE org_id = ?)
+    `).get(user.org_id);
+    totalEmployeeSessions = empSessions.count;
+    sessionBudgetUsed = empSessions.total_cost;
+  }
 
   res.json({
     upcomingSessions: upcomingSessions.count,
     completedSessions: completedSessions.count,
     unreadNotifications: unreadNotifications.count,
+    totalEmployeeSessions,
+    sessionBudgetUsed,
     nextSession,
-    recentNotifications,
-    totalEmployeeSessions: totalEmployeeSessions.count,
-    sessionBudgetUsed: sessionBudgetUsed.total
+    recentNotifications
   });
 });
 
 // --- Serve App Pages ---
-const appPages = ['dashboard', 'therapists', 'sessions', 'resources', 'notifications', 'profile', 'self-test', 'employees'];
+const appPages = ['dashboard', 'therapists', 'sessions', 'resources', 'notifications', 'profile', 'self-test', 'org', 'team', 'employees'];
 appPages.forEach(page => {
   app.get(`/app/${page}`, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'app.html'));
