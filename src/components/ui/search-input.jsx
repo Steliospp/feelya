@@ -1,16 +1,15 @@
 import { Search } from 'lucide-react';
-import { cn } from '../../lib/utils';
 
-export default function SearchInput({ placeholder = 'Search...', value, onChange, className }) {
+export default function SearchInput({ placeholder = 'Search...', value, onChange, className = '' }) {
   return (
-    <div className={cn('relative', className)}>
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-text-muted pointer-events-none" />
+    <div className={`relative ${className}`}>
+      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[16px] h-[16px] text-neutral-400 pointer-events-none" />
       <input
         type="text"
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full h-10 pl-10 pr-4 bg-surface-dim border border-border-light rounded-full text-[14px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+        className="w-full h-10 pl-10 pr-4 bg-white border border-neutral-200 rounded-xl text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-300 transition-all"
       />
     </div>
   );

@@ -1,7 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Home, Users, Plus, Clock, User } from 'lucide-react';
 import { useState } from 'react';
-import { cn } from '../../lib/utils';
 import BottomSheet from '../../components/ui/bottom-sheet';
 import ListRow from '../../components/ui/list-row';
 import { Zap, Calendar, Search as SearchIcon, MessageSquare } from 'lucide-react';
@@ -12,10 +11,7 @@ function TabLink({ to, icon: Icon, label }) {
       to={to}
       end
       className={({ isActive }) =>
-        cn(
-          'flex flex-col items-center gap-0.5 text-[11px] font-medium transition-colors no-underline hover:no-underline pt-2 pb-1 flex-1',
-          isActive ? 'text-primary' : 'text-text-muted'
-        )
+        `flex flex-col items-center gap-0.5 text-[11px] font-medium transition-colors no-underline hover:no-underline pt-2 pb-1 flex-1 ${isActive ? 'text-neutral-900' : 'text-neutral-400'}`
       }
     >
       <Icon className="w-[22px] h-[22px]" />

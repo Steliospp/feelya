@@ -2,7 +2,6 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, CalendarDays, Inbox, Users, BarChart3, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Avatar from '../../components/ui/avatar';
-import { cn } from '../../lib/utils';
 
 const links = [
   { to: '/hr', label: 'Overview', icon: LayoutDashboard, end: true },
@@ -19,12 +18,11 @@ function SideLink({ to, label, icon: Icon, end }) {
       to={to}
       end={end}
       className={({ isActive }) =>
-        cn(
-          'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13.5px] font-medium transition-all duration-150 no-underline hover:no-underline',
+        `group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13.5px] font-medium transition-all duration-150 no-underline hover:no-underline ${
           isActive
             ? 'bg-neutral-100 text-neutral-900'
             : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700'
-        )
+        }`
       }
     >
       {({ isActive }) => (

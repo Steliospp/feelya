@@ -5,7 +5,6 @@ import { Chip, ChipRow } from '../../components/ui/chip';
 import Button from '../../components/ui/button';
 import Card from '../../components/ui/card';
 import SearchInput from '../../components/ui/search-input';
-import { cn } from '../../lib/utils';
 
 const categories = [
   { name: 'Anxiety', emoji: '😰' },
@@ -101,12 +100,11 @@ export default function StartPage() {
               <button
                 key={c.name}
                 onClick={() => toggleTopic(c.name)}
-                className={cn(
-                  'flex items-center gap-3 p-3 rounded-[12px] text-left transition-all cursor-pointer border',
+                className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all cursor-pointer border ${
                   selectedTopics.includes(c.name)
-                    ? 'bg-primary-50 border-primary text-primary'
-                    : 'bg-surface border-border-light text-text-primary hover:border-primary/30'
-                )}
+                    ? 'bg-neutral-100 border-neutral-900 text-neutral-900'
+                    : 'bg-white border-neutral-200 text-neutral-900 hover:border-neutral-400'
+                }`}
               >
                 <span className="text-[20px]">{c.emoji}</span>
                 <span className="text-[14px] font-medium">{c.name}</span>
@@ -130,14 +128,14 @@ export default function StartPage() {
       {step === 'type' && (
         <div className="space-y-3">
           <Card
-            className={cn('cursor-pointer border-2 transition-all', guideType === 'licensed' ? 'border-primary bg-primary-50' : 'border-transparent hover:border-primary/30')}
+            className={`cursor-pointer border-2 transition-all ${guideType === 'licensed' ? 'border-neutral-900 bg-neutral-50' : 'border-transparent hover:border-neutral-300'}`}
             onClick={() => setGuideType('licensed')}
           >
             <div className="text-[16px] font-semibold text-text-primary">Licensed Professional</div>
             <p className="text-[14px] text-text-secondary mt-1">Accredited therapists and counsellors with clinical training.</p>
           </Card>
           <Card
-            className={cn('cursor-pointer border-2 transition-all', guideType === 'guide' ? 'border-primary bg-primary-50' : 'border-transparent hover:border-primary/30')}
+            className={`cursor-pointer border-2 transition-all ${guideType === 'guide' ? 'border-neutral-900 bg-neutral-50' : 'border-transparent hover:border-neutral-300'}`}
             onClick={() => setGuideType('guide')}
           >
             <div className="text-[16px] font-semibold text-text-primary">Guide</div>
@@ -157,10 +155,9 @@ export default function StartPage() {
           ].map((m) => (
             <Card
               key={m.id}
-              className={cn(
-                'flex items-center gap-4 cursor-pointer border-2 transition-all',
-                mode === m.id ? 'border-primary bg-primary-50' : 'border-transparent hover:border-primary/30'
-              )}
+              className={`flex items-center gap-4 cursor-pointer border-2 transition-all ${
+                mode === m.id ? 'border-neutral-900 bg-neutral-50' : 'border-transparent hover:border-neutral-300'
+              }`}
               onClick={() => setMode(m.id)}
             >
               <div className="w-12 h-12 rounded-[12px] bg-primary-50 flex items-center justify-center text-primary">{m.icon}</div>
