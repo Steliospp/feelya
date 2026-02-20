@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 
 const roles = [
   { role: 'EMPLOYEE', label: 'Employee', path: '/app' },
+  { role: 'THERAPIST', label: 'Therapist', path: '/therapist' },
   { role: 'HR_ADMIN', label: 'HR', path: '/hr' },
   { role: 'SUPER_ADMIN', label: 'Super Admin', path: '/admin' },
 ];

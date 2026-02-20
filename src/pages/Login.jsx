@@ -6,6 +6,7 @@ import '../styles/auth.css';
 function redirectForRole(role) {
   if (role === 'SUPER_ADMIN') return '/admin';
   if (role === 'HR_ADMIN') return '/hr';
+  if (role === 'THERAPIST') return '/therapist';
   return '/app';
 }
 
@@ -83,6 +84,7 @@ export default function Login() {
           <div className="auth__demo-hint">
             <div className="auth__demo-hint-title">Demo accounts</div>
             <div className="auth__demo-hint-item"><strong>employee@demo.com</strong> &mdash; Employee</div>
+            <div className="auth__demo-hint-item"><strong>therapist@demo.com</strong> &mdash; Therapist</div>
             <div className="auth__demo-hint-item"><strong>hr@demo.com</strong> &mdash; HR Admin</div>
             <div className="auth__demo-hint-item"><strong>admin@feelya.com</strong> &mdash; Super Admin</div>
             <div className="auth__demo-hint-note">Any password works</div>

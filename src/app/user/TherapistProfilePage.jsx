@@ -33,67 +33,71 @@ export default function TherapistProfilePage() {
   const [selectedSlot, setSelectedSlot] = useState(null);
 
   return (
-    <div>
+    <div className="max-w-[720px]">
       {/* Back */}
       <button
         onClick={() => navigate(-1)}
-        className="w-10 h-10 rounded-full bg-surface flex items-center justify-center hover:bg-surface-dim transition-colors cursor-pointer border-none mb-4"
+        className="w-10 h-10 rounded-full bg-surface border border-border-light flex items-center justify-center hover:bg-surface-dim hover:shadow-card transition-all cursor-pointer mb-6"
       >
         <ArrowLeft className="w-5 h-5 text-text-primary" />
       </button>
 
-      {/* Hero */}
-      <div className="flex flex-col items-center text-center mb-6">
-        <Avatar name={therapist.name} color={therapist.color} size="xl" />
-        <h1 className="text-[22px] font-semibold text-text-primary mt-3">{therapist.name}</h1>
-        <p className="text-[14px] text-text-secondary mt-0.5">{therapist.credentials}</p>
-        <div className="flex items-center gap-3 mt-2">
-          {therapist.licensed && (
-            <Badge variant="success">
-              <Shield className="w-3 h-3 mr-1" /> Licensed
-            </Badge>
-          )}
-          <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-warning fill-warning" />
-            <span className="text-[14px] font-medium text-text-primary">{therapist.rating}</span>
+      {/* Hero card */}
+      <Card elevation={2} className="!p-0 overflow-hidden mb-6">
+        <div className="bg-gradient-to-r from-primary-50 via-primary-50/60 to-transparent px-6 py-5">
+          <div className="flex items-center gap-4">
+            <Avatar name={therapist.name} color={therapist.color} size="xl" />
+            <div>
+              <h1 className="text-[22px] font-semibold text-text-primary font-serif">{therapist.name}</h1>
+              <p className="text-[14px] text-text-secondary mt-0.5">{therapist.credentials}</p>
+              <div className="flex items-center gap-3 mt-2">
+                {therapist.licensed && (
+                  <Badge variant="success">
+                    <Shield className="w-3 h-3 mr-1" /> Licensed
+                  </Badge>
+                )}
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4 text-warning fill-warning" />
+                  <span className="text-[14px] font-medium text-text-primary">{therapist.rating}</span>
+                </div>
+                <span className="text-[13px] text-text-secondary">{therapist.yearsExperience} years exp.</span>
+              </div>
+              <p className="text-[12px] text-text-muted mt-1">{therapist.sessions.toLocaleString()} sessions delivered</p>
+            </div>
           </div>
-          <span className="text-[13px] text-text-secondary">{therapist.yearsExperience} years exp.</span>
         </div>
-        <p className="text-[12px] text-text-muted mt-1">{therapist.sessions.toLocaleString()} sessions delivered</p>
-      </div>
-
-      {/* Actions */}
-      <div className="flex gap-2 mb-6">
-        <Button variant="primary" size="lg" full onClick={() => document.getElementById('availability')?.scrollIntoView({ behavior: 'smooth' })}>
-          <Calendar className="w-5 h-5" /> Schedule session
-        </Button>
-      </div>
-      <div className="flex gap-2 mb-6">
-        <Button variant="outline" size="md" full>
-          <MessageCircle className="w-4 h-4" /> Message
-        </Button>
-      </div>
+        <div className="px-6 py-4 flex gap-3">
+          <Button variant="primary" size="md" onClick={() => document.getElementById('availability')?.scrollIntoView({ behavior: 'smooth' })}>
+            <Calendar className="w-4 h-4" /> Schedule session
+          </Button>
+          <Button variant="outline" size="md">
+            <MessageCircle className="w-4 h-4" /> Message
+          </Button>
+        </div>
+      </Card>
 
       {/* About */}
-      <Card className="mb-4">
+      <Card elevation={1} className="mb-4 !p-5">
         <h2 className="text-[16px] font-semibold text-text-primary mb-2">About</h2>
         <p className="text-[14px] text-text-secondary leading-relaxed">{therapist.about}</p>
       </Card>
 
       {/* Specialties */}
-      <Card className="mb-4">
+      <Card elevation={1} className="mb-4 !p-5">
         <h2 className="text-[16px] font-semibold text-text-primary mb-3">Specialties</h2>
         <div className="flex flex-wrap gap-2">
-          {therapist.specialties.map((s) => <Badge key={s}>{s}</Badge>)}
+          {therapist.specialties.map((s) => (
+            <span key={s} className="text-[13px] font-medium text-primary bg-primary-50 border border-primary/10 px-3 py-1 rounded-full">{s}</span>
+          ))}
         </div>
       </Card>
 
       {/* Approach */}
-      <Card className="mb-4">
+      <Card elevation={1} className="mb-4 !p-5">
         <h2 className="text-[16px] font-semibold text-text-primary mb-3">Approach</h2>
-        <ul className="space-y-1.5">
+        <ul className="space-y-2">
           {therapist.approach.map((a) => (
-            <li key={a} className="text-[14px] text-text-secondary flex items-start gap-2">
+            <li key={a} className="text-[14px] text-text-secondary flex items-start gap-2.5">
               <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
               {a}
             </li>
@@ -102,12 +106,12 @@ export default function TherapistProfilePage() {
       </Card>
 
       {/* Availability */}
-      <Card id="availability">
-        <h2 className="text-[16px] font-semibold text-text-primary mb-3">Availability</h2>
-        <div className="space-y-4">
+      <Card elevation={1} id="availability" className="!p-5">
+        <h2 className="text-[16px] font-semibold text-text-primary mb-4">Availability</h2>
+        <div className="space-y-5">
           {therapist.availability.map((day) => (
             <div key={day.day}>
-              <div className="text-[13px] font-medium text-text-secondary mb-2">{day.day}</div>
+              <div className="text-[13px] font-medium text-text-secondary mb-2.5">{day.day}</div>
               <div className="flex flex-wrap gap-2">
                 {day.slots.map((slot) => {
                   const key = `${day.day}-${slot}`;
@@ -126,7 +130,7 @@ export default function TherapistProfilePage() {
           ))}
         </div>
         {selectedSlot && (
-          <Button variant="primary" size="lg" full className="mt-4">
+          <Button variant="primary" size="lg" full className="mt-5">
             Confirm booking
           </Button>
         )}

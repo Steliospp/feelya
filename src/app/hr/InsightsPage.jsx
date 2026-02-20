@@ -1,5 +1,8 @@
 import Card from '../../components/ui/card';
-import Badge from '../../components/ui/badge';
+import PageHeader from '../../components/ui/page-header';
+import StatCard from '../../components/ui/stat-card';
+import SectionCard from '../../components/ui/section-card';
+import { CalendarDays, Users, Star } from 'lucide-react';
 
 const monthlyData = [
   { month: 'Sep', sessions: 180, workshops: 45, satisfaction: 4.5 },
@@ -24,33 +27,35 @@ export default function InsightsPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-[28px] font-semibold text-text-primary">Insights</h1>
-        <p className="text-[15px] text-text-secondary mt-1">Engagement trends and programme analytics</p>
-      </div>
+      <PageHeader title="Insights" description="Engagement trends and programme analytics" />
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <Card className="!p-5">
-          <div className="text-[13px] text-text-secondary mb-1">Sessions this month</div>
-          <div className="text-[28px] font-semibold text-text-primary">{latest.sessions}</div>
-          <div className="text-[13px] text-success font-medium mt-1">+18% vs last month</div>
-        </Card>
-        <Card className="!p-5">
-          <div className="text-[13px] text-text-secondary mb-1">Workshop attendance</div>
-          <div className="text-[28px] font-semibold text-text-primary">{latest.workshops}</div>
-          <div className="text-[13px] text-success font-medium mt-1">+21% vs last month</div>
-        </Card>
-        <Card className="!p-5">
-          <div className="text-[13px] text-text-secondary mb-1">Satisfaction score</div>
-          <div className="text-[28px] font-semibold text-text-primary">{latest.satisfaction}/5</div>
-          <div className="text-[13px] text-success font-medium mt-1">+0.1 vs last month</div>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <StatCard
+          icon={<CalendarDays className="w-5 h-5" />}
+          iconClassName="text-primary bg-primary-50"
+          label="Sessions this month"
+          value={String(latest.sessions)}
+          change="+18%"
+        />
+        <StatCard
+          icon={<Users className="w-5 h-5" />}
+          iconClassName="text-violet bg-violet/10"
+          label="Workshop attendance"
+          value={String(latest.workshops)}
+          change="+21%"
+        />
+        <StatCard
+          icon={<Star className="w-5 h-5" />}
+          iconClassName="text-warning bg-warning-bg"
+          label="Satisfaction score"
+          value={`${latest.satisfaction}/5`}
+          change="+0.1"
+        />
       </div>
 
       {/* Sessions over time */}
-      <Card className="mb-6 !p-5">
-        <h2 className="text-[16px] font-semibold text-text-primary mb-4">Sessions over time</h2>
+      <SectionCard title="Sessions over time" className="mb-8">
         <div className="flex items-end gap-3 h-[160px]">
           {monthlyData.map((d) => {
             const height = (d.sessions / 400) * 100;
@@ -63,15 +68,14 @@ export default function InsightsPage() {
             );
           })}
         </div>
-      </Card>
+      </SectionCard>
 
       {/* Top topics */}
-      <Card className="!p-5">
-        <h2 className="text-[16px] font-semibold text-text-primary mb-4">Top topics</h2>
-        <div className="space-y-3">
+      <SectionCard title="Top topics">
+        <div className="space-y-3.5">
           {topTopics.map((t) => (
             <div key={t.name} className="flex items-center gap-3">
-              <Badge>{t.name}</Badge>
+              <span className="text-[13px] font-medium text-primary bg-primary-50 border border-primary/10 px-2.5 py-0.5 rounded-full">{t.name}</span>
               <div className="flex-1 h-2 bg-surface-dim rounded-full overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-primary to-violet rounded-full" style={{ width: `${t.percentage}%` }} />
               </div>
@@ -80,7 +84,7 @@ export default function InsightsPage() {
             </div>
           ))}
         </div>
-      </Card>
+      </SectionCard>
     </div>
   );
 }

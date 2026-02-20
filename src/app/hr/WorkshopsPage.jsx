@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import Card from '../../components/ui/card';
 import Badge from '../../components/ui/badge';
 import Button from '../../components/ui/button';
 import { Chip, ChipRow } from '../../components/ui/chip';
+import PageHeader from '../../components/ui/page-header';
+import SectionCard from '../../components/ui/section-card';
 
 const upcoming = [
   { id: 1, title: 'Managing Workplace Anxiety', topic: 'Anxiety', date: 'Mon 24 Feb, 2:00 PM', host: 'Dr Sarah Chen', seats: '42/50', status: 'confirmed' },
@@ -20,41 +21,37 @@ export default function WorkshopsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-[28px] font-semibold text-text-primary">Workshops</h1>
-          <p className="text-[15px] text-text-secondary mt-1">Manage team workshops and events</p>
-        </div>
+      <PageHeader title="Workshops" description="Manage team workshops and events">
         <Button>Create workshop</Button>
-      </div>
+      </PageHeader>
 
-      <ChipRow className="mb-6 !mx-0 !px-0">
+      <ChipRow className="mb-6">
         <Chip active={tab === 'Upcoming'} onClick={() => setTab('Upcoming')}>Upcoming</Chip>
         <Chip active={tab === 'Past'} onClick={() => setTab('Past')}>Past</Chip>
       </ChipRow>
 
       {tab === 'Upcoming' && (
-        <Card className="!p-0">
+        <SectionCard noPadding>
           <table className="w-full text-[14px]">
             <thead>
               <tr className="text-left border-b border-border-light">
-                <th className="px-5 py-3 text-text-secondary font-medium">Title</th>
-                <th className="px-5 py-3 text-text-secondary font-medium">Topic</th>
-                <th className="px-5 py-3 text-text-secondary font-medium">Date</th>
-                <th className="px-5 py-3 text-text-secondary font-medium">Host</th>
-                <th className="px-5 py-3 text-text-secondary font-medium">Seats</th>
-                <th className="px-5 py-3 text-text-secondary font-medium">Actions</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Title</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Topic</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Date</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Host</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Seats</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {upcoming.map((w) => (
-                <tr key={w.id} className="border-t border-border-light hover:bg-surface-muted transition-colors">
-                  <td className="px-5 py-3 font-medium text-text-primary">{w.title}</td>
-                  <td className="px-5 py-3"><Badge>{w.topic}</Badge></td>
-                  <td className="px-5 py-3 text-text-secondary">{w.date}</td>
-                  <td className="px-5 py-3 text-text-secondary">{w.host}</td>
-                  <td className="px-5 py-3 text-text-secondary">{w.seats}</td>
-                  <td className="px-5 py-3 flex gap-2">
+              {upcoming.map((w, i) => (
+                <tr key={w.id} className={`border-t border-border-light hover:bg-surface-muted/60 transition-colors ${i % 2 === 1 ? 'bg-surface-muted/30' : ''}`}>
+                  <td className="px-5 py-3.5 font-medium text-text-primary">{w.title}</td>
+                  <td className="px-5 py-3.5"><span className="text-[12px] font-medium text-primary bg-primary-50 border border-primary/10 px-2.5 py-0.5 rounded-full">{w.topic}</span></td>
+                  <td className="px-5 py-3.5 text-text-secondary">{w.date}</td>
+                  <td className="px-5 py-3.5 text-text-secondary">{w.host}</td>
+                  <td className="px-5 py-3.5 text-text-secondary">{w.seats}</td>
+                  <td className="px-5 py-3.5 flex gap-2">
                     <Button variant="ghost" size="sm">View</Button>
                     <Button variant="ghost" size="sm">Edit</Button>
                   </td>
@@ -62,34 +59,34 @@ export default function WorkshopsPage() {
               ))}
             </tbody>
           </table>
-        </Card>
+        </SectionCard>
       )}
 
       {tab === 'Past' && (
-        <Card className="!p-0">
+        <SectionCard noPadding>
           <table className="w-full text-[14px]">
             <thead>
               <tr className="text-left border-b border-border-light">
-                <th className="px-5 py-3 text-text-secondary font-medium">Title</th>
-                <th className="px-5 py-3 text-text-secondary font-medium">Date</th>
-                <th className="px-5 py-3 text-text-secondary font-medium">Host</th>
-                <th className="px-5 py-3 text-text-secondary font-medium">Attended</th>
-                <th className="px-5 py-3 text-text-secondary font-medium">Rating</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Title</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Date</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Host</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Attended</th>
+                <th className="px-5 py-3 text-[13px] text-text-muted font-medium uppercase tracking-wider">Rating</th>
               </tr>
             </thead>
             <tbody>
-              {past.map((w) => (
-                <tr key={w.id} className="border-t border-border-light hover:bg-surface-muted transition-colors">
-                  <td className="px-5 py-3 font-medium text-text-primary">{w.title}</td>
-                  <td className="px-5 py-3 text-text-secondary">{w.date}</td>
-                  <td className="px-5 py-3 text-text-secondary">{w.host}</td>
-                  <td className="px-5 py-3 text-text-secondary">{w.attended}</td>
-                  <td className="px-5 py-3 text-text-secondary">{w.rating}/5</td>
+              {past.map((w, i) => (
+                <tr key={w.id} className={`border-t border-border-light hover:bg-surface-muted/60 transition-colors ${i % 2 === 1 ? 'bg-surface-muted/30' : ''}`}>
+                  <td className="px-5 py-3.5 font-medium text-text-primary">{w.title}</td>
+                  <td className="px-5 py-3.5 text-text-secondary">{w.date}</td>
+                  <td className="px-5 py-3.5 text-text-secondary">{w.host}</td>
+                  <td className="px-5 py-3.5 text-text-secondary">{w.attended}</td>
+                  <td className="px-5 py-3.5 text-text-secondary">{w.rating}/5</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </Card>
+        </SectionCard>
       )}
     </div>
   );

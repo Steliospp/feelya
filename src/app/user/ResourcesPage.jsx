@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BookOpen, Wind, Headphones, Phone, ArrowRight, Search } from 'lucide-react';
 import { Chip, ChipRow } from '../../components/ui/chip';
 import Card from '../../components/ui/card';
+import PageHeader from '../../components/ui/page-header';
 
 const categories = ['All', 'Articles', 'Tools', 'Audio', 'Crisis'];
 
@@ -34,36 +35,35 @@ export default function ResourcesPage() {
 
   return (
     <div>
-      <h1 className="text-[28px] font-semibold text-text-primary mb-1">Resources</h1>
-      <p className="text-[14px] text-text-secondary mb-4">Articles, tools, and support when you need it.</p>
+      <PageHeader title="Resources" description="Articles, tools, and support when you need it." />
 
       {/* Search */}
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-text-muted pointer-events-none" />
+      <div className="relative mb-5">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-text-muted pointer-events-none" />
         <input
           type="text"
           placeholder="Search resources..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full h-10 pl-10 pr-4 bg-surface border border-border-light rounded-[12px] text-[14px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+          className="w-full h-11 pl-11 pr-4 bg-surface border border-border-light rounded-[12px] text-[14px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all shadow-card"
         />
       </div>
 
-      <ChipRow className="mb-5">
+      <ChipRow className="mb-6">
         {categories.map((c) => (
           <Chip key={c} active={filter === c} onClick={() => setFilter(c)}>{c}</Chip>
         ))}
       </ChipRow>
 
-      {/* Crisis support — always visible when Crisis filter is active or as a section */}
+      {/* Crisis support */}
       {(filter === 'Crisis' || filter === 'All') && (
-        <section className="mb-6">
+        <section className="mb-8">
           <h2 className="text-[16px] font-semibold text-text-primary mb-3">Crisis support</h2>
-          <Card className="!p-0 overflow-hidden">
+          <Card elevation={1} className="!p-0 overflow-hidden">
             {crisisResources.map((r, i) => (
               <div key={r.id}>
                 {i > 0 && <div className="border-t border-border-light" />}
-                <div className="flex items-center gap-3 px-4 py-3">
+                <div className="flex items-center gap-3 px-5 py-3.5">
                   <div className="w-9 h-9 rounded-[10px] bg-danger-bg flex items-center justify-center text-danger shrink-0">
                     <Phone className="w-[18px] h-[18px]" />
                   </div>
@@ -88,14 +88,14 @@ export default function ResourcesPage() {
               <p className="text-[14px] text-text-muted">No resources found.</p>
             </div>
           ) : (
-            <Card className="!p-0 overflow-hidden">
+            <Card elevation={1} className="!p-0 overflow-hidden">
               {filtered.map((r, i) => {
                 const Icon = r.icon;
                 return (
                   <div key={r.id}>
                     {i > 0 && <div className="border-t border-border-light" />}
-                    <div className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-surface-dim transition-colors">
-                      <div className="w-9 h-9 rounded-[10px] bg-primary-50 flex items-center justify-center text-primary shrink-0">
+                    <div className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-surface-dim transition-colors">
+                      <div className="w-9 h-9 rounded-[10px] bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center text-primary shrink-0">
                         <Icon className="w-[18px] h-[18px]" />
                       </div>
                       <div className="flex-1 min-w-0">

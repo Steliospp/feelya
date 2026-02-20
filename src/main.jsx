@@ -18,6 +18,14 @@ import WorkshopsPage from './app/user/WorkshopsPage';
 import ResourcesPage from './app/user/ResourcesPage';
 import ProfilePage from './app/user/ProfilePage';
 
+// Therapist portal
+import TherapistShell from './app/therapist/TherapistShell';
+import TherapistDashboardPage from './app/therapist/DashboardPage';
+import TherapistSchedulePage from './app/therapist/SchedulePage';
+import TherapistClientsPage from './app/therapist/ClientsPage';
+import TherapistWorkshopsPage from './app/therapist/WorkshopsPage';
+import TherapistProfilePageT from './app/therapist/ProfilePage';
+
 // HR portal
 import HRShell from './app/hr/HRShell';
 import OverviewPage from './app/hr/OverviewPage';
@@ -64,6 +72,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="workshops" element={<WorkshopsPage />} />
             <Route path="resources" element={<ResourcesPage />} />
             <Route path="profile" element={<ProfilePage />} />
+          </Route>
+
+          {/* Therapist Portal */}
+          <Route path="/therapist" element={<RequireAuth roles={['THERAPIST', 'SUPER_ADMIN']}><TherapistShell /></RequireAuth>}>
+            <Route index element={<TherapistDashboardPage />} />
+            <Route path="schedule" element={<TherapistSchedulePage />} />
+            <Route path="clients" element={<TherapistClientsPage />} />
+            <Route path="workshops" element={<TherapistWorkshopsPage />} />
+            <Route path="profile" element={<TherapistProfilePageT />} />
           </Route>
 
           {/* HR Portal */}

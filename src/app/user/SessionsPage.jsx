@@ -7,6 +7,7 @@ import Badge from '../../components/ui/badge';
 import Button from '../../components/ui/button';
 import Avatar from '../../components/ui/avatar';
 import EmptyState from '../../components/ui/empty-state';
+import PageHeader from '../../components/ui/page-header';
 
 const tabs = ['Upcoming', 'Past'];
 
@@ -26,9 +27,9 @@ export default function SessionsPage() {
 
   return (
     <div>
-      <h1 className="text-[28px] font-semibold text-text-primary mb-4">Sessions</h1>
+      <PageHeader title="Sessions" description="Your therapy sessions, past and upcoming." />
 
-      <ChipRow className="mb-5">
+      <ChipRow className="mb-6">
         {tabs.map((t) => (
           <Chip key={t} active={tab === t} onClick={() => setTab(t)}>{t}</Chip>
         ))}
@@ -44,33 +45,33 @@ export default function SessionsPage() {
               action={<Button onClick={() => navigate('/app/therapists')}>Browse therapists</Button>}
             />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {upcoming.map((s) => (
-                <Card key={s.id} className="!p-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar name={s.therapist} color={s.color} size="md" />
+                <Card key={s.id} elevation={1} className="!p-5">
+                  <div className="flex items-center gap-4">
+                    <Avatar name={s.therapist} color={s.color} size="lg" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-[15px] font-semibold text-text-primary">{s.therapist}</span>
                         {s.licensed && <Badge variant="success">Licensed</Badge>}
                       </div>
-                      <Badge variant="default" className="mt-1">{s.topic}</Badge>
+                      <Badge variant="default" className="mt-1.5">{s.topic}</Badge>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 mt-3 text-[13px] text-text-secondary">
-                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {s.date}</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {s.time}</span>
+                  <div className="flex items-center gap-5 mt-4 text-[13px] text-text-secondary">
+                    <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-primary/60" /> {s.date}</span>
+                    <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-primary/60" /> {s.time}</span>
                     <span>{s.duration}</span>
                   </div>
-                  <div className="flex gap-2 mt-3">
-                    <Button variant="outline" size="sm" className="flex-1" onClick={() => navigate(`/app/therapist/${s.id}`)}>
+                  <div className="flex gap-3 mt-4">
+                    <Button variant="outline" size="sm" onClick={() => navigate(`/app/therapist/${s.id}`)}>
                       Reschedule
                     </Button>
-                    <Button variant="primary" size="sm" className="flex-1">
+                    <Button variant="primary" size="sm">
                       {s.mode === 'video' ? <><Video className="w-4 h-4" /> Join</> : <><MessageCircle className="w-4 h-4" /> Join</>}
                     </Button>
                   </div>
-                  <p className="text-[12px] text-text-muted mt-2">Available to join 5 min before your session.</p>
+                  <p className="text-[12px] text-text-muted mt-2.5">Available to join 5 min before your session.</p>
                 </Card>
               ))}
             </div>
@@ -87,14 +88,14 @@ export default function SessionsPage() {
               desc="Your completed sessions will appear here."
             />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {past.map((s) => (
-                <Card key={s.id} className="!p-4">
-                  <div className="flex items-center gap-3">
+                <Card key={s.id} elevation={1} className="!p-5">
+                  <div className="flex items-center gap-4">
                     <Avatar name={s.therapist} color={s.color} size="md" />
                     <div className="flex-1">
                       <div className="text-[15px] font-semibold text-text-primary">{s.therapist}</div>
-                      <div className="text-[13px] text-text-secondary">{s.topic} &middot; {s.date} &middot; {s.duration}</div>
+                      <div className="text-[13px] text-text-secondary mt-0.5">{s.topic} &middot; {s.date} &middot; {s.duration}</div>
                     </div>
                     {s.rated && (
                       <div className="flex items-center gap-0.5">
@@ -102,11 +103,11 @@ export default function SessionsPage() {
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-2 mt-3">
-                    <Button variant="outline" size="sm" className="flex-1" onClick={() => navigate(`/app/therapist/${s.id}`)}>
+                  <div className="flex gap-3 mt-4">
+                    <Button variant="outline" size="sm" onClick={() => navigate(`/app/therapist/${s.id}`)}>
                       Book again
                     </Button>
-                    {!s.rated && <Button variant="secondary" size="sm" className="flex-1">Leave review</Button>}
+                    {!s.rated && <Button variant="secondary" size="sm">Leave review</Button>}
                   </div>
                 </Card>
               ))}

@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Calendar, Clock, Users, MapPin, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, Users, CheckCircle } from 'lucide-react';
 import { Chip, ChipRow } from '../../components/ui/chip';
 import Card from '../../components/ui/card';
 import Badge from '../../components/ui/badge';
 import Button from '../../components/ui/button';
 import EmptyState from '../../components/ui/empty-state';
+import PageHeader from '../../components/ui/page-header';
 
 const tabs = ['Upcoming', 'Registered', 'Past'];
 
@@ -28,37 +29,33 @@ export default function WorkshopsPage() {
 
   return (
     <div>
-      <h1 className="text-[28px] font-semibold text-text-primary mb-1">Workshops</h1>
-      <p className="text-[14px] text-text-secondary mb-4">Group sessions led by licensed professionals.</p>
+      <PageHeader title="Workshops" description="Group sessions led by licensed professionals." />
 
-      <ChipRow className="mb-5">
+      <ChipRow className="mb-6">
         {tabs.map((t) => (
           <Chip key={t} active={tab === t} onClick={() => setTab(t)}>{t}</Chip>
         ))}
       </ChipRow>
 
       {tab === 'Upcoming' && (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {workshops.map((w) => (
-            <Card key={w.id} className="!p-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="text-[15px] font-semibold text-text-primary">{w.title}</div>
-                  <Badge variant="muted" className="mt-1.5">{w.topic}</Badge>
-                </div>
+            <Card key={w.id} elevation={1} className="!p-5 hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-200">
+              <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center text-primary mb-3">
+                <Users className="w-5 h-5" />
               </div>
+              <div className="text-[15px] font-semibold text-text-primary">{w.title}</div>
+              <span className="inline-block text-[12px] font-medium text-primary bg-primary-50 border border-primary/10 px-2.5 py-0.5 rounded-full mt-2">{w.topic}</span>
               <div className="flex flex-wrap items-center gap-3 mt-3 text-[13px] text-text-secondary">
-                <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {w.date}</span>
-                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {w.time}</span>
+                <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-primary/60" /> {w.date}</span>
+                <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-primary/60" /> {w.time}</span>
                 <span>{w.duration}</span>
               </div>
-              <div className="flex items-center gap-3 mt-2 text-[12px] text-text-muted">
-                <span>Led by {w.facilitator}</span>
-                <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {w.seatsLeft} seats left</span>
+              <div className="text-[12px] text-text-muted mt-2">Led by {w.facilitator}</div>
+              <div className="flex items-center justify-between mt-4">
+                <Badge variant="muted">{w.seatsLeft} seats left</Badge>
+                <Button variant="primary" size="sm">Register</Button>
               </div>
-              <Button variant="primary" size="sm" className="mt-3" full>
-                Register
-              </Button>
             </Card>
           ))}
         </div>
@@ -73,9 +70,9 @@ export default function WorkshopsPage() {
               desc="Browse upcoming workshops and register."
             />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {registeredWorkshops.map((w) => (
-                <Card key={w.id} className="!p-4">
+                <Card key={w.id} elevation={1} className="!p-5">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="text-[15px] font-semibold text-text-primary">{w.title}</div>
@@ -83,14 +80,14 @@ export default function WorkshopsPage() {
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-3 mt-3 text-[13px] text-text-secondary">
-                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {w.date}</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {w.time}</span>
+                    <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-primary/60" /> {w.date}</span>
+                    <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-primary/60" /> {w.time}</span>
                     <span>{w.duration}</span>
                   </div>
                   <div className="text-[12px] text-text-muted mt-2">Led by {w.facilitator}</div>
-                  <div className="flex gap-2 mt-3">
-                    <Button variant="outline" size="sm" className="flex-1">Cancel</Button>
-                    <Button variant="secondary" size="sm" className="flex-1">Add to calendar</Button>
+                  <div className="flex gap-3 mt-4">
+                    <Button variant="outline" size="sm">Cancel</Button>
+                    <Button variant="secondary" size="sm">Add to calendar</Button>
                   </div>
                 </Card>
               ))}
@@ -108,9 +105,9 @@ export default function WorkshopsPage() {
               desc="Workshops you've attended will appear here."
             />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {pastWorkshops.map((w) => (
-                <Card key={w.id} className="!p-4">
+                <Card key={w.id} elevation={1} className="!p-5">
                   <div className="text-[15px] font-semibold text-text-primary">{w.title}</div>
                   <div className="text-[13px] text-text-secondary mt-1">{w.date} &middot; {w.duration} &middot; {w.facilitator}</div>
                   {w.attended && <Badge variant="success" className="mt-2">Attended</Badge>}

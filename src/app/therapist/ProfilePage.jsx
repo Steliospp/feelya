@@ -1,15 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { MessageCircle, Clock, Users, Shield, CreditCard, Bell, HelpCircle, RotateCcw, LogOut } from 'lucide-react';
+import { Star, Clock, Users, Shield, Bell, HelpCircle, Settings, LogOut } from 'lucide-react';
 import Avatar from '../../components/ui/avatar';
+import Badge from '../../components/ui/badge';
 import Card from '../../components/ui/card';
 import ListRow from '../../components/ui/list-row';
 import PageHeader from '../../components/ui/page-header';
 
 const stats = [
-  { label: 'Chats', value: 24, icon: <MessageCircle className="w-4 h-4" /> },
-  { label: 'Minutes', value: 720, icon: <Clock className="w-4 h-4" /> },
-  { label: 'Workshops', value: 3, icon: <Users className="w-4 h-4" /> },
+  { label: 'Sessions', value: 1240, icon: <Clock className="w-4 h-4" /> },
+  { label: 'Clients', value: 28, icon: <Users className="w-4 h-4" /> },
+  { label: 'Rating', value: 4.9, icon: <Star className="w-4 h-4" /> },
 ];
 
 export default function ProfilePage() {
@@ -25,18 +26,28 @@ export default function ProfilePage() {
     <div className="max-w-[720px]">
       <PageHeader title="Profile" />
 
-      {/* Profile card */}
+      {/* Profile hero */}
       <Card elevation={2} className="!p-0 overflow-hidden mb-6">
         <div className="bg-gradient-to-r from-primary-50 via-primary-50/60 to-transparent px-6 py-5">
           <div className="flex items-center gap-4">
             <Avatar name={`${user?.first_name} ${user?.last_name}`} color={user?.avatar_color} size="xl" />
             <div>
               <div className="text-[18px] font-semibold text-text-primary">{user?.first_name} {user?.last_name}</div>
-              <div className="text-[14px] text-text-secondary">{user?.email}</div>
-              <div className="text-[13px] text-text-muted mt-0.5">{user?.companyName}</div>
+              <div className="text-[14px] text-text-secondary">{user?.credentials || 'Clinical Psychologist, PhD'}</div>
+              <div className="flex items-center gap-2 mt-1.5">
+                <Badge variant="success"><Shield className="w-3 h-3 mr-1" /> Licensed</Badge>
+                <span className="text-[13px] text-text-muted">{user?.email}</span>
+              </div>
             </div>
           </div>
         </div>
+        {user?.specialties && (
+          <div className="px-6 py-3 border-t border-border-light flex flex-wrap gap-2">
+            {user.specialties.map((s) => (
+              <span key={s} className="text-[12px] font-medium text-primary bg-primary-50 border border-primary/10 px-2.5 py-0.5 rounded-full">{s}</span>
+            ))}
+          </div>
+        )}
       </Card>
 
       {/* Stats row */}
@@ -53,15 +64,13 @@ export default function ProfilePage() {
 
       {/* Settings */}
       <Card elevation={1} className="!p-0 overflow-hidden">
-        <ListRow icon={<Shield className="w-5 h-5" />} label="Safety & resources" desc="Crisis lines and support" onClick={() => {}} />
+        <ListRow icon={<Settings className="w-5 h-5" />} label="Availability settings" desc="Manage your schedule and time slots" onClick={() => {}} />
         <div className="border-t border-border-light" />
-        <ListRow icon={<CreditCard className="w-5 h-5" />} label="Payment" desc="Manage your plan" onClick={() => {}} />
+        <ListRow icon={<Bell className="w-5 h-5" />} label="Notifications" desc="Session reminders and client updates" onClick={() => {}} />
         <div className="border-t border-border-light" />
-        <ListRow icon={<Bell className="w-5 h-5" />} label="Notifications" desc="Reminders and updates" onClick={() => {}} />
+        <ListRow icon={<Shield className="w-5 h-5" />} label="Credentials" desc="Professional qualifications and licences" onClick={() => {}} />
         <div className="border-t border-border-light" />
-        <ListRow icon={<HelpCircle className="w-5 h-5" />} label="Help" desc="FAQs and contact support" onClick={() => {}} />
-        <div className="border-t border-border-light" />
-        <ListRow icon={<RotateCcw className="w-5 h-5" />} label="Reset app" desc="Clear local data" onClick={() => {}} />
+        <ListRow icon={<HelpCircle className="w-5 h-5" />} label="Support" desc="FAQs and contact Feelya team" onClick={() => {}} />
       </Card>
 
       {/* Logout */}
