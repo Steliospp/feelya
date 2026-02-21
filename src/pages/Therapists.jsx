@@ -124,11 +124,11 @@ export default function Therapists() {
   const [sort, setSort] = useState('recommended');
 
   const [openGroups, setOpenGroups] = useState({
-    price: true,
-    gender: true,
-    spec: true,
-    lang: true,
-    type: true,
+    price: false,
+    gender: false,
+    spec: false,
+    lang: false,
+    type: false,
   });
 
   const therapists = useMemo(() => {
