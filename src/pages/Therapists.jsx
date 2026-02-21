@@ -191,7 +191,7 @@ export default function Therapists() {
             <input
               className="mp__search"
               type="text"
-              placeholder="Search name, title or specialisation..."
+              placeholder="Search..."
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
