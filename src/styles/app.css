@@ -420,7 +420,7 @@ button { font-family: var(--font); }
 }
 
 /* ── Sidebar ── */
-.mp__sidebar { position: relative; overflow: hidden; }
+.mp__sidebar { position: relative; min-width: 0; }
 
 .mp__filters {
   position: sticky;
