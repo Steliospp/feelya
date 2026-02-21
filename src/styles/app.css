@@ -916,6 +916,25 @@ button { font-family: var(--font); }
   font-weight: 600;
 }
 
+/* Cancel confirmation */
+.wc__confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wc__confirm-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+
+.wc__confirm-btns {
+  display: flex;
+  gap: 8px;
+}
+
 /* Suggest topic */
 .ws__suggest {
   margin-bottom: 20px;
@@ -1282,6 +1301,11 @@ button { font-family: var(--font); }
   text-align: center;
   padding: 60px 20px;
   color: var(--text-sec);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
 }
 
 .empty-state svg { color: var(--text-muted); margin-bottom: 16px; }
