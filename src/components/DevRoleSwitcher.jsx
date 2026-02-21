@@ -32,7 +32,8 @@ export default function DevRoleSwitcher() {
     navigate('/login');
   };
 
-  const onPointerDown = useCallback((e) => {
+  /* Drag is initiated only from the handle (DEV label) */
+  const onHandlePointerDown = useCallback((e) => {
     dragging.current = true;
     moved.current = false;
     offset.current = {
@@ -42,7 +43,7 @@ export default function DevRoleSwitcher() {
     e.currentTarget.setPointerCapture(e.pointerId);
   }, [pos]);
 
-  const onPointerMove = useCallback((e) => {
+  const onHandlePointerMove = useCallback((e) => {
     if (!dragging.current) return;
     moved.current = true;
     const el = panelRef.current;
@@ -54,7 +55,7 @@ export default function DevRoleSwitcher() {
     });
   }, []);
 
-  const onPointerUp = useCallback(() => {
+  const onHandlePointerUp = useCallback(() => {
     dragging.current = false;
   }, []);
 
@@ -65,9 +66,6 @@ export default function DevRoleSwitcher() {
   return (
     <div
       ref={panelRef}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
       style={{
         position: 'fixed',
         left: pos.x,
@@ -82,22 +80,26 @@ export default function DevRoleSwitcher() {
         boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
         fontSize: 12,
         fontFamily: "'Inter', -apple-system, sans-serif",
-        cursor: dragging.current ? 'grabbing' : 'grab',
         userSelect: 'none',
         touchAction: 'none',
       }}
     >
+      {/* Drag handle */}
       <span
+        onPointerDown={onHandlePointerDown}
+        onPointerMove={onHandlePointerMove}
+        onPointerUp={onHandlePointerUp}
         onClick={toggleCollapse}
         style={{
           color: '#94a3b8',
           fontWeight: 600,
           marginRight: collapsed ? 0 : 4,
-          cursor: 'pointer',
+          cursor: 'grab',
           fontSize: 11,
           letterSpacing: '0.05em',
+          padding: '2px 4px',
         }}
-        title={collapsed ? 'Expand' : 'Collapse'}
+        title="Drag to move · Click to collapse"
       >
         DEV {collapsed ? '▸' : '▾'}
       </span>
