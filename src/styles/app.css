@@ -550,6 +550,7 @@ button { font-family: var(--font); }
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-left: auto;
 }
 
 .mp__search-wrap {
