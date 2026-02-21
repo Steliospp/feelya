@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 const mockWorkshops = [
   { id: 1, title: 'Managing Stress at Work', desc: 'Learn practical strategies to manage workplace stress, set healthy boundaries, and prevent burnout.', host: 'Dr. Sarah Mitchell', date: 'Tue 25 Feb 2026', time: '12:00 PM', duration: 60, spots: 8, totalSpots: 20, category: 'Stress', registered: false },
@@ -33,12 +33,29 @@ const personIcon = (
 );
 
 export default function Workshops() {
-  const [workshops, setWorkshops] = useState(mockWorkshops);
+  const [workshops, setWorkshops] = useState(() => {
+    try {
+      const saved = localStorage.getItem('feelya_workshops');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Merge saved registration state with mock data
+        return mockWorkshops.map(w => {
+          const s = parsed.find(p => p.id === w.id);
+          return s ? { ...w, registered: s.registered, spots: s.spots } : w;
+        });
+      }
+    } catch {}
+    return mockWorkshops;
+  });
   const [search, setSearch] = useState('');
   const [suggestOpen, setSuggestOpen] = useState(false);
   const [suggestion, setSuggestion] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [confirmingCancel, setConfirmingCancel] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem('feelya_workshops', JSON.stringify(workshops.map(w => ({ id: w.id, registered: w.registered, spots: w.spots }))));
+  }, [workshops]);
 
   /* filters */
   const [filters, setFilters] = useState({ category: '', duration: '', availability: '' });
@@ -235,7 +252,7 @@ export default function Workshops() {
                     <div className="wc__confirm">
                       <span className="wc__confirm-text">Are you sure?</span>
                       <div className="wc__confirm-btns">
-                        <button className="btn btn--ghost btn--sm" style={{ flex: 1 }} onClick={() => confirmCancel(w.id)}>Yes, cancel</button>
+                        <button className="btn btn--danger-outline btn--sm" style={{ flex: 1 }} onClick={() => confirmCancel(w.id)}>Yes, cancel</button>
                         <button className="btn btn--primary btn--sm" style={{ flex: 1 }} onClick={() => setConfirmingCancel(null)}>Keep</button>
                       </div>
                     </div>
