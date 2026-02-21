@@ -410,25 +410,20 @@ button { font-family: var(--font); }
 /* ============ THERAPIST MARKETPLACE ============ */
 
 /* Page wrapper */
-.mp { max-width: 1400px; margin: 0 auto; }
-
-/* 12-column grid: sidebar 3 + results 9 */
-.mp__grid {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  gap: 32px;
-}
-
-/* ── Sidebar ── */
-.mp__sidebar { position: relative; min-width: 0; }
+.mp { max-width: 1200px; margin: 0 auto; padding: 0 24px; box-sizing: border-box; }
 
 .mp__filters {
-  position: sticky;
-  top: 24px;
   background: var(--bg-white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 16px;
+  margin-bottom: 24px;
+}
+
+.mp__filters-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
 }
 
 .mp__filters-head {
@@ -460,8 +455,7 @@ button { font-family: var(--font); }
 
 /* Filter group accordion */
 .mp__fg {
-  border-top: 1px solid var(--border-light);
-  padding: 8px 0 4px;
+  padding: 0;
 }
 
 .mp__fg-hd {
@@ -524,7 +518,7 @@ button { font-family: var(--font); }
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .mp__results-left {
@@ -596,23 +590,21 @@ button { font-family: var(--font); }
 .mp__cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 20px;
 }
 
-@media (min-width: 1600px) {
-  .mp__cards { grid-template-columns: repeat(3, 1fr); }
-}
-
-/* ── Horizontal therapist card ── */
+/* ── Therapist card ── */
 .tc {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 14px;
   background: var(--bg-white);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 20px;
+  padding: 18px;
   transition: box-shadow 0.2s, border-color 0.2s;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .tc:hover {
@@ -719,9 +711,10 @@ button { font-family: var(--font); }
   color: var(--text-muted);
   line-height: 1.5;
   margin-top: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .tc__session-types {
@@ -820,17 +813,18 @@ button { font-family: var(--font); }
 }
 
 /* ── Marketplace responsive ── */
-@media (max-width: 1100px) {
+@media (max-width: 900px) {
+  .mp__filters-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
   .mp__cards { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 900px) {
-  .mp__grid { grid-template-columns: 1fr; }
-  .mp__sidebar { position: static; }
-  .mp__filters { position: static; }
-}
-
 @media (max-width: 640px) {
+  .mp { padding: 0 12px; }
+  .mp__filters-row {
+    grid-template-columns: 1fr;
+  }
   .tc { flex-direction: column; }
   .tc__actions {
     flex-direction: row;
