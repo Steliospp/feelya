@@ -134,10 +134,10 @@ export default function Therapists() {
   const therapists = useMemo(() => {
     let list = MOCK_THERAPISTS.filter(t => {
       if (filters.price) {
-        const vp = t.video_price;
-        if (filters.price === '0-50' && vp > 50) return false;
-        if (filters.price === '50-80' && (vp < 50 || vp > 80)) return false;
-        if (filters.price === '80+' && vp < 80) return false;
+        const lp = getLowestPrice(t);
+        if (filters.price === '0-50' && lp > 50) return false;
+        if (filters.price === '50-80' && (lp < 50 || lp > 80)) return false;
+        if (filters.price === '80+' && lp < 80) return false;
       }
       if (filters.gender && t.gender !== filters.gender) return false;
       if (filters.spec && !t.specialisations.includes(filters.spec)) return false;
@@ -179,134 +179,127 @@ export default function Therapists() {
 
   return (
     <div className="mp">
-      {/* ── 12-col grid: sidebar + results ── */}
-      <div className="mp__grid">
-
-        {/* ── Filters sidebar (col-span-3) ── */}
-        <aside className="mp__sidebar">
-          <div className="mp__filters">
-            <div className="mp__filters-head">
-              <span className="mp__filters-title">Filters</span>
-              {activeFilterCount > 0 && (
-                <button className="mp__filters-clear" onClick={resetFilters}>Clear all</button>
-              )}
-            </div>
-
-            {/* Price */}
-            <div className={`mp__fg${openGroups.price ? ' mp__fg--open' : ''}`}>
-              <button className="mp__fg-hd" onClick={() => toggleGroup('price')}>Price Range {chevronSvg}</button>
-              <div className="mp__fg-bd">
-                <select className="mp__select" value={filters.price} onChange={e => handleFilterChange('price', e.target.value)}>
-                  <option value="">Any price</option>
-                  <option value="0-50">Up to &pound;50</option>
-                  <option value="50-80">&pound;50 – &pound;80</option>
-                  <option value="80+">£80 and more</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Gender */}
-            <div className={`mp__fg${openGroups.gender ? ' mp__fg--open' : ''}`}>
-              <button className="mp__fg-hd" onClick={() => toggleGroup('gender')}>Gender {chevronSvg}</button>
-              <div className="mp__fg-bd">
-                <select className="mp__select" value={filters.gender} onChange={e => handleFilterChange('gender', e.target.value)}>
-                  <option value="">Any</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Specialisations */}
-            <div className={`mp__fg${openGroups.spec ? ' mp__fg--open' : ''}`}>
-              <button className="mp__fg-hd" onClick={() => toggleGroup('spec')}>Specialisations {chevronSvg}</button>
-              <div className="mp__fg-bd">
-                <select className="mp__select" value={filters.spec} onChange={e => handleFilterChange('spec', e.target.value)}>
-                  <option value="">All</option>
-                  <option value="Anxiety">Anxiety</option>
-                  <option value="Depression">Depression</option>
-                  <option value="Stress">Stress</option>
-                  <option value="Burnout">Burnout</option>
-                  <option value="Relationships">Relationships</option>
-                  <option value="Trauma">Trauma</option>
-                  <option value="OCD">OCD</option>
-                  <option value="Self-esteem">Self-esteem</option>
-                  <option value="LGBTQ+">LGBTQ+</option>
-                  <option value="Grief">Grief</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Languages */}
-            <div className={`mp__fg${openGroups.lang ? ' mp__fg--open' : ''}`}>
-              <button className="mp__fg-hd" onClick={() => toggleGroup('lang')}>Languages {chevronSvg}</button>
-              <div className="mp__fg-bd">
-                <select className="mp__select" value={filters.lang} onChange={e => handleFilterChange('lang', e.target.value)}>
-                  <option value="">Any language</option>
-                  <option value="English">English</option>
-                  <option value="French">French</option>
-                  <option value="Mandarin">Mandarin</option>
-                  <option value="Hindi">Hindi</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Session Type */}
-            <div className={`mp__fg${openGroups.type ? ' mp__fg--open' : ''}`}>
-              <button className="mp__fg-hd" onClick={() => toggleGroup('type')}>Session Type {chevronSvg}</button>
-              <div className="mp__fg-bd">
-                <select className="mp__select" value={filters.type} onChange={e => handleFilterChange('type', e.target.value)}>
-                  <option value="">Video &amp; Audio</option>
-                  <option value="video">Video only</option>
-                  <option value="audio">Audio only</option>
-                </select>
-              </div>
-            </div>
+      {/* ── Header row ── */}
+      <div className="mp__results-head">
+        <div className="mp__results-left">
+          <h1 className="mp__title">Therapists</h1>
+          <span className="mp__count">{therapists.length} available</span>
+        </div>
+        <div className="mp__results-right">
+          <div className="mp__search-wrap">
+            <span className="mp__search-icon">{searchIcon}</span>
+            <input
+              className="mp__search"
+              type="text"
+              placeholder="Search name, title or specialisation..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
           </div>
-        </aside>
+          <select className="mp__sort" value={sort} onChange={e => setSort(e.target.value)}>
+            {SORT_OPTIONS.map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-        {/* ── Results area (col-span-9) ── */}
-        <section className="mp__results">
-          {/* Results header */}
-          <div className="mp__results-head">
-            <div className="mp__results-left">
-              <h1 className="mp__title">Therapists</h1>
-              <span className="mp__count">{therapists.length} available</span>
-            </div>
-            <div className="mp__results-right">
-              <div className="mp__search-wrap">
-                <span className="mp__search-icon">{searchIcon}</span>
-                <input
-                  className="mp__search"
-                  type="text"
-                  placeholder="Search name, title or specialisation..."
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                />
-              </div>
-              <select className="mp__sort" value={sort} onChange={e => setSort(e.target.value)}>
-                {SORT_OPTIONS.map(o => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
+      {/* ── Filters bar ── */}
+      <div className="mp__filters">
+        <div className="mp__filters-head">
+          <span className="mp__filters-title">Filters</span>
+          {activeFilterCount > 0 && (
+            <button className="mp__filters-clear" onClick={resetFilters}>Clear all</button>
+          )}
+        </div>
+
+        <div className="mp__filters-row">
+          {/* Price */}
+          <div className={`mp__fg${openGroups.price ? ' mp__fg--open' : ''}`}>
+            <button className="mp__fg-hd" onClick={() => toggleGroup('price')}>Price Range {chevronSvg}</button>
+            <div className="mp__fg-bd">
+              <select className="mp__select" value={filters.price} onChange={e => handleFilterChange('price', e.target.value)}>
+                <option value="">Any price</option>
+                <option value="0-50">Up to &pound;50</option>
+                <option value="50-80">&pound;50 – &pound;80</option>
+                <option value="80+">£80 and more</option>
               </select>
             </div>
           </div>
 
-          {/* Cards grid */}
-          {therapists.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-state__title">No therapists found</div>
-              <p className="empty-state__desc">Try adjusting your filters or search query.</p>
+          {/* Gender */}
+          <div className={`mp__fg${openGroups.gender ? ' mp__fg--open' : ''}`}>
+            <button className="mp__fg-hd" onClick={() => toggleGroup('gender')}>Gender {chevronSvg}</button>
+            <div className="mp__fg-bd">
+              <select className="mp__select" value={filters.gender} onChange={e => handleFilterChange('gender', e.target.value)}>
+                <option value="">Any</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
             </div>
-          ) : (
-            <div className="mp__cards">
-              {therapists.map(t => (
-                <TherapistCard key={t.id} therapist={t} onViewProfile={openProfileModal} onBookNow={openBookingModal} />
-              ))}
+          </div>
+
+          {/* Specialisations */}
+          <div className={`mp__fg${openGroups.spec ? ' mp__fg--open' : ''}`}>
+            <button className="mp__fg-hd" onClick={() => toggleGroup('spec')}>Specialisations {chevronSvg}</button>
+            <div className="mp__fg-bd">
+              <select className="mp__select" value={filters.spec} onChange={e => handleFilterChange('spec', e.target.value)}>
+                <option value="">All</option>
+                <option value="Anxiety">Anxiety</option>
+                <option value="Depression">Depression</option>
+                <option value="Stress">Stress</option>
+                <option value="Burnout">Burnout</option>
+                <option value="Relationships">Relationships</option>
+                <option value="Trauma">Trauma</option>
+                <option value="OCD">OCD</option>
+                <option value="Self-esteem">Self-esteem</option>
+                <option value="LGBTQ+">LGBTQ+</option>
+                <option value="Grief">Grief</option>
+              </select>
             </div>
-          )}
-        </section>
+          </div>
+
+          {/* Languages */}
+          <div className={`mp__fg${openGroups.lang ? ' mp__fg--open' : ''}`}>
+            <button className="mp__fg-hd" onClick={() => toggleGroup('lang')}>Languages {chevronSvg}</button>
+            <div className="mp__fg-bd">
+              <select className="mp__select" value={filters.lang} onChange={e => handleFilterChange('lang', e.target.value)}>
+                <option value="">Any language</option>
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="Mandarin">Mandarin</option>
+                <option value="Hindi">Hindi</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Session Type */}
+          <div className={`mp__fg${openGroups.type ? ' mp__fg--open' : ''}`}>
+            <button className="mp__fg-hd" onClick={() => toggleGroup('type')}>Session Type {chevronSvg}</button>
+            <div className="mp__fg-bd">
+              <select className="mp__select" value={filters.type} onChange={e => handleFilterChange('type', e.target.value)}>
+                <option value="">Video &amp; Audio</option>
+                <option value="video">Video only</option>
+                <option value="audio">Audio only</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* ── Cards grid ── */}
+      {therapists.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-state__title">No therapists found</div>
+          <p className="empty-state__desc">Try adjusting your filters or search query.</p>
+        </div>
+      ) : (
+        <div className="mp__cards">
+          {therapists.map(t => (
+            <TherapistCard key={t.id} therapist={t} onViewProfile={openProfileModal} onBookNow={openBookingModal} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
