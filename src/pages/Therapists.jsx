@@ -133,7 +133,12 @@ export default function Therapists() {
 
   const therapists = useMemo(() => {
     let list = MOCK_THERAPISTS.filter(t => {
-      if (filters.price && t.video_price > Number(filters.price)) return false;
+      if (filters.price) {
+        const vp = t.video_price;
+        if (filters.price === '0-50' && vp > 50) return false;
+        if (filters.price === '50-80' && (vp < 50 || vp > 80)) return false;
+        if (filters.price === '80+' && vp < 80) return false;
+      }
       if (filters.gender && t.gender !== filters.gender) return false;
       if (filters.spec && !t.specialisations.includes(filters.spec)) return false;
       if (filters.lang && !t.languages.includes(filters.lang)) return false;
@@ -193,9 +198,9 @@ export default function Therapists() {
               <div className="mp__fg-bd">
                 <select className="mp__select" value={filters.price} onChange={e => handleFilterChange('price', e.target.value)}>
                   <option value="">Any price</option>
-                  <option value="70">Up to &pound;70/session</option>
-                  <option value="90">Up to &pound;90/session</option>
-                  <option value="120">Up to &pound;120/session</option>
+                  <option value="0-50">Up to &pound;50</option>
+                  <option value="50-80">&pound;50 – &pound;80</option>
+                  <option value="80+">£80 and more</option>
                 </select>
               </div>
             </div>
