@@ -38,6 +38,7 @@ export default function Workshops() {
   const [suggestOpen, setSuggestOpen] = useState(false);
   const [suggestion, setSuggestion] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [confirmingCancel, setConfirmingCancel] = useState(null);
 
   /* filters */
   const [filters, setFilters] = useState({ category: '', duration: '', availability: '' });
@@ -75,9 +76,21 @@ export default function Workshops() {
   }, [workshops, filters, search]);
 
   function handleRegister(id) {
+    const workshop = workshops.find(w => w.id === id);
+    if (workshop?.registered) {
+      setConfirmingCancel(id);
+      return;
+    }
     setWorkshops(prev => prev.map(w =>
-      w.id === id ? { ...w, registered: !w.registered, spots: w.registered ? w.spots + 1 : w.spots - 1 } : w
+      w.id === id ? { ...w, registered: true, spots: w.spots - 1 } : w
     ));
+  }
+
+  function confirmCancel(id) {
+    setWorkshops(prev => prev.map(w =>
+      w.id === id ? { ...w, registered: false, spots: w.spots + 1 } : w
+    ));
+    setConfirmingCancel(null);
   }
 
   function handleSuggest() {
@@ -218,12 +231,22 @@ export default function Workshops() {
                   <div className={`wc__spots${w.spots < 5 ? ' wc__spots--low' : ''}`}>
                     {w.spots} / {w.totalSpots} spots remaining
                   </div>
-                  <button
-                    className={`btn btn--${w.registered ? 'ghost' : 'primary'} btn--sm btn--full`}
-                    onClick={() => handleRegister(w.id)}
-                  >
-                    {w.registered ? 'Cancel Registration' : 'Register'}
-                  </button>
+                  {confirmingCancel === w.id ? (
+                    <div className="wc__confirm">
+                      <span className="wc__confirm-text">Are you sure?</span>
+                      <div className="wc__confirm-btns">
+                        <button className="btn btn--ghost btn--sm" style={{ flex: 1 }} onClick={() => confirmCancel(w.id)}>Yes, cancel</button>
+                        <button className="btn btn--primary btn--sm" style={{ flex: 1 }} onClick={() => setConfirmingCancel(null)}>Keep</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      className={`btn btn--${w.registered ? 'ghost' : 'primary'} btn--sm btn--full`}
+                      onClick={() => handleRegister(w.id)}
+                    >
+                      {w.registered ? 'Cancel Registration' : 'Register'}
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
