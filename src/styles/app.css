@@ -521,16 +521,16 @@ button { font-family: var(--font); }
 .mp__results-head {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   margin-bottom: 16px;
+  width: 100%;
 }
 
 .mp__results-left {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  flex: 1;
-  min-width: 0;
 }
 
 .mp__title {
@@ -551,6 +551,7 @@ button { font-family: var(--font); }
   align-items: center;
   gap: 10px;
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 .mp__search-wrap {
