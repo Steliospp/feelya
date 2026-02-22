@@ -529,6 +529,8 @@ button { font-family: var(--font); }
   display: flex;
   align-items: baseline;
   gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
 .mp__title {
