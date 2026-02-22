@@ -410,7 +410,7 @@ button { font-family: var(--font); }
 /* ============ THERAPIST MARKETPLACE ============ */
 
 /* Page wrapper */
-.mp { max-width: 1200px; margin: 0 auto; padding: 0 24px; box-sizing: border-box; }
+.mp { max-width: 1200px; margin: 0 auto; padding: 0 24px; box-sizing: border-box; width: 100%; }
 
 /* Sidebar + results grid */
 .mp__grid {
@@ -521,8 +521,6 @@ button { font-family: var(--font); }
 .mp__results-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
 }
