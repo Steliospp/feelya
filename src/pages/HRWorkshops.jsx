@@ -27,6 +27,8 @@ export default function HRWorkshops() {
   const [activeTab, setActiveTab] = useState('all');
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ title: '', description: '', date: '', time: '', duration: '60', capacity: '20', category: 'Wellbeing' });
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({ title: '', description: '', date: '', time: '', duration: '', capacity: '', category: '' });
 
   function refresh() {
     setWorkshops(getWorkshops().filter(w => w.companyId === user.companyId));
@@ -71,8 +73,32 @@ export default function HRWorkshops() {
     refresh();
   }
 
-  function handleResubmit(id) {
-    updateWorkshop(id, { status: 'pending_review' });
+  function startEditing(w) {
+    setEditingId(w.id);
+    setEditForm({
+      title: w.title,
+      description: w.description,
+      date: w.date,
+      time: w.time,
+      duration: String(w.duration),
+      capacity: String(w.capacity),
+      category: w.category,
+    });
+  }
+
+  function handleEditSubmit(e) {
+    e.preventDefault();
+    updateWorkshop(editingId, {
+      title: editForm.title,
+      description: editForm.description,
+      date: editForm.date,
+      time: editForm.time,
+      duration: Number(editForm.duration),
+      capacity: Number(editForm.capacity),
+      category: editForm.category,
+      status: 'pending_review',
+    });
+    setEditingId(null);
     refresh();
   }
 
@@ -178,36 +204,104 @@ export default function HRWorkshops() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {filtered.map(w => (
             <div className="card card--no-hover" key={w.id} style={{ padding: 20 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
-                <div style={{ flex: 1, minWidth: 200 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <span style={{ fontWeight: 700, fontSize: 16 }}>{w.title}</span>
+              {editingId === w.id ? (
+                <form onSubmit={handleEditSubmit}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontWeight: 700, fontSize: 16 }}>Edit Workshop</span>
                     <span className={`tag ${STATUS_TAG[w.status] || ''}`}>{STATUS_LABELS[w.status]}</span>
                   </div>
-                  <div style={{ fontSize: 13, color: 'var(--text-sec)', marginBottom: 8 }}>{w.description}</div>
-                  <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
-                    <span>{w.category}</span>
-                    <span>{w.date} at {w.time}</span>
-                    <span>{w.duration}min</span>
-                    <span>{w.capacity} capacity</span>
-                    {w.therapist && <span>Therapist: {w.therapist.name}</span>}
-                    {w.attendees.length > 0 && <span>{w.attendees.length} registered</span>}
-                  </div>
-                </div>
-                {w.status === 'needs_changes' && (
-                  <button className="btn btn--outline btn--sm" onClick={() => handleResubmit(w.id)}>Resubmit</button>
-                )}
-              </div>
-              {/* Show admin comments */}
-              {w.comments.length > 0 && (
-                <div style={{ marginTop: 12, padding: 12, background: 'var(--bg)', borderRadius: 8 }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 6 }}>Review Comments</div>
-                  {w.comments.map((c, i) => (
-                    <div key={i} style={{ fontSize: 13, color: 'var(--text-sec)', marginBottom: 4 }}>
-                      <strong>{c.by}:</strong> {c.text}
+                  {/* Show admin comments above the edit form */}
+                  {w.comments.length > 0 && (
+                    <div style={{ marginBottom: 16, padding: 12, background: 'var(--bg)', borderRadius: 8 }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 6 }}>Review Comments</div>
+                      {w.comments.map((c, i) => (
+                        <div key={i} style={{ fontSize: 13, color: 'var(--text-sec)', marginBottom: 4 }}>
+                          <strong>{c.by}:</strong> {c.text}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )}
+                  <div className="profile-grid">
+                    <div>
+                      <div className="form-group">
+                        <label className="form-label">Title</label>
+                        <input className="form-input" value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} required />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Description</label>
+                        <textarea className="form-input" rows={3} value={editForm.description} onChange={e => setEditForm({...editForm, description: e.target.value})} required />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Category</label>
+                        <select className="form-input" value={editForm.category} onChange={e => setEditForm({...editForm, category: e.target.value})}>
+                          <option>Wellbeing</option>
+                          <option>Stress</option>
+                          <option>Anxiety</option>
+                          <option>Mindfulness</option>
+                          <option>Relationships</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="form-group">
+                        <label className="form-label">Preferred Date</label>
+                        <input className="form-input" type="date" value={editForm.date} onChange={e => setEditForm({...editForm, date: e.target.value})} required />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Preferred Time</label>
+                        <input className="form-input" type="time" value={editForm.time} onChange={e => setEditForm({...editForm, time: e.target.value})} required />
+                      </div>
+                      <div style={{ display: 'flex', gap: 12 }}>
+                        <div className="form-group" style={{ flex: 1 }}>
+                          <label className="form-label">Duration (min)</label>
+                          <input className="form-input" type="number" value={editForm.duration} onChange={e => setEditForm({...editForm, duration: e.target.value})} />
+                        </div>
+                        <div className="form-group" style={{ flex: 1 }}>
+                          <label className="form-label">Capacity</label>
+                          <input className="form-input" type="number" value={editForm.capacity} onChange={e => setEditForm({...editForm, capacity: e.target.value})} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                    <button className="btn btn--primary btn--sm" type="submit">Save & Resubmit</button>
+                    <button className="btn btn--outline btn--sm" type="button" onClick={() => setEditingId(null)}>Cancel</button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+                    <div style={{ flex: 1, minWidth: 200 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontWeight: 700, fontSize: 16 }}>{w.title}</span>
+                        <span className={`tag ${STATUS_TAG[w.status] || ''}`}>{STATUS_LABELS[w.status]}</span>
+                      </div>
+                      <div style={{ fontSize: 13, color: 'var(--text-sec)', marginBottom: 8 }}>{w.description}</div>
+                      <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
+                        <span>{w.category}</span>
+                        <span>{w.date} at {w.time}</span>
+                        <span>{w.duration}min</span>
+                        <span>{w.capacity} capacity</span>
+                        {w.therapist && <span>Therapist: {w.therapist.name}</span>}
+                        {w.attendees.length > 0 && <span>{w.attendees.length} registered</span>}
+                      </div>
+                    </div>
+                    {w.status === 'needs_changes' && (
+                      <button className="btn btn--primary btn--sm" onClick={() => startEditing(w)}>Edit & Resubmit</button>
+                    )}
+                  </div>
+                  {/* Show admin comments */}
+                  {w.comments.length > 0 && (
+                    <div style={{ marginTop: 12, padding: 12, background: 'var(--bg)', borderRadius: 8 }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 6 }}>Review Comments</div>
+                      {w.comments.map((c, i) => (
+                        <div key={i} style={{ fontSize: 13, color: 'var(--text-sec)', marginBottom: 4 }}>
+                          <strong>{c.by}:</strong> {c.text}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ))}
