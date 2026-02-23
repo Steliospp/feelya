@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { downloadCSV } from '../lib/csv';
 import '../styles/app.css';
 
 const monthlyData = [
@@ -32,11 +34,32 @@ export default function HRInsights() {
   const maxSessions = Math.max(...monthlyData.map(m => m.sessions));
   const maxDeptEngagement = 100;
 
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+
+  function handleExport() {
+    downloadCSV('insights-report.csv', monthlyData, [
+      { key: 'month', label: 'Month' },
+      { key: 'sessions', label: 'Sessions' },
+      { key: 'engagement', label: 'Engagement %' },
+      { key: 'wellbeing', label: 'Wellbeing Score' },
+      { key: 'workshops', label: 'Workshops' },
+    ]);
+  }
+
   return (
     <div className="page">
-      <div className="page-header">
-        <h1 className="page-header__title">Insights</h1>
-        <p className="page-header__subtitle">Aggregated trends and analytics for your organisation's wellbeing programme.</p>
+      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+        <div>
+          <h1 className="page-header__title">Insights</h1>
+          <p className="page-header__subtitle">Aggregated trends and analytics for your organisation's wellbeing programme.</p>
+        </div>
+        <div className="export-bar">
+          <input type="date" className="export-bar__date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
+          <span className="export-bar__sep">to</span>
+          <input type="date" className="export-bar__date" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+          <button className="btn btn--outline btn--sm" onClick={handleExport}>Export CSV</button>
+        </div>
       </div>
 
       {/* Trend Charts */}

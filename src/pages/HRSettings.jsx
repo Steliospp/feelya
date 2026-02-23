@@ -94,6 +94,37 @@ export default function HRSettings() {
           </div>
 
           <div className="card card--no-hover">
+            <div className="card__title">Billing</div>
+            <div className="form-group">
+              <label className="form-label">Current Plan</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span className="tag tag--success">Professional</span>
+                <span style={{ fontSize: 13, color: 'var(--text-sec)' }}>£4.50/employee/month</span>
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Payment Method</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{
+                  padding: '6px 12px',
+                  background: 'var(--bg)',
+                  borderRadius: 8,
+                  fontSize: 13,
+                  fontFamily: 'monospace',
+                  fontWeight: 600,
+                }}>
+                  **** **** **** 4242
+                </div>
+                <button type="button" className="btn btn--ghost btn--xs">Update</button>
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Next Invoice</label>
+              <div style={{ fontSize: 14, color: 'var(--text-sec)' }}>1 Mar 2026 — £{(247 * 4.5).toFixed(2)}</div>
+            </div>
+          </div>
+
+          <div className="card card--no-hover">
             <div className="card__title">Notifications</div>
             <div className="form-group">
               <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 14 }}>

@@ -48,6 +48,34 @@ export default function Dashboard() {
         <p className="page-header__subtitle">Your personal wellbeing hub</p>
       </div>
 
+      {/* Quick Actions */}
+      <div className="quick-actions">
+        <button className="quick-action" onClick={() => navigate('/app/therapists')}>
+          <div className="quick-action__icon" style={{ background: 'var(--primary-50)', color: 'var(--primary)' }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17 17v-1a4 4 0 00-3-3.87M13 3.13a4 4 0 010 7.75M9 9a4 4 0 100-8 4 4 0 000 8zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </div>
+          Book a Session
+        </button>
+        <button className="quick-action" onClick={() => navigate('/app/workshops')}>
+          <div className="quick-action__icon" style={{ background: 'var(--warning-bg)', color: 'var(--warning)' }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M14 17v-1a3 3 0 00-3-3H6a3 3 0 00-3 3v1m15-1v-1a3 3 0 00-2.25-2.9M11.5 3.1a3 3 0 010 5.8M8.5 9a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </div>
+          Browse Workshops
+        </button>
+        <button className="quick-action" onClick={() => navigate('/app/resources')}>
+          <div className="quick-action__icon" style={{ background: 'var(--success-bg)', color: 'var(--success)' }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4h5l2 2h5a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </div>
+          View Resources
+        </button>
+        <button className="quick-action" onClick={() => navigate('/app/sessions')}>
+          <div className="quick-action__icon" style={{ background: '#ede9fe', color: '#8b5cf6' }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M13 2v4M7 2v4M3 8h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          </div>
+          My Sessions
+        </button>
+      </div>
+
       {/* Personal Stats */}
       <div className="stats-grid">
         <div className="stat-card">
