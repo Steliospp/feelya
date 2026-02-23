@@ -375,7 +375,7 @@ function TherapistCard({ therapist: t, onViewProfile, onBookNow }) {
           <span className="tc__price-per">/ 50 min</span>
         </div>
         <span className="tc__avail">Next: {t.next_available}</span>
-        <button className="btn btn--dark btn--sm tc__btn-book" onClick={() => onBookNow(t.id)}>Book now</button>
+        <button className="btn btn--dark btn--sm tc__btn-book" onClick={() => navigate(`/app/book/${t.id}`)}>Book now</button>
         <button className="btn btn--ghost btn--sm tc__btn-profile" onClick={() => navigate(`/app/therapist-profile/${t.id}`)}>View profile</button>
       </div>
     </div>
