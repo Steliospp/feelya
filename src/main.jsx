@@ -14,7 +14,6 @@ import Sessions from './pages/Sessions';
 import Workshops from './pages/Workshops';
 import Resources from './pages/Resources';
 import Profile from './pages/Profile';
-import HRLayout from './components/HRLayout';
 import HRDashboard from './pages/HRDashboard';
 import HRTherapists from './pages/HRTherapists';
 import HRWorkshops from './pages/HRWorkshops';
@@ -41,36 +40,37 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/book-demo" element={<BookDemo />} />
           <Route path="/signup" element={<BookDemo />} />
 
-          {/* Employee app */}
-          <Route path="/app" element={<RequireAuth><AppLayout /></RequireAuth>}>
+          {/* Company portal — single shell, role-gated nav */}
+          <Route path="/app" element={<RequireAuth roles={['EMPLOYEE', 'HR_ADMIN']}><AppLayout /></RequireAuth>}>
+            {/* Shared */}
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="therapists" element={<Therapists />} />
-            <Route path="sessions" element={<Sessions />} />
-            <Route path="workshops" element={<Workshops />} />
-            <Route path="resources" element={<Resources />} />
             <Route path="profile" element={<Profile />} />
+
+            {/* Employee-only pages */}
+            <Route path="therapists" element={<RequireAuth roles={['EMPLOYEE']}><Therapists /></RequireAuth>} />
+            <Route path="sessions" element={<RequireAuth roles={['EMPLOYEE']}><Sessions /></RequireAuth>} />
+            <Route path="workshops" element={<RequireAuth roles={['EMPLOYEE']}><Workshops /></RequireAuth>} />
+            <Route path="resources" element={<RequireAuth roles={['EMPLOYEE']}><Resources /></RequireAuth>} />
+
+            {/* HR-only pages */}
+            <Route path="hr" element={<RequireAuth roles={['HR_ADMIN']}><HRDashboard /></RequireAuth>} />
+            <Route path="hr/therapists" element={<RequireAuth roles={['HR_ADMIN']}><HRTherapists /></RequireAuth>} />
+            <Route path="hr/workshops" element={<RequireAuth roles={['HR_ADMIN']}><HRWorkshops /></RequireAuth>} />
+            <Route path="hr/requests" element={<RequireAuth roles={['HR_ADMIN']}><HRRequests /></RequireAuth>} />
+            <Route path="hr/employees" element={<RequireAuth roles={['HR_ADMIN']}><HREmployees /></RequireAuth>} />
+            <Route path="hr/insights" element={<RequireAuth roles={['HR_ADMIN']}><HRInsights /></RequireAuth>} />
+            <Route path="hr/settings" element={<RequireAuth roles={['HR_ADMIN']}><HRSettings /></RequireAuth>} />
           </Route>
 
-          {/* HR Admin routes */}
-          <Route path="/app/hr" element={<RequireAuth roles={['HR_ADMIN', 'SUPER_ADMIN']}><HRLayout /></RequireAuth>}>
-            <Route index element={<HRDashboard />} />
-            <Route path="therapists" element={<HRTherapists />} />
-            <Route path="workshops" element={<HRWorkshops />} />
-            <Route path="requests" element={<HRRequests />} />
-            <Route path="employees" element={<HREmployees />} />
-            <Route path="insights" element={<HRInsights />} />
-            <Route path="settings" element={<HRSettings />} />
-          </Route>
-
-          {/* Therapist portal routes */}
-          <Route path="/therapist" element={<RequireAuth roles={['THERAPIST', 'SUPER_ADMIN']}><TherapistLayout /></RequireAuth>}>
+          {/* Therapist portal */}
+          <Route path="/therapist" element={<RequireAuth roles={['THERAPIST']}><TherapistLayout /></RequireAuth>}>
             <Route index element={<TherapistDashboard />} />
             <Route path="sessions" element={<TherapistSessions />} />
             <Route path="profile" element={<TherapistProfile />} />
           </Route>
 
-          {/* Super Admin routes */}
+          {/* Super Admin portal */}
           <Route path="/admin" element={<RequireAuth roles={['SUPER_ADMIN']}><AdminLayout /></RequireAuth>}>
             <Route index element={<AdminDashboard />} />
             <Route path="demos" element={<AdminDemos />} />
