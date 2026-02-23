@@ -3,6 +3,39 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/app.css';
 
+const sections = [
+  {
+    label: 'Overview',
+    items: [
+      { to: '/admin', end: true, label: 'Dashboard', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 3h7v7H3V3zm10 0h4v4h-4V3zM3 13h4v4H3v-4zm10 3.5a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+    ],
+  },
+  {
+    label: 'Manage',
+    items: [
+      { to: '/admin/sessions', label: 'Sessions', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M13 2v4M7 2v4M3 8h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg> },
+      { to: '/admin/therapists', label: 'Therapists', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17 17v-1a4 4 0 00-3-3.87M13 3.13a4 4 0 010 7.75M9 9a4 4 0 100-8 4 4 0 000 8zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+      { to: '/admin/users', label: 'Users', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 17v-1a3 3 0 00-3-3H8a3 3 0 00-3 3v1M10 10a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+      { to: '/admin/companies', label: 'Companies', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 17h14M4 4h5v13H4V4zm7 3h5v10h-5V7z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+    ],
+  },
+  {
+    label: 'Commerce',
+    items: [
+      { to: '/admin/coupons', label: 'Coupons', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 7a2 2 0 012-2h12a2 2 0 012 2v1a2 2 0 100 4v1a2 2 0 01-2 2H4a2 2 0 01-2-2v-1a2 2 0 100-4V7z" stroke="currentColor" strokeWidth="1.5"/><path d="M8 8v4m4-4v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg> },
+      { to: '/admin/categories', label: 'Categories', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg> },
+    ],
+  },
+  {
+    label: 'Content',
+    items: [
+      { to: '/admin/content', label: 'Content', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 3h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm0 4h12M7 7v10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+      { to: '/admin/workshops', label: 'Workshops', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M14 17v-1a3 3 0 00-3-3H6a3 3 0 00-3 3v1m15-1v-1a3 3 0 00-2.25-2.9M11.5 3.1a3 3 0 010 5.8M8.5 9a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+      { to: '/admin/demos', label: 'Demo Leads', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4h12a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1zm0 3h12M7 4v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+    ],
+  },
+];
+
 export default function AdminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -29,21 +62,23 @@ export default function AdminLayout() {
           </div>
 
           <nav className="sidebar__nav">
-            <div className="sidebar__section">
-              <div className="sidebar__section-label">Platform</div>
-              <NavLink to="/admin" end className={({ isActive }) => `sidebar__link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 3h7v7H3V3zm10 0h4v4h-4V3zM3 13h4v4H3v-4zm10 3.5a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Overview
-              </NavLink>
-              <NavLink to="/admin/workshops" className={({ isActive }) => `sidebar__link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4h12a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1zm0 3h12M7 4v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Workshop Reviews
-              </NavLink>
-              <NavLink to="/admin/demos" className={({ isActive }) => `sidebar__link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M14 17v-1a3 3 0 00-3-3H6a3 3 0 00-3 3v1m15-1v-1a3 3 0 00-2.25-2.9M11.5 3.1a3 3 0 010 5.8M8.5 9a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Demo Leads
-              </NavLink>
-            </div>
+            {sections.map((section, i) => (
+              <div className="sidebar__section" key={i}>
+                <div className="sidebar__section-label">{section.label}</div>
+                {section.items.map(item => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    className={({ isActive }) => `sidebar__link ${isActive ? 'active' : ''}`}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </NavLink>
+                ))}
+              </div>
+            ))}
           </nav>
         </div>
         <div className="sidebar__bottom">
