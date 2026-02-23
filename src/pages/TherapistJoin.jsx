@@ -1,7 +1,15 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/auth.css';
+
+const SPECIALITY_OPTIONS = [
+  'Anxiety', 'Depression', 'Stress', 'Burnout', 'Trauma & PTSD',
+  'Grief & Loss', 'Relationships', 'Self-esteem', 'CBT',
+  'Mindfulness', 'Workplace Issues', 'Sleep', 'Anger Management',
+  'OCD', 'Eating Disorders', 'Addiction', 'ADHD', 'Couples Therapy',
+  'Family Therapy', 'Phobias', 'Personality Disorders',
+];
 
 export default function TherapistJoin() {
   const [mode, setMode] = useState('signup'); // 'signup' | 'signin'
@@ -12,10 +20,36 @@ export default function TherapistJoin() {
   const [signupForm, setSignupForm] = useState({
     firstName: '', lastName: '', email: '', phone: '',
     accreditation: '', accreditationNumber: '',
-    specialities: '', password: '', confirmPassword: '',
+    specialities: [], password: '', confirmPassword: '',
     agreeTerms: false,
   });
   const [signupSubmitted, setSignupSubmitted] = useState(false);
+  const [specDropdownOpen, setSpecDropdownOpen] = useState(false);
+  const specRef = useRef(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e) {
+      if (specRef.current && !specRef.current.contains(e.target)) {
+        setSpecDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  function toggleSpeciality(spec) {
+    setSignupForm(f => ({
+      ...f,
+      specialities: f.specialities.includes(spec)
+        ? f.specialities.filter(s => s !== spec)
+        : [...f.specialities, spec],
+    }));
+  }
+
+  function removeSpeciality(spec) {
+    setSignupForm(f => ({ ...f, specialities: f.specialities.filter(s => s !== spec) }));
+  }
 
   // Signin state
   const [signinEmail, setSigninEmail] = useState('');
@@ -53,6 +87,7 @@ export default function TherapistJoin() {
 
   const signupValid = signupForm.firstName.trim() && signupForm.lastName.trim() &&
     signupForm.email.trim() && signupForm.accreditation &&
+    signupForm.specialities.length > 0 &&
     signupForm.password.length >= 8 && signupForm.password === signupForm.confirmPassword &&
     signupForm.agreeTerms;
 
@@ -159,10 +194,74 @@ export default function TherapistJoin() {
                   </div>
                 </div>
 
-                <div className="form-group">
+                <div className="form-group" ref={specRef} style={{ position: 'relative' }}>
                   <label className="form-label">Specialities</label>
-                  <input className="form-input" placeholder="e.g. Anxiety, Depression, CBT, Trauma" value={signupForm.specialities} onChange={e => handleSignupField('specialities', e.target.value)} />
-                  <span style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>Separate with commas</span>
+                  <div
+                    onClick={() => setSpecDropdownOpen(!specDropdownOpen)}
+                    style={{
+                      width: '100%', minHeight: 46, padding: '8px 12px', border: '1.5px solid var(--border)',
+                      borderRadius: 10, background: '#fff', cursor: 'pointer', display: 'flex', flexWrap: 'wrap',
+                      gap: 6, alignItems: 'center', transition: 'border-color 0.2s',
+                      borderColor: specDropdownOpen ? '#6366f1' : undefined,
+                      boxShadow: specDropdownOpen ? '0 0 0 3px rgba(99,102,241,0.1)' : undefined,
+                    }}
+                  >
+                    {signupForm.specialities.length === 0 && (
+                      <span style={{ color: '#94a3b8', fontSize: 15 }}>Select your specialities...</span>
+                    )}
+                    {signupForm.specialities.map(spec => (
+                      <span key={spec} style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px',
+                        background: '#eef2ff', color: '#4338ca', borderRadius: 9999, fontSize: 13, fontWeight: 500,
+                      }}>
+                        {spec}
+                        <button type="button" onClick={e => { e.stopPropagation(); removeSpeciality(spec); }} style={{
+                          background: 'none', border: 'none', cursor: 'pointer', color: '#6366f1', fontSize: 15,
+                          padding: 0, lineHeight: 1, fontWeight: 700,
+                        }}>&times;</button>
+                      </span>
+                    ))}
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: 'auto', flexShrink: 0, transform: specDropdownOpen ? 'rotate(180deg)' : '', transition: 'transform 0.2s' }}>
+                      <path d="M4 6l4 4 4-4" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  {specDropdownOpen && (
+                    <div style={{
+                      position: 'absolute', zIndex: 50, left: 0, right: 0, marginTop: 4,
+                      background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10,
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)', maxHeight: 220, overflowY: 'auto',
+                      padding: '6px 0',
+                    }}>
+                      {SPECIALITY_OPTIONS.map(spec => {
+                        const selected = signupForm.specialities.includes(spec);
+                        return (
+                          <div
+                            key={spec}
+                            onClick={() => toggleSpeciality(spec)}
+                            style={{
+                              padding: '9px 14px', fontSize: 14, cursor: 'pointer', display: 'flex',
+                              alignItems: 'center', justifyContent: 'space-between',
+                              background: selected ? '#eef2ff' : 'transparent',
+                              color: selected ? '#4338ca' : '#1e1b4b', fontWeight: selected ? 600 : 400,
+                              transition: 'background 0.15s',
+                            }}
+                            onMouseEnter={e => { if (!selected) e.currentTarget.style.background = '#f8fafc'; }}
+                            onMouseLeave={e => { if (!selected) e.currentTarget.style.background = 'transparent'; }}
+                          >
+                            {spec}
+                            {selected && (
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M4 8l3 3 5-5" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <span style={{ fontSize: 12, color: '#94a3b8', marginTop: 4, display: 'block' }}>
+                    {signupForm.specialities.length === 0 ? 'Choose at least one' : `${signupForm.specialities.length} selected`}
+                  </span>
                 </div>
 
                 <div className="form-row">
