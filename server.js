@@ -57,6 +57,12 @@ db.exec(`
     audio_duration INTEGER DEFAULT 50,
     intro_duration INTEGER DEFAULT 30,
     bio TEXT DEFAULT '',
+    about TEXT DEFAULT '',
+    focus_areas TEXT DEFAULT '',
+    credentials TEXT DEFAULT '',
+    experience TEXT DEFAULT '',
+    methodologies TEXT DEFAULT '',
+    professional_bodies TEXT DEFAULT '',
     next_available TEXT DEFAULT '',
     rating REAL DEFAULT 4.8,
     review_count INTEGER DEFAULT 0,
@@ -103,23 +109,105 @@ db.exec(`
   );
 `);
 
+// --- Migrate: add new profile columns if missing ---
+try {
+  const cols = db.prepare("PRAGMA table_info(therapists)").all().map(c => c.name);
+  const newCols = [
+    ['about', 'TEXT DEFAULT ""'],
+    ['focus_areas', 'TEXT DEFAULT ""'],
+    ['credentials', 'TEXT DEFAULT ""'],
+    ['experience', 'TEXT DEFAULT ""'],
+    ['methodologies', 'TEXT DEFAULT ""'],
+    ['professional_bodies', 'TEXT DEFAULT ""'],
+  ];
+  for (const [col, def] of newCols) {
+    if (!cols.includes(col)) {
+      db.exec(`ALTER TABLE therapists ADD COLUMN ${col} ${def}`);
+    }
+  }
+} catch (e) { /* columns already exist */ }
+
 // --- Seed Therapists ---
 const therapistCount = db.prepare('SELECT COUNT(*) as count FROM therapists').get();
 if (therapistCount.count === 0) {
   const insertTherapist = db.prepare(`
-    INSERT INTO therapists (name, title, accreditation, specialisations, languages, gender, intro_video_price, intro_audio_price, video_price, audio_price, video_duration, audio_duration, intro_duration, bio, next_available, rating, review_count, session_type)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO therapists (name, title, accreditation, specialisations, languages, gender, intro_video_price, intro_audio_price, video_price, audio_price, video_duration, audio_duration, intro_duration, bio, about, focus_areas, credentials, experience, methodologies, professional_bodies, next_available, rating, review_count, session_type)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   const therapists = [
-    ['Dr. Sarah Mitchell', 'Clinical Psychologist', 'HCPC', 'Anxiety,Depression,Stress,CBT', 'English', 'Female', 45, 45, 90, 90, 50, 50, 30, 'Dr. Mitchell is a clinical psychologist with over 15 years of experience helping individuals navigate anxiety, depression, and stress. She uses evidence-based approaches including CBT and mindfulness techniques.', 'Today, 6:00 PM', 4.9, 127, 'both'],
-    ['Dr. James Cooper', 'Counselling Psychologist', 'BACP', 'Relationships,Trauma,Self-esteem,Grief', 'English', 'Male', 40, 40, 80, 80, 50, 50, 30, 'Dr. Cooper specialises in relationship difficulties and trauma recovery. With a warm, person-centred approach, he creates a safe space for clients to explore their challenges and build resilience.', 'Tomorrow, 10:00 AM', 4.8, 98, 'both'],
-    ['Dr. Amara Okafor', 'Psychotherapist', 'UKCP', 'Depression,Anxiety,Cultural Identity,LGBTQ+', 'English,French', 'Female', 50, 50, 95, 95, 50, 50, 30, 'Dr. Okafor brings a culturally sensitive approach to therapy, specialising in identity exploration, depression, and anxiety. She integrates psychodynamic and integrative therapeutic models.', 'Today, 8:00 PM', 5.0, 64, 'both'],
-    ['Dr. Michael Chen', 'Clinical Psychologist', 'HCPC', 'OCD,Phobias,Panic Disorder,Anxiety', 'English,Mandarin', 'Male', 45, 45, 85, 85, 50, 50, 30, 'Dr. Chen is an expert in anxiety disorders, particularly OCD and phobias. He uses exposure therapy and CBT to help clients overcome their fears and regain control of their lives.', 'Wed, 2:00 PM', 4.7, 156, 'both'],
-    ['Emma Richardson', 'Integrative Therapist', 'BACP', 'Stress,Work-Life Balance,Burnout,Mindfulness', 'English', 'Female', 35, 35, 70, 70, 50, 50, 30, 'Emma helps professionals manage stress and burnout through integrative therapy combining CBT, mindfulness, and solution-focused techniques. She understands the pressures of modern work life.', 'Today, 7:30 PM', 4.9, 89, 'both'],
-    ['Dr. Robert Hayes', 'Psychiatrist & Psychotherapist', 'HCPC', 'Depression,Bipolar,PTSD,Complex Trauma', 'English', 'Male', 60, 60, 120, 120, 50, 50, 30, 'Dr. Hayes is a dual-qualified psychiatrist and psychotherapist with extensive experience in mood disorders and complex trauma. He provides a holistic approach to mental health treatment.', 'Thu, 11:00 AM', 4.8, 203, 'both'],
-    ['Priya Sharma', 'Counsellor', 'BACP', 'Anxiety,Self-esteem,Life Transitions,Young Adults', 'English,Hindi', 'Female', null, null, 65, 65, 50, 50, 30, 'Priya specialises in helping young adults navigate life transitions, build confidence, and manage anxiety. Her warm, empathetic approach makes clients feel immediately at ease.', 'Tomorrow, 3:00 PM', 4.9, 72, 'both'],
-    ['Dr. William Foster', 'Psychoanalyst', 'BPS', 'Personality,Deep-rooted Issues,Childhood Trauma,Identity', 'English', 'Male', 55, 55, 100, 100, 50, 50, 30, 'Dr. Foster offers psychoanalytic therapy for those seeking deep understanding of recurring patterns and unresolved childhood experiences. He provides a thoughtful, exploratory therapeutic space.', 'Fri, 9:00 AM', 4.6, 145, 'both']
+    ['Dr. Sarah Mitchell', 'Clinical Psychologist', 'HCPC', 'Anxiety,Depression,Stress,CBT', 'English', 'Female', 45, 45, 90, 90, 50, 50, 30,
+      'Dr. Mitchell is a clinical psychologist with over 15 years of experience helping individuals navigate anxiety, depression, and stress. She uses evidence-based approaches including CBT and mindfulness techniques.',
+      'You might be looking to resolve an issue or live more fully but whatever it might be I can offer you the hand of support. I believe that you have everything you need but sometimes you might need space to explore how you might go about it. Our relationship will be like no other. There will be no jargon but rather a felt experience of warmth, compassion, non-judgement and empathy felt between us. I believe that if we can achieve this in our sessions then you will have everything you need to live effectively with what you bring.',
+      'Anxiety | Depression | Stress | CBT | Burnout',
+      'HCPC Registered | DClinPsy | BSc Psychology | BUPA registered psychotherapist',
+      'I have worked in the NHS for over 15 years across primary and secondary care settings, providing evidence-based therapy for anxiety, depression and stress-related conditions. I have also worked in a large corporate employee assistance programme offering counselling to a range of clients from many backgrounds. This gives me a wealth of experience in both shorter term therapy (6 sessions or less) and longer term complex cases.',
+      'We will spend 50 minutes together and you will decide what you wish to bring to the session. During our sessions we will explore what has brought you to therapy. I will listen to you, reflect back what I think I have heard, and highlight emerging patterns. The methodologies I use are: Cognitive Behavioural Therapy (CBT), Mindfulness-Based Approaches, and Evidence-Based Interventions.',
+      'HCPC,BPS',
+      'Today, 6:00 PM', 4.9, 127, 'both'],
+    ['Dr. James Cooper', 'Counselling Psychologist', 'BACP', 'Relationships,Trauma,Self-esteem,Grief', 'English', 'Male', 40, 40, 80, 80, 50, 50, 30,
+      'Dr. Cooper specialises in relationship difficulties and trauma recovery. With a warm, person-centred approach, he creates a safe space for clients to explore their challenges and build resilience.',
+      'I offer a warm and supportive therapeutic space where you can explore the challenges you face. Whether you are struggling with relationship difficulties, recovering from trauma, or working through grief, I am here to walk alongside you on your journey towards healing and growth.',
+      'Relationships | Trauma | Self-esteem | Grief | Loss',
+      'MBACP (Accred) | PGDip Counselling Psychology | BA Psychology',
+      'I have over 10 years of experience working in both NHS and private practice settings. My work has focused primarily on relationship difficulties, trauma recovery, and bereavement. I have extensive experience with couples therapy and individual counselling for attachment-related issues.',
+      'My approach is person-centred at its core, meaning I follow your lead and create a safe, non-judgemental space. I also integrate elements of psychodynamic therapy to help understand how past experiences shape current patterns. Sessions are 50 minutes and we will work at a pace that feels right for you.',
+      'BACP',
+      'Tomorrow, 10:00 AM', 4.8, 98, 'both'],
+    ['Dr. Amara Okafor', 'Psychotherapist', 'UKCP', 'Depression,Anxiety,Cultural Identity,LGBTQ+', 'English,French', 'Female', 50, 50, 95, 95, 50, 50, 30,
+      'Dr. Okafor brings a culturally sensitive approach to therapy, specialising in identity exploration, depression, and anxiety. She integrates psychodynamic and integrative therapeutic models.',
+      'I believe therapy should be a space where all aspects of who you are can be explored without judgement. I bring a culturally sensitive and affirming approach to my practice, recognising that identity, culture, and lived experience are central to mental health and wellbeing.',
+      'Depression | Anxiety | Cultural Identity | LGBTQ+ | Intersectional Therapy',
+      'MUKCP | MSc Psychotherapy | BA Cultural Studies | Certified EMDR Practitioner',
+      'I have worked in diverse therapeutic settings across London and Paris, bringing a multicultural perspective to my practice. My experience includes working with marginalised communities, LGBTQ+ individuals, and clients navigating complex identity issues. I have a particular interest in how culture and identity intersect with mental health.',
+      'I use an integrative approach, drawing from psychodynamic therapy, relational therapy, and culturally responsive frameworks. I may also incorporate EMDR for trauma processing. Our first session will focus on building our therapeutic relationship and understanding what you hope to achieve.',
+      'UKCP,BACP',
+      'Today, 8:00 PM', 5.0, 64, 'both'],
+    ['Dr. Michael Chen', 'Clinical Psychologist', 'HCPC', 'OCD,Phobias,Panic Disorder,Anxiety', 'English,Mandarin', 'Male', 45, 45, 85, 85, 50, 50, 30,
+      'Dr. Chen is an expert in anxiety disorders, particularly OCD and phobias. He uses exposure therapy and CBT to help clients overcome their fears and regain control of their lives.',
+      'I specialise in helping people overcome anxiety disorders that can feel overwhelming and debilitating. Whether it is OCD, phobias, or panic attacks, I use proven therapeutic techniques to help you regain control and live the life you want to lead.',
+      'OCD | Phobias | Panic Disorder | Anxiety | Health Anxiety',
+      'HCPC Registered | DClinPsy | MSc Clinical Psychology | Certified in ERP',
+      'I have spent over 12 years specialising in anxiety disorders, working in specialist NHS anxiety clinics and in private practice. I have treated hundreds of clients with OCD, phobias, and panic disorder using evidence-based approaches. My special interest is in exposure and response prevention (ERP) for OCD.',
+      'My primary approach is Cognitive Behavioural Therapy (CBT) with a strong emphasis on Exposure and Response Prevention (ERP) for OCD. I also use graded exposure therapy for phobias and interoceptive exposure for panic disorder. Treatment is structured, goal-oriented, and collaborative.',
+      'HCPC,BPS',
+      'Wed, 2:00 PM', 4.7, 156, 'both'],
+    ['Emma Richardson', 'Integrative Therapist', 'BACP', 'Stress,Work-Life Balance,Burnout,Mindfulness', 'English', 'Female', 35, 35, 70, 70, 50, 50, 30,
+      'Emma helps professionals manage stress and burnout through integrative therapy combining CBT, mindfulness, and solution-focused techniques. She understands the pressures of modern work life.',
+      'I understand the unique pressures that modern working life brings. Whether you are dealing with burnout, struggling with work-life balance, or simply feeling overwhelmed, I am here to help you find sustainable ways to manage stress and rediscover what matters most to you.',
+      'Stress | Work-Life Balance | Burnout | Mindfulness | Self-Care',
+      'MBACP (Reg) | Dip. Integrative Counselling | Mindfulness Teacher Training',
+      'I have worked extensively with corporate professionals and those in high-pressure roles. My background includes working in employee assistance programmes and corporate wellbeing services. I understand workplace dynamics and the toll that chronic stress can take on both mental and physical health.',
+      'I take an integrative approach, blending CBT techniques with mindfulness practices and solution-focused therapy. This means I tailor my approach to what works best for you. I may use relaxation techniques, cognitive restructuring, or guided mindfulness depending on your needs.',
+      'BACP',
+      'Today, 7:30 PM', 4.9, 89, 'both'],
+    ['Dr. Robert Hayes', 'Psychiatrist & Psychotherapist', 'HCPC', 'Depression,Bipolar,PTSD,Complex Trauma', 'English', 'Male', 60, 60, 120, 120, 50, 50, 30,
+      'Dr. Hayes is a dual-qualified psychiatrist and psychotherapist with extensive experience in mood disorders and complex trauma. He provides a holistic approach to mental health treatment.',
+      'As both a psychiatrist and psychotherapist, I bring a unique perspective to mental health treatment. I understand that complex conditions like PTSD, bipolar disorder, and treatment-resistant depression often require a holistic approach that considers the whole person.',
+      'Depression | Bipolar | PTSD | Complex Trauma | Treatment-Resistant Conditions',
+      'HCPC Registered | MRCPsych | MBBS | PGDip Psychotherapy | GMC Registered',
+      'I have over 20 years of experience in psychiatry and psychotherapy. My career has spanned NHS inpatient and outpatient services, crisis teams, and specialist trauma clinics. I have particular expertise in complex cases that have not responded to standard treatment approaches.',
+      'I offer a holistic approach combining psychotherapy with psychiatric understanding. Depending on your needs, I may use trauma-focused CBT, EMDR, or psychodynamic approaches. For complex cases, I take a phased approach: stabilisation, processing, and integration.',
+      'HCPC,Royal College of Psychiatrists,GMC',
+      'Thu, 11:00 AM', 4.8, 203, 'both'],
+    ['Priya Sharma', 'Counsellor', 'BACP', 'Anxiety,Self-esteem,Life Transitions,Young Adults', 'English,Hindi', 'Female', null, null, 65, 65, 50, 50, 30,
+      'Priya specialises in helping young adults navigate life transitions, build confidence, and manage anxiety. Her warm, empathetic approach makes clients feel immediately at ease.',
+      'I believe everyone deserves to feel heard and supported. I specialise in working with young adults who may be navigating major life changes, building their sense of self, or managing anxiety that feels overwhelming. My approach is warm, genuine, and completely non-judgemental.',
+      'Anxiety | Self-esteem | Life Transitions | Young Adults | Identity',
+      'MBACP (Reg) | Dip. Person-Centred Counselling | BA Psychology',
+      'I have worked with young adults and university students in both educational settings and private practice. My experience includes supporting clients through career changes, relationship breakdowns, academic pressures, and the challenges of early adulthood. I also have experience working with clients from South Asian backgrounds navigating cultural expectations.',
+      'My core approach is person-centred counselling, which means I follow your lead and provide a safe space for you to explore your thoughts and feelings at your own pace. I may also draw on elements of CBT and narrative therapy when helpful.',
+      'BACP',
+      'Tomorrow, 3:00 PM', 4.9, 72, 'both'],
+    ['Dr. William Foster', 'Psychoanalyst', 'BPS', 'Personality,Deep-rooted Issues,Childhood Trauma,Identity', 'English', 'Male', 55, 55, 100, 100, 50, 50, 30,
+      'Dr. Foster offers psychoanalytic therapy for those seeking deep understanding of recurring patterns and unresolved childhood experiences. He provides a thoughtful, exploratory therapeutic space.',
+      'I offer a space for deep exploration and understanding. If you find yourself repeating the same patterns, struggling with relationships, or feeling that something from your past continues to affect your present, psychoanalytic therapy can help you understand the unconscious forces at play.',
+      'Personality | Deep-rooted Issues | Childhood Trauma | Identity | Recurring Patterns',
+      'CPsychol (BPS) | Doctorate in Psychoanalytic Psychotherapy | MSc Psychology',
+      'I have over 18 years of experience in psychoanalytic practice, working in the Tavistock and Portman NHS Trust and in private practice. My work focuses on long-term, in-depth therapy for clients seeking to understand deep-rooted patterns and unresolved childhood experiences.',
+      'I practise psychoanalytic psychotherapy, which involves exploring unconscious processes, early experiences, and the therapeutic relationship itself as a tool for understanding. Sessions are 50 minutes and I typically recommend meeting weekly to build the therapeutic relationship needed for deep work.',
+      'BPS,British Psychoanalytic Council',
+      'Fri, 9:00 AM', 4.6, 145, 'both']
   ];
 
   for (const t of therapists) {
@@ -534,7 +622,7 @@ app.get('/api/dashboard', authMiddleware, (req, res) => {
 });
 
 // --- SPA Fallback: all non-API routes serve React index.html ---
-app.get('*', (req, res) => {
+app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 

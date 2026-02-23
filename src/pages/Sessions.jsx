@@ -18,52 +18,52 @@ const formatIcons = {
 
 const MOCK_SESSIONS = [
   {
-    id: 1, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
+    id: 1, therapist_id: 1, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
     date: 'Mon 24 Feb', time: '10:00 AM', duration: 50, price: 85,
     session_format: 'video', status: 'upcoming',
   },
   {
-    id: 2, therapist_name: 'James Thompson', therapist_title: 'Counselling Psychologist',
+    id: 2, therapist_id: 2, therapist_name: 'James Thompson', therapist_title: 'Counselling Psychologist',
     date: 'Wed 26 Feb', time: '2:00 PM', duration: 50, price: 75,
     session_format: 'video', status: 'upcoming',
   },
   {
-    id: 3, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
+    id: 3, therapist_id: 1, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
     date: 'Mon 17 Feb', time: '10:00 AM', duration: 50, price: 85,
     session_format: 'video', status: 'completed',
   },
   {
-    id: 4, therapist_name: 'Dr. Priya Sharma', therapist_title: 'Clinical Psychologist',
+    id: 4, therapist_id: 3, therapist_name: 'Dr. Priya Sharma', therapist_title: 'Clinical Psychologist',
     date: 'Thu 13 Feb', time: '3:00 PM', duration: 50, price: 95,
     session_format: 'audio', status: 'completed',
   },
   {
-    id: 5, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
+    id: 5, therapist_id: 1, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
     date: 'Mon 10 Feb', time: '10:00 AM', duration: 50, price: 85,
     session_format: 'video', status: 'completed',
   },
   {
-    id: 6, therapist_name: 'Michael Chen', therapist_title: 'Integrative Therapist',
+    id: 6, therapist_id: 4, therapist_name: 'Michael Chen', therapist_title: 'Integrative Therapist',
     date: 'Fri 7 Feb', time: '11:00 AM', duration: 50, price: 70,
     session_format: 'video', status: 'completed',
   },
   {
-    id: 7, therapist_name: 'Dr. Emily Richards', therapist_title: 'CBT Therapist',
+    id: 7, therapist_id: 5, therapist_name: 'Dr. Emily Richards', therapist_title: 'CBT Therapist',
     date: 'Mon 3 Feb', time: '9:00 AM', duration: 50, price: 90,
     session_format: 'audio', status: 'completed',
   },
   {
-    id: 8, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
+    id: 8, therapist_id: 1, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
     date: 'Wed 29 Jan', time: '10:00 AM', duration: 50, price: 85,
     session_format: 'video', status: 'completed',
   },
   {
-    id: 9, therapist_name: 'James Thompson', therapist_title: 'Counselling Psychologist',
+    id: 9, therapist_id: 2, therapist_name: 'James Thompson', therapist_title: 'Counselling Psychologist',
     date: 'Tue 21 Jan', time: '2:00 PM', duration: 50, price: 75,
     session_format: 'video', status: 'completed',
   },
   {
-    id: 10, therapist_name: 'Dr. Priya Sharma', therapist_title: 'Clinical Psychologist',
+    id: 10, therapist_id: 3, therapist_name: 'Dr. Priya Sharma', therapist_title: 'Clinical Psychologist',
     date: 'Mon 6 Jan', time: '4:00 PM', duration: 50, price: 95,
     session_format: 'audio', status: 'cancelled',
   },
@@ -151,7 +151,7 @@ export default function Sessions() {
                 </svg>
               </div>
               <div>
-                <div className="session-item__name">{s.therapist_name}</div>
+                <div className="session-item__name" style={{ color: 'var(--primary)', cursor: 'pointer' }} onClick={() => navigate(`/app/therapist-profile/${s.therapist_id}`)}>{s.therapist_name}</div>
                 <div className="session-item__detail" style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                   <span>{s.therapist_title}</span>
                   <span style={{ color: 'var(--border)' }}>&middot;</span>

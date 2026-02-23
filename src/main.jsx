@@ -30,6 +30,7 @@ import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDemos from './pages/AdminDemos';
 import AdminWorkshops from './pages/AdminWorkshops';
+import TherapistProfileView from './pages/TherapistProfileView';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -48,6 +49,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
+
+            {/* Therapist profile (shared across employee & HR) */}
+            <Route path="therapist-profile/:id" element={<TherapistProfileView />} />
 
             {/* Employee-only pages */}
             <Route path="therapists" element={<RequireAuth roles={['EMPLOYEE']}><Therapists /></RequireAuth>} />
@@ -71,6 +75,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="sessions" element={<TherapistSessions />} />
             <Route path="workshops" element={<TherapistWorkshops />} />
             <Route path="profile" element={<TherapistProfile />} />
+            <Route path="view/:id" element={<TherapistProfileView />} />
           </Route>
 
           {/* Super Admin portal */}
@@ -78,6 +83,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route index element={<AdminDashboard />} />
             <Route path="demos" element={<AdminDemos />} />
             <Route path="workshops" element={<AdminWorkshops />} />
+            <Route path="therapist/:id" element={<TherapistProfileView />} />
           </Route>
         </Routes>
         <DevRoleSwitcher />
