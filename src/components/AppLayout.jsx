@@ -7,6 +7,8 @@ import BookingModal from './BookingModal';
 import TherapistProfileModal from './TherapistProfileModal';
 import { ROLES } from '../lib/roles';
 import { companyNav, getNavForRole } from '../lib/navConfig';
+import HROnboarding from '../pages/HROnboarding';
+import EmployeeOnboarding from '../pages/EmployeeOnboarding';
 import '../styles/app.css';
 
 const logoSvg = (
@@ -18,7 +20,7 @@ const logoutIcon = (
 );
 
 export default function AppLayout() {
-  const { user, logout } = useAuth();
+  const { user, logout, getOnboardingStatus } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
@@ -29,6 +31,14 @@ export default function AppLayout() {
   }
 
   if (!user) return null;
+
+  // Onboarding gates
+  if (user.role === ROLES.HR_ADMIN && !getOnboardingStatus('HR_ADMIN', user.id)) {
+    return <HROnboarding />;
+  }
+  if (user.role === ROLES.EMPLOYEE && !getOnboardingStatus('EMPLOYEE', user.id)) {
+    return <EmployeeOnboarding />;
+  }
 
   const initial = (user.first_name || 'U')[0].toUpperCase();
   const sections = getNavForRole(companyNav, user.role);
