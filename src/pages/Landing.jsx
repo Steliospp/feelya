@@ -430,11 +430,18 @@ const Landing = () => {
             <a href="#platform" className="nav__link" onClick={(e) => scrollToSection(e, 'platform')}>Platform</a>
             <a href="#pricing" className="nav__link" onClick={(e) => scrollToSection(e, 'pricing')}>Pricing</a>
             <a href="#case-studies" className="nav__link" onClick={(e) => scrollToSection(e, 'case-studies')}>Case Studies</a>
+            <a href="#for-therapists" className="nav__link" onClick={(e) => scrollToSection(e, 'for-therapists')}>For Therapists</a>
           </div>
 
           <div className="nav__actions">
             <Link to="/login" className="nav__link nav__link--login">Log In</Link>
             <a href="#get-started" className="btn btn--primary btn--sm" onClick={(e) => scrollToSection(e, 'get-started')}>Book a Demo</a>
+          </div>
+
+          {/* Therapist banner under header */}
+          <div className="nav__therapist-banner">
+            <span>Are you a therapist?</span>
+            <a href="#for-therapists" onClick={(e) => scrollToSection(e, 'for-therapists')}>Join Feelya here</a>
           </div>
 
           <button
@@ -785,6 +792,100 @@ const Landing = () => {
                 <span className="resource-card__link">{res.linkText}</span>
               </a>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ======== For Therapists ======== */}
+      <section className="for-therapists" id="for-therapists">
+        <div className="container">
+          <div className="for-therapists__inner">
+            <div className="for-therapists__content" ref={registerAnim}>
+              <span className="section-label">For Therapists</span>
+              <h2 className="section-title">Grow your practice with Feelya</h2>
+              <p className="for-therapists__desc">
+                Join a growing network of accredited UK-based therapists delivering impactful corporate therapy sessions. Focus on what you do best &mdash; we handle referrals, scheduling, and payments.
+              </p>
+              <ul className="for-therapists__benefits">
+                <li>
+                  <CheckCircleIcon20 />
+                  Steady stream of corporate client referrals
+                </li>
+                <li>
+                  <CheckCircleIcon20 />
+                  Flexible schedule &mdash; choose your own hours
+                </li>
+                <li>
+                  <CheckCircleIcon20 />
+                  Guaranteed timely payments, no chasing invoices
+                </li>
+                <li>
+                  <CheckCircleIcon20 />
+                  Dedicated therapist portal to manage sessions and clients
+                </li>
+                <li>
+                  <CheckCircleIcon20 />
+                  Write blogs and share your expertise with the community
+                </li>
+                <li>
+                  <CheckCircleIcon20 />
+                  Must be BACP, HCPC, UKCP, or BPS accredited
+                </li>
+              </ul>
+              <div className="for-therapists__ctas">
+                <Link to="/therapist-join" className="btn btn--primary btn--lg">
+                  Join as a Therapist
+                  <ArrowIcon />
+                </Link>
+              </div>
+            </div>
+
+            <div className="for-therapists__visual" ref={registerAnim}>
+              <div className="for-therapists__card">
+                <div className="for-therapists__card-header">
+                  <div className="for-therapists__card-avatar" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 16 }}>Therapist Portal</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Your dashboard at a glance</div>
+                  </div>
+                </div>
+                <div className="for-therapists__card-stats">
+                  <div className="for-therapists__card-stat">
+                    <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--primary)' }}>24</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Sessions/wk</div>
+                  </div>
+                  <div className="for-therapists__card-stat">
+                    <div style={{ fontSize: 22, fontWeight: 700, color: '#10b981' }}>4.9</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Rating</div>
+                  </div>
+                  <div className="for-therapists__card-stat">
+                    <div style={{ fontSize: 22, fontWeight: 700, color: '#f59e0b' }}>18</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Clients</div>
+                  </div>
+                </div>
+                <div style={{ padding: '16px 20px', background: '#f8fafc', borderRadius: '0 0 16px 16px', fontSize: 13, color: 'var(--text-sec)' }}>
+                  <div style={{ fontWeight: 600, marginBottom: 8, color: 'var(--text)' }}>Upcoming Sessions</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Employee #1042</span>
+                      <span style={{ fontWeight: 500 }}>Today 2:00 PM</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Employee #0817</span>
+                      <span style={{ fontWeight: 500 }}>Today 4:30 PM</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Employee #1395</span>
+                      <span style={{ fontWeight: 500 }}>Tomorrow 10:00 AM</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

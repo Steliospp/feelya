@@ -15,6 +15,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [therapistMode, setTherapistMode] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -56,8 +57,8 @@ export default function Login() {
             </svg>
             <span>feelya</span>
           </Link>
-          <h1 className="auth__hero-title">Welcome back</h1>
-          <p className="auth__hero-sub">Log in to manage your organisation's wellbeing programme, view analytics, or access your therapy sessions.</p>
+          <h1 className="auth__hero-title">{therapistMode ? 'Welcome back, therapist' : 'Welcome back'}</h1>
+          <p className="auth__hero-sub">{therapistMode ? 'Sign in to your therapist portal to manage sessions, clients, blogs, and your profile.' : "Log in to manage your organisation's wellbeing programme, view analytics, or access your therapy sessions."}</p>
           <div className="auth__trust-items">
             <div className="auth__trust-item">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -82,17 +83,23 @@ export default function Login() {
 
           <div className="auth__demo-hint">
             <div className="auth__demo-hint-title">Demo accounts</div>
-            <div className="auth__demo-hint-item"><strong>employee@demo.com</strong> &mdash; Employee</div>
-            <div className="auth__demo-hint-item"><strong>hr@demo.com</strong> &mdash; HR Admin</div>
-            <div className="auth__demo-hint-item"><strong>admin@feelya.com</strong> &mdash; Super Admin</div>
+            {therapistMode ? (
+              <div className="auth__demo-hint-item"><strong>therapist@demo.com</strong> &mdash; Therapist</div>
+            ) : (
+              <>
+                <div className="auth__demo-hint-item"><strong>employee@demo.com</strong> &mdash; Employee</div>
+                <div className="auth__demo-hint-item"><strong>hr@demo.com</strong> &mdash; HR Admin</div>
+                <div className="auth__demo-hint-item"><strong>admin@feelya.com</strong> &mdash; Super Admin</div>
+              </>
+            )}
             <div className="auth__demo-hint-note">Any password works</div>
           </div>
         </div>
       </div>
       <div className="auth__right">
         <div className="auth__form-container">
-          <h2 className="auth__title">Log in to your account</h2>
-          <p className="auth__subtitle">Enter your credentials to continue</p>
+          <h2 className="auth__title">{therapistMode ? 'Therapist Sign In' : 'Log in to your account'}</h2>
+          <p className="auth__subtitle">{therapistMode ? 'Enter your therapist credentials to continue' : 'Enter your credentials to continue'}</p>
           {error && <div className="auth__error">{error}</div>}
           <form className="auth__form" onSubmit={handleSubmit}>
             <div className="form-group">
@@ -102,7 +109,7 @@ export default function Login() {
                 type="email"
                 id="email"
                 name="email"
-                placeholder="you@company.com"
+                placeholder={therapistMode ? 'you@example.com' : 'you@company.com'}
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -134,7 +141,29 @@ export default function Login() {
               {loading && <span className="spinner"></span>}
             </button>
           </form>
-          <p className="auth__switch">Don't have an account? <Link to="/book-demo">Book a demo</Link></p>
+          <p className="auth__switch">
+            {therapistMode
+              ? <>Don&rsquo;t have an account? <Link to="/therapist-join">Apply to join</Link></>
+              : <>Don&rsquo;t have an account? <Link to="/book-demo">Book a demo</Link></>
+            }
+          </p>
+
+          {/* Therapist mode toggle */}
+          <div style={{ textAlign: 'center', marginTop: 16 }}>
+            <button
+              type="button"
+              onClick={() => { setTherapistMode(!therapistMode); setError(''); setEmail(''); setPassword(''); }}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+                fontSize: 13, color: '#6366f1', fontWeight: 500, padding: '6px 12px',
+                borderRadius: 8, transition: 'background 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#eef2ff'}
+              onMouseLeave={e => e.currentTarget.style.background = 'none'}
+            >
+              {therapistMode ? '\u2190 Back to regular login' : "I'm a therapist"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

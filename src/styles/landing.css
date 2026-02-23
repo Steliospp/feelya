@@ -1219,6 +1219,96 @@ em {
 }
 
 /* ========================================
+   Nav Therapist Banner
+   ======================================== */
+.nav__therapist-banner {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.nav__therapist-banner a {
+  color: var(--color-primary);
+  font-weight: 600;
+  transition: color var(--transition);
+}
+.nav__therapist-banner a:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* ========================================
+   For Therapists
+   ======================================== */
+.for-therapists {
+  padding: 120px 0;
+  background: linear-gradient(180deg, var(--color-bg) 0%, #eef2ff 100%);
+}
+.for-therapists__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.for-therapists__desc {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  margin: 16px 0 28px;
+}
+.for-therapists__benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.for-therapists__benefits li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+.for-therapists__ctas {
+  display: flex;
+  gap: 16px;
+}
+.for-therapists__card {
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
+}
+.for-therapists__card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+}
+.for-therapists__card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-light);
+}
+.for-therapists__card-stat {
+  text-align: center;
+  padding: 16px 12px;
+}
+.for-therapists__card-stat + .for-therapists__card-stat {
+  border-left: 1px solid var(--color-border-light);
+}
+
+/* ========================================
    Final CTA
    ======================================== */
 .final-cta {
@@ -1565,6 +1655,23 @@ em {
 
   .platform__preview {
     display: none;
+  }
+
+  .nav__therapist-banner {
+    display: none;
+  }
+
+  .for-therapists__inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .for-therapists__visual {
+    display: none;
+  }
+
+  .for-therapists {
+    padding: 80px 0;
   }
 
   .footer__grid {
