@@ -1,46 +1,96 @@
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { getWorkshops, addWorkshop, updateWorkshop, newId } from '../lib/workshopStore';
 import '../styles/app.css';
 
-const initialWorkshops = [
-  { id: 1, title: 'Managing Stress at Work', host: 'Dr. Sarah Mitchell', date: '2026-02-25', time: '12:00 PM', duration: 60, registered: 12, capacity: 20, status: 'upcoming', category: 'Stress' },
-  { id: 2, title: 'Building Resilience', host: 'Emma Richardson', date: '2026-02-27', time: '1:00 PM', duration: 45, registered: 13, capacity: 25, status: 'upcoming', category: 'Wellbeing' },
-  { id: 3, title: 'Mindfulness in the Workplace', host: 'Priya Sharma', date: '2026-03-03', time: '11:00 AM', duration: 30, registered: 15, capacity: 30, status: 'upcoming', category: 'Mindfulness' },
-  { id: 4, title: 'Understanding Anxiety', host: 'Dr. Michael Chen', date: '2026-03-05', time: '2:00 PM', duration: 60, registered: 14, capacity: 20, status: 'upcoming', category: 'Anxiety' },
-  { id: 5, title: 'Work-Life Balance', host: 'Emma Richardson', date: '2026-02-10', time: '12:00 PM', duration: 45, registered: 22, capacity: 25, status: 'completed', category: 'Wellbeing' },
-  { id: 6, title: 'Dealing with Burnout', host: 'Dr. Sarah Mitchell', date: '2026-01-28', time: '11:00 AM', duration: 60, registered: 18, capacity: 20, status: 'completed', category: 'Stress' },
-];
+const STATUS_LABELS = {
+  pending_review: 'Pending Review',
+  needs_changes: 'Needs Changes',
+  approved: 'Approved',
+  published: 'Published',
+  scheduled: 'Scheduled',
+  completed: 'Completed',
+};
+
+const STATUS_TAG = {
+  pending_review: 'tag--warning',
+  needs_changes: 'tag--danger',
+  approved: 'tag--success',
+  published: '',
+  scheduled: 'tag--success',
+  completed: '',
+};
 
 export default function HRWorkshops() {
-  const [workshops] = useState(initialWorkshops);
-  const [activeTab, setActiveTab] = useState('upcoming');
+  const { user } = useAuth();
+  const [workshops, setWorkshops] = useState(() => getWorkshops().filter(w => w.companyId === user.companyId));
+  const [activeTab, setActiveTab] = useState('all');
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ title: '', host: '', date: '', time: '', duration: '60', capacity: '20', category: 'Wellbeing' });
+  const [form, setForm] = useState({ title: '', description: '', date: '', time: '', duration: '60', capacity: '20', category: 'Wellbeing' });
 
-  const filtered = workshops.filter(w => w.status === activeTab);
-  const upcoming = workshops.filter(w => w.status === 'upcoming').length;
-  const totalRegistrations = workshops.reduce((s, w) => s + w.registered, 0);
+  function refresh() {
+    setWorkshops(getWorkshops().filter(w => w.companyId === user.companyId));
+  }
+
+  const tabs = [
+    { key: 'all', label: 'All' },
+    { key: 'pending_review', label: 'Pending' },
+    { key: 'needs_changes', label: 'Needs Changes' },
+    { key: 'approved', label: 'Approved' },
+    { key: 'published', label: 'Published' },
+    { key: 'scheduled', label: 'Scheduled' },
+  ];
+
+  const filtered = activeTab === 'all' ? workshops : workshops.filter(w => w.status === activeTab);
+  const pendingCount = workshops.filter(w => w.status === 'pending_review').length;
+  const needsChangesCount = workshops.filter(w => w.status === 'needs_changes').length;
+  const scheduledCount = workshops.filter(w => w.status === 'scheduled').length;
 
   function handleCreate(e) {
     e.preventDefault();
+    addWorkshop({
+      id: newId(),
+      companyId: user.companyId,
+      companyName: user.companyName,
+      title: form.title,
+      description: form.description,
+      category: form.category,
+      date: form.date,
+      time: form.time,
+      duration: Number(form.duration),
+      capacity: Number(form.capacity),
+      status: 'pending_review',
+      createdBy: { id: user.id, name: `${user.first_name} ${user.last_name}` },
+      therapist: null,
+      attendees: [],
+      comments: [],
+      createdAt: new Date().toISOString(),
+    });
     setShowCreate(false);
-    setForm({ title: '', host: '', date: '', time: '', duration: '60', capacity: '20', category: 'Wellbeing' });
+    setForm({ title: '', description: '', date: '', time: '', duration: '60', capacity: '20', category: 'Wellbeing' });
+    refresh();
+  }
+
+  function handleResubmit(id) {
+    updateWorkshop(id, { status: 'pending_review' });
+    refresh();
   }
 
   return (
     <div className="page">
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h1 className="page-header__title">Workshops</h1>
-          <p className="page-header__subtitle">Create and manage wellbeing workshops for your employees.</p>
+          <p className="page-header__subtitle">Create workshop requests and track their approval status.</p>
         </div>
         <button className="btn btn--primary btn--sm" onClick={() => setShowCreate(!showCreate)}>
-          {showCreate ? 'Cancel' : 'Create Workshop'}
+          {showCreate ? 'Cancel' : 'Request Workshop'}
         </button>
       </div>
 
       {showCreate && (
         <div className="card" style={{ marginBottom: 24 }}>
-          <div className="card__title">New Workshop</div>
+          <div className="card__title">New Workshop Request</div>
           <form onSubmit={handleCreate}>
             <div className="profile-grid">
               <div>
@@ -49,8 +99,8 @@ export default function HRWorkshops() {
                   <input className="form-input" value={form.title} onChange={e => setForm({...form, title: e.target.value})} placeholder="Workshop title" required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Host / Facilitator</label>
-                  <input className="form-input" value={form.host} onChange={e => setForm({...form, host: e.target.value})} placeholder="Therapist or facilitator name" required />
+                  <label className="form-label">Description</label>
+                  <textarea className="form-input" rows={3} value={form.description} onChange={e => setForm({...form, description: e.target.value})} placeholder="Describe the workshop goals and content..." required />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Category</label>
@@ -65,11 +115,11 @@ export default function HRWorkshops() {
               </div>
               <div>
                 <div className="form-group">
-                  <label className="form-label">Date</label>
+                  <label className="form-label">Preferred Date</label>
                   <input className="form-input" type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Time</label>
+                  <label className="form-label">Preferred Time</label>
                   <input className="form-input" type="time" value={form.time} onChange={e => setForm({...form, time: e.target.value})} required />
                 </div>
                 <div style={{ display: 'flex', gap: 12 }}>
@@ -84,66 +134,83 @@ export default function HRWorkshops() {
                 </div>
               </div>
             </div>
-            <button className="btn btn--primary btn--sm" type="submit" style={{ marginTop: 8 }}>Create Workshop</button>
+            <button className="btn btn--primary btn--sm" type="submit" style={{ marginTop: 8 }}>Submit for Review</button>
           </form>
         </div>
       )}
 
+      {/* Stats */}
       <div className="org-stats-grid" style={{ marginBottom: 24 }}>
         <div className="org-stat">
-          <div className="org-stat__label">Upcoming</div>
-          <div className="org-stat__value">{upcoming}</div>
+          <div className="org-stat__label">Pending Review</div>
+          <div className="org-stat__value" style={{ color: 'var(--warning)' }}>{pendingCount}</div>
         </div>
         <div className="org-stat">
-          <div className="org-stat__label">Total Workshops</div>
+          <div className="org-stat__label">Needs Changes</div>
+          <div className="org-stat__value" style={{ color: 'var(--danger)' }}>{needsChangesCount}</div>
+        </div>
+        <div className="org-stat">
+          <div className="org-stat__label">Scheduled</div>
+          <div className="org-stat__value" style={{ color: 'var(--success)' }}>{scheduledCount}</div>
+        </div>
+        <div className="org-stat">
+          <div className="org-stat__label">Total</div>
           <div className="org-stat__value">{workshops.length}</div>
         </div>
-        <div className="org-stat">
-          <div className="org-stat__label">Total Registrations</div>
-          <div className="org-stat__value">{totalRegistrations}</div>
-        </div>
       </div>
 
+      {/* Tabs */}
       <div className="sessions-tabs" style={{ marginBottom: 24 }}>
-        <button className={`sessions-tab ${activeTab === 'upcoming' ? 'active' : ''}`} onClick={() => setActiveTab('upcoming')}>
-          Upcoming ({workshops.filter(w => w.status === 'upcoming').length})
-        </button>
-        <button className={`sessions-tab ${activeTab === 'completed' ? 'active' : ''}`} onClick={() => setActiveTab('completed')}>
-          Past ({workshops.filter(w => w.status === 'completed').length})
-        </button>
+        {tabs.map(t => (
+          <button key={t.key} className={`sessions-tab ${activeTab === t.key ? 'active' : ''}`} onClick={() => setActiveTab(t.key)}>
+            {t.label} ({t.key === 'all' ? workshops.length : workshops.filter(w => w.status === t.key).length})
+          </button>
+        ))}
       </div>
 
+      {/* List */}
       {filtered.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state__title">No {activeTab} workshops</div>
+          <div className="empty-state__title">No workshops in this category</div>
+          <p className="empty-state__desc">Create a new workshop request to get started.</p>
         </div>
       ) : (
-        <div className="card card--no-hover">
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid var(--border)', textAlign: 'left' }}>
-                <th style={{ padding: '12px 16px', color: 'var(--text-sec)', fontWeight: 600 }}>Workshop</th>
-                <th style={{ padding: '12px 16px', color: 'var(--text-sec)', fontWeight: 600 }}>Host</th>
-                <th style={{ padding: '12px 16px', color: 'var(--text-sec)', fontWeight: 600 }}>Date</th>
-                <th style={{ padding: '12px 16px', color: 'var(--text-sec)', fontWeight: 600 }}>Registrations</th>
-                <th style={{ padding: '12px 16px', color: 'var(--text-sec)', fontWeight: 600 }}>Category</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(w => (
-                <tr key={w.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                  <td style={{ padding: '14px 16px', fontWeight: 600 }}>{w.title}</td>
-                  <td style={{ padding: '14px 16px', color: 'var(--text-sec)' }}>{w.host}</td>
-                  <td style={{ padding: '14px 16px', color: 'var(--text-sec)' }}>{w.date} at {w.time}</td>
-                  <td style={{ padding: '14px 16px' }}>
-                    <span style={{ fontWeight: 600 }}>{w.registered}</span>
-                    <span style={{ color: 'var(--text-muted)' }}> / {w.capacity}</span>
-                  </td>
-                  <td style={{ padding: '14px 16px' }}><span className="tag">{w.category}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {filtered.map(w => (
+            <div className="card card--no-hover" key={w.id} style={{ padding: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: 200 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontWeight: 700, fontSize: 16 }}>{w.title}</span>
+                    <span className={`tag ${STATUS_TAG[w.status] || ''}`}>{STATUS_LABELS[w.status]}</span>
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--text-sec)', marginBottom: 8 }}>{w.description}</div>
+                  <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
+                    <span>{w.category}</span>
+                    <span>{w.date} at {w.time}</span>
+                    <span>{w.duration}min</span>
+                    <span>{w.capacity} capacity</span>
+                    {w.therapist && <span>Therapist: {w.therapist.name}</span>}
+                    {w.attendees.length > 0 && <span>{w.attendees.length} registered</span>}
+                  </div>
+                </div>
+                {w.status === 'needs_changes' && (
+                  <button className="btn btn--outline btn--sm" onClick={() => handleResubmit(w.id)}>Resubmit</button>
+                )}
+              </div>
+              {/* Show admin comments */}
+              {w.comments.length > 0 && (
+                <div style={{ marginTop: 12, padding: 12, background: 'var(--bg)', borderRadius: 8 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 6 }}>Review Comments</div>
+                  {w.comments.map((c, i) => (
+                    <div key={i} style={{ fontSize: 13, color: 'var(--text-sec)', marginBottom: 4 }}>
+                      <strong>{c.by}:</strong> {c.text}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>
