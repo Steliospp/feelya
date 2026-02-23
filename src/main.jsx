@@ -14,6 +14,7 @@ import Sessions from './pages/Sessions';
 import Workshops from './pages/Workshops';
 import Resources from './pages/Resources';
 import Profile from './pages/Profile';
+import SelfTest from './pages/SelfTest';
 import HRDashboard from './pages/HRDashboard';
 import HRTherapists from './pages/HRTherapists';
 import HRWorkshops from './pages/HRWorkshops';
@@ -51,6 +52,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="self-test" element={<SelfTest />} />
 
             {/* Therapist profile & booking (shared across employee & HR) */}
             <Route path="therapist-profile/:id" element={<TherapistProfileView />} />

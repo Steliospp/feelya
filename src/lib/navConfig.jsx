@@ -24,18 +24,28 @@ export const companyNav = [
   },
   {
     label: 'Therapy',
-    roles: [ROLES.EMPLOYEE, ROLES.HR_ADMIN],
+    roles: [ROLES.EMPLOYEE],
     items: [
-      { to: '/app/therapists', label: 'Therapists', icon: icons.therapists, roles: [ROLES.EMPLOYEE, ROLES.HR_ADMIN] },
-      { to: '/app/sessions',   label: 'Sessions',   icon: icons.sessions,   roles: [ROLES.EMPLOYEE, ROLES.HR_ADMIN] },
+      { to: '/app/therapists', label: 'Therapists', icon: icons.therapists, roles: [ROLES.EMPLOYEE] },
+      { to: '/app/sessions',   label: 'Sessions',   icon: icons.sessions,   roles: [ROLES.EMPLOYEE] },
     ],
   },
   {
     label: 'Wellbeing',
-    roles: [ROLES.EMPLOYEE, ROLES.HR_ADMIN],
+    roles: [ROLES.EMPLOYEE],
     items: [
-      { to: '/app/workshops', label: 'Workshops', icon: icons.workshops, roles: [ROLES.EMPLOYEE, ROLES.HR_ADMIN] },
-      { to: '/app/resources', label: 'Resources', icon: icons.resources, roles: [ROLES.EMPLOYEE, ROLES.HR_ADMIN] },
+      { to: '/app/workshops', label: 'Workshops', icon: icons.workshops, roles: [ROLES.EMPLOYEE] },
+      { to: '/app/resources', label: 'Resources', icon: icons.resources, roles: [ROLES.EMPLOYEE] },
+    ],
+  },
+  {
+    label: 'For You',
+    roles: [ROLES.HR_ADMIN],
+    items: [
+      { to: '/app/therapists', label: 'Therapists', icon: icons.therapists, roles: [ROLES.HR_ADMIN] },
+      { to: '/app/sessions',   label: 'Sessions',   icon: icons.sessions,   roles: [ROLES.HR_ADMIN] },
+      { to: '/app/workshops',  label: 'Workshops',  icon: icons.workshops,  roles: [ROLES.HR_ADMIN] },
+      { to: '/app/resources',  label: 'Resources',  icon: icons.resources,  roles: [ROLES.HR_ADMIN] },
     ],
   },
   {
