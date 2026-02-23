@@ -2,33 +2,66 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
 
+function isWithin24Hours(datetimeStr) {
+  const sessionTime = new Date(datetimeStr);
+  const now = new Date();
+  const diff = sessionTime.getTime() - now.getTime();
+  return diff < 24 * 60 * 60 * 1000;
+}
+
 function CancelModal({ session, onConfirm, onClose }) {
+  const lateCancel = session.datetime && isWithin24Hours(session.datetime);
+  const fee = lateCancel ? Math.round(session.price * 0.5) : 0;
+
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 420 }}>
+      <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 440 }}>
         <button className="modal__close" onClick={onClose}>&times;</button>
         <div style={{ textAlign: 'center', marginBottom: 20 }}>
           <div style={{
-            width: 56, height: 56, borderRadius: '50%', background: 'var(--danger-bg)',
+            width: 56, height: 56, borderRadius: '50%',
+            background: lateCancel ? 'var(--warning-bg)' : 'var(--danger-bg)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px',
           }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-              <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="var(--danger)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke={lateCancel ? 'var(--warning)' : 'var(--danger)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <h3 className="modal__title" style={{ fontSize: 20 }}>Cancel Session?</h3>
+          <h3 className="modal__title" style={{ fontSize: 20 }}>
+            {lateCancel ? 'Late Cancellation' : 'Cancel Session?'}
+          </h3>
           <p style={{ fontSize: 14, color: 'var(--text-sec)', lineHeight: 1.6, marginBottom: 8 }}>
             Are you sure you want to cancel your session with <strong>{session.therapist_name}</strong> on {session.date} at {session.time}?
           </p>
-          <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-            This action cannot be undone.
-          </p>
+
+          {lateCancel ? (
+            <div style={{
+              background: 'var(--warning-bg)', border: '1px solid #fde68a',
+              borderRadius: 10, padding: '14px 18px', marginTop: 12, textAlign: 'left',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span style={{ fontWeight: 600, fontSize: 14, color: '#92400e' }}>Less than 24 hours notice</span>
+              </div>
+              <p style={{ fontSize: 13, color: '#92400e', lineHeight: 1.6, margin: 0 }}>
+                Cancellations made less than 24 hours before the session incur a <strong>50% cancellation fee of &pound;{fee}</strong>. This will be charged to your account.
+              </p>
+            </div>
+          ) : (
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              Free cancellation &mdash; more than 24 hours before the session.
+            </p>
+          )}
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="btn btn--ghost btn--md btn--full" onClick={onClose}>Keep Session</button>
           <button className="btn btn--md btn--full" onClick={onConfirm} style={{
             background: 'var(--danger)', color: '#fff', border: 'none',
-          }}>Cancel Session</button>
+          }}>
+            {lateCancel ? `Cancel (£${fee} fee)` : 'Cancel Session'}
+          </button>
         </div>
       </div>
     </div>
@@ -49,16 +82,35 @@ const formatIcons = {
   ),
 };
 
+// Build datetime strings relative to now so the 24hr check works in the demo
+const tomorrow10am = (() => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(10, 0, 0, 0);
+  return d.toISOString();
+})();
+const in3days = (() => {
+  const d = new Date();
+  d.setDate(d.getDate() + 3);
+  d.setHours(14, 0, 0, 0);
+  return d.toISOString();
+})();
+const in5hours = (() => {
+  const d = new Date();
+  d.setHours(d.getHours() + 5, 0, 0, 0);
+  return d.toISOString();
+})();
+
 const MOCK_SESSIONS = [
   {
     id: 1, therapist_id: 1, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',
     date: 'Mon 24 Feb', time: '10:00 AM', duration: 50, price: 85,
-    session_format: 'video', status: 'upcoming',
+    session_format: 'video', status: 'upcoming', datetime: in5hours,
   },
   {
     id: 2, therapist_id: 2, therapist_name: 'James Thompson', therapist_title: 'Counselling Psychologist',
     date: 'Wed 26 Feb', time: '2:00 PM', duration: 50, price: 75,
-    session_format: 'video', status: 'upcoming',
+    session_format: 'video', status: 'upcoming', datetime: in3days,
   },
   {
     id: 3, therapist_id: 1, therapist_name: 'Dr. Sarah Mitchell', therapist_title: 'Clinical Psychologist',

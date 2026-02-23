@@ -13,13 +13,64 @@ export const mockSessions = [
   { id: 8, clientInitial: 'P', clientName: 'P. Evans', date: '2026-02-17', time: '4:00 PM', format: 'Video', type: 'Standard', duration: 50, price: 90, status: 'cancelled', notes: '' },
 ];
 
+function CancelModal({ session, onConfirm, onClose }) {
+  const [reason, setReason] = useState('');
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 440 }}>
+        <button className="modal__close" onClick={onClose}>&times;</button>
+        <div style={{ textAlign: 'center', marginBottom: 20 }}>
+          <div style={{
+            width: 56, height: 56, borderRadius: '50%', background: 'var(--danger-bg)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px',
+          }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="var(--danger)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <h3 className="modal__title" style={{ fontSize: 20 }}>Cancel Session?</h3>
+          <p style={{ fontSize: 14, color: 'var(--text-sec)', lineHeight: 1.6, marginBottom: 8 }}>
+            Cancel your session with <strong>{session.clientName}</strong> on {session.date} at {session.time}?
+          </p>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            The client will be notified of the cancellation and will not be charged.
+          </p>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <label className="form-label" style={{ fontSize: 13 }}>Reason (optional)</label>
+          <textarea
+            className="form-textarea"
+            value={reason}
+            onChange={e => setReason(e.target.value)}
+            placeholder="e.g. Schedule conflict, illness..."
+            style={{ minHeight: 70 }}
+          />
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button className="btn btn--ghost btn--md btn--full" onClick={onClose}>Keep Session</button>
+          <button className="btn btn--md btn--full" onClick={() => onConfirm(reason)} style={{
+            background: 'var(--danger)', color: '#fff', border: 'none',
+          }}>Cancel Session</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const tabs = ['upcoming', 'completed', 'cancelled'];
 
 export default function TherapistSessions() {
   const navigate = useNavigate();
+  const [sessions, setSessions] = useState(mockSessions);
   const [activeTab, setActiveTab] = useState('upcoming');
+  const [cancellingSession, setCancellingSession] = useState(null);
 
-  const filtered = mockSessions.filter((s) => s.status === activeTab);
+  const filtered = sessions.filter((s) => s.status === activeTab);
+
+  function cancelSession(id, reason) {
+    setSessions(prev => prev.map(s => s.id === id ? { ...s, status: 'cancelled', notes: reason || s.notes } : s));
+    setCancellingSession(null);
+  }
 
   const formatDate = (dateStr) => {
     const d = new Date(dateStr + 'T00:00:00');
@@ -48,7 +99,7 @@ export default function TherapistSessions() {
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
             <span style={{ marginLeft: 6, opacity: 0.7 }}>
-              ({mockSessions.filter((s) => s.status === tab).length})
+              ({sessions.filter((s) => s.status === tab).length})
             </span>
           </button>
         ))}
@@ -92,10 +143,23 @@ export default function TherapistSessions() {
                 <span className={`tag ${s.status === 'upcoming' ? 'tag--success' : s.status === 'completed' ? '' : 'tag--danger'}`}>
                   {s.status.charAt(0).toUpperCase() + s.status.slice(1)}
                 </span>
+                {s.status === 'upcoming' && (
+                  <button className="btn btn--danger-outline btn--xs" onClick={() => setCancellingSession(s)}>
+                    Cancel
+                  </button>
+                )}
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      {cancellingSession && (
+        <CancelModal
+          session={cancellingSession}
+          onConfirm={(reason) => cancelSession(cancellingSession.id, reason)}
+          onClose={() => setCancellingSession(null)}
+        />
       )}
     </div>
   );
