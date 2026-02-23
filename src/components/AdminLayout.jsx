@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ToastProvider } from './Toast';
 import '../styles/app.css';
 
 const sections = [
@@ -49,7 +50,7 @@ export default function AdminLayout() {
   const initial = (user.first_name || 'U')[0].toUpperCase();
 
   return (
-    <>
+    <ToastProvider>
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar__top">
           <a href="/" className="sidebar__logo">
@@ -108,6 +109,6 @@ export default function AdminLayout() {
           <Outlet />
         </div>
       </main>
-    </>
+    </ToastProvider>
   );
 }

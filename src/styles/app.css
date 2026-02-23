@@ -1381,19 +1381,26 @@ button { font-family: var(--font); }
 .empty-state__desc { font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
 
 /* ============ TOAST ============ */
-.toast {
+.toast-container {
   position: fixed;
   bottom: 24px;
   right: 24px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
   background: var(--text);
   color: #fff;
   padding: 14px 24px;
   border-radius: var(--radius);
   font-size: 14px;
   font-weight: 500;
-  z-index: 2000;
   box-shadow: var(--shadow-xl);
   animation: slideUp 0.3s ease;
+  pointer-events: auto;
 }
 
 .toast--success { background: #059669; }
