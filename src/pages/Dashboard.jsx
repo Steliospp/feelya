@@ -190,10 +190,10 @@ export default function Dashboard() {
         </div>
 
         <div className="self-test-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <h3>Book a Session</h3>
-          <p>Browse your company&rsquo;s approved therapists and schedule a confidential session.</p>
-          <button className="btn btn--white btn--md" onClick={() => navigate('/app/therapists')}>
-            Find a Therapist
+          <h3>Take a Self-Assessment</h3>
+          <p>Confidential, validated tools to help you understand how you&rsquo;re feeling right now.</p>
+          <button className="btn btn--white btn--md" onClick={() => navigate('/app/self-test')}>
+            Start Assessment
           </button>
         </div>
       </div>
