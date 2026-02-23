@@ -55,11 +55,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="therapist-profile/:id" element={<TherapistProfileView />} />
             <Route path="book/:id" element={<BookSession />} />
 
-            {/* Employee-only pages */}
-            <Route path="therapists" element={<RequireAuth roles={['EMPLOYEE']}><Therapists /></RequireAuth>} />
-            <Route path="sessions" element={<RequireAuth roles={['EMPLOYEE']}><Sessions /></RequireAuth>} />
-            <Route path="workshops" element={<RequireAuth roles={['EMPLOYEE']}><Workshops /></RequireAuth>} />
-            <Route path="resources" element={<RequireAuth roles={['EMPLOYEE']}><Resources /></RequireAuth>} />
+            {/* Employee & HR pages */}
+            <Route path="therapists" element={<Therapists />} />
+            <Route path="sessions" element={<Sessions />} />
+            <Route path="workshops" element={<Workshops />} />
+            <Route path="resources" element={<Resources />} />
 
             {/* HR-only pages */}
             <Route path="hr" element={<RequireAuth roles={['HR_ADMIN']}><HRDashboard /></RequireAuth>} />
