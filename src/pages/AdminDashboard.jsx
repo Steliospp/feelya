@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { getWorkshops } from '../lib/workshopStore';
 import '../styles/app.css';
 
 const LEADS_KEY = 'feelya_demo_leads';
@@ -20,6 +21,7 @@ const mockPlatformStats = {
 export default function AdminDashboard() {
   const leads = loadLeads();
   const newLeads = leads.filter((l) => l.status === 'new').length;
+  const pendingWorkshops = getWorkshops().filter(w => w.status === 'pending_review').length;
 
   return (
     <div className="page">
@@ -62,6 +64,18 @@ export default function AdminDashboard() {
           )}
           <Link to="/admin/demos" className="btn btn--outline btn--sm" style={{ marginTop: 12 }}>
             View All Leads
+          </Link>
+        </div>
+        <div className="dash-card">
+          <div className="dash-card__label">Workshop Reviews</div>
+          <div className="dash-card__value" style={{ color: pendingWorkshops > 0 ? '#f59e0b' : 'var(--text)' }}>
+            {pendingWorkshops}
+          </div>
+          {pendingWorkshops > 0 && (
+            <div className="dash-card__sub" style={{ color: '#f59e0b' }}>pending review</div>
+          )}
+          <Link to="/admin/workshops" className="btn btn--outline btn--sm" style={{ marginTop: 12 }}>
+            Review Workshops
           </Link>
         </div>
       </div>

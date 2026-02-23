@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getWorkshops } from '../lib/workshopStore';
 import '../styles/app.css';
 
 const mockStats = {
@@ -23,6 +24,7 @@ const mockUpcoming = [
 
 export default function TherapistDashboard() {
   const { user } = useAuth();
+  const availableWorkshops = getWorkshops().filter(w => w.status === 'published').length;
 
   return (
     <div className="page">
@@ -130,6 +132,10 @@ export default function TherapistDashboard() {
               <Link to="/therapist/sessions" className="btn btn--primary btn--md btn--full">
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M16 2H4a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V3a1 1 0 00-1-1zM7 2v16M3 7h14M3 12h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 View Sessions
+              </Link>
+              <Link to="/therapist/workshops" className="btn btn--outline btn--md btn--full">
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M14 17v-1a3 3 0 00-3-3H6a3 3 0 00-3 3v1m15-1v-1a3 3 0 00-2.25-2.9M11.5 3.1a3 3 0 010 5.8M8.5 9a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Workshops {availableWorkshops > 0 && `(${availableWorkshops} available)`}
               </Link>
               <Link to="/therapist/profile" className="btn btn--outline btn--md btn--full">
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 13a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="1.5"/></svg>

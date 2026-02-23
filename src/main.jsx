@@ -25,9 +25,11 @@ import TherapistLayout from './components/TherapistLayout';
 import TherapistDashboard from './pages/TherapistDashboard';
 import TherapistSessions from './pages/TherapistSessions';
 import TherapistProfile from './pages/TherapistProfile';
+import TherapistWorkshops from './pages/TherapistWorkshops';
 import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDemos from './pages/AdminDemos';
+import AdminWorkshops from './pages/AdminWorkshops';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -67,6 +69,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/therapist" element={<RequireAuth roles={['THERAPIST']}><TherapistLayout /></RequireAuth>}>
             <Route index element={<TherapistDashboard />} />
             <Route path="sessions" element={<TherapistSessions />} />
+            <Route path="workshops" element={<TherapistWorkshops />} />
             <Route path="profile" element={<TherapistProfile />} />
           </Route>
 
@@ -74,6 +77,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/admin" element={<RequireAuth roles={['SUPER_ADMIN']}><AdminLayout /></RequireAuth>}>
             <Route index element={<AdminDashboard />} />
             <Route path="demos" element={<AdminDemos />} />
+            <Route path="workshops" element={<AdminWorkshops />} />
           </Route>
         </Routes>
         <DevRoleSwitcher />

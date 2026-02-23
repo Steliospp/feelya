@@ -1,13 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-
-const mockWorkshops = [
-  { id: 1, title: 'Managing Stress at Work', desc: 'Learn practical strategies to manage workplace stress, set healthy boundaries, and prevent burnout.', host: 'Dr. Sarah Mitchell', date: 'Tue 25 Feb 2026', time: '12:00 PM', duration: 60, spots: 8, totalSpots: 20, category: 'Stress', registered: false },
-  { id: 2, title: 'Building Resilience', desc: 'Develop mental resilience and learn how to bounce back from setbacks with evidence-based techniques.', host: 'Emma Richardson', date: 'Thu 27 Feb 2026', time: '1:00 PM', duration: 45, spots: 12, totalSpots: 25, category: 'Wellbeing', registered: false },
-  { id: 3, title: 'Mindfulness in the Workplace', desc: 'An introduction to mindfulness practices you can use at your desk to improve focus and reduce anxiety.', host: 'Priya Sharma', date: 'Mon 3 Mar 2026', time: '11:00 AM', duration: 30, spots: 15, totalSpots: 30, category: 'Mindfulness', registered: false },
-  { id: 4, title: 'Understanding Anxiety', desc: 'Explore the mechanisms of anxiety and learn practical CBT-based tools to manage anxious thoughts.', host: 'Dr. Michael Chen', date: 'Wed 5 Mar 2026', time: '2:00 PM', duration: 60, spots: 6, totalSpots: 20, category: 'Anxiety', registered: true },
-  { id: 5, title: 'Healthy Sleep Habits', desc: 'Understand the connection between sleep and mental health, and build better evening routines.', host: 'Dr. Amara Okafor', date: 'Fri 7 Mar 2026', time: '12:30 PM', duration: 45, spots: 18, totalSpots: 25, category: 'Wellbeing', registered: false },
-  { id: 6, title: 'Communication Skills for Teams', desc: 'Improve your professional relationships with assertive communication techniques and conflict resolution.', host: 'Dr. James Cooper', date: 'Tue 11 Mar 2026', time: '10:00 AM', duration: 60, spots: 10, totalSpots: 20, category: 'Relationships', registered: false },
-];
+import { useAuth } from '../context/AuthContext';
+import { getWorkshops, updateWorkshop } from '../lib/workshopStore';
 
 const CATEGORIES = ['Stress', 'Wellbeing', 'Mindfulness', 'Anxiety', 'Relationships'];
 
@@ -33,29 +26,34 @@ const personIcon = (
 );
 
 export default function Workshops() {
-  const [workshops, setWorkshops] = useState(() => {
-    try {
-      const saved = localStorage.getItem('feelya_workshops');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        // Merge saved registration state with mock data
-        return mockWorkshops.map(w => {
-          const s = parsed.find(p => p.id === w.id);
-          return s ? { ...w, registered: s.registered, spots: s.spots } : w;
-        });
-      }
-    } catch {}
-    return mockWorkshops;
-  });
+  const { user } = useAuth();
+  // Only show scheduled workshops from the store (therapist assigned)
+  const [storeWorkshops, setStoreWorkshops] = useState(() => getWorkshops().filter(w => w.status === 'scheduled'));
+
+  function refresh() {
+    setStoreWorkshops(getWorkshops().filter(w => w.status === 'scheduled'));
+  }
+
+  // Map store workshops to the card display format
+  const workshops = storeWorkshops.map(w => ({
+    id: w.id,
+    title: w.title,
+    desc: w.description,
+    host: w.therapist?.name || 'TBC',
+    date: w.date,
+    time: w.time,
+    duration: w.duration,
+    spots: w.capacity - w.attendees.length,
+    totalSpots: w.capacity,
+    category: w.category,
+    registered: w.attendees.includes(user?.id),
+  }));
+
   const [search, setSearch] = useState('');
   const [suggestOpen, setSuggestOpen] = useState(false);
   const [suggestion, setSuggestion] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [confirmingCancel, setConfirmingCancel] = useState(null);
-
-  useEffect(() => {
-    localStorage.setItem('feelya_workshops', JSON.stringify(workshops.map(w => ({ id: w.id, registered: w.registered, spots: w.spots }))));
-  }, [workshops]);
 
   /* filters */
   const [filters, setFilters] = useState({ category: '', duration: '', availability: '' });
@@ -98,15 +96,20 @@ export default function Workshops() {
       setConfirmingCancel(id);
       return;
     }
-    setWorkshops(prev => prev.map(w =>
-      w.id === id ? { ...w, registered: true, spots: w.spots - 1 } : w
-    ));
+    // Add user to attendees in store
+    const sw = storeWorkshops.find(w => w.id === id);
+    if (sw) {
+      updateWorkshop(id, { attendees: [...sw.attendees, user.id] });
+      refresh();
+    }
   }
 
   function confirmCancel(id) {
-    setWorkshops(prev => prev.map(w =>
-      w.id === id ? { ...w, registered: false, spots: w.spots + 1 } : w
-    ));
+    const sw = storeWorkshops.find(w => w.id === id);
+    if (sw) {
+      updateWorkshop(id, { attendees: sw.attendees.filter(a => a !== user.id) });
+      refresh();
+    }
     setConfirmingCancel(null);
   }
 
@@ -133,21 +136,23 @@ export default function Workshops() {
           <h1 className="mp__title">Workshops</h1>
           <span className="mp__count">{filtered.length} available</span>
         </div>
-        <div className="mp__results-right">
-          <div className="mp__search-wrap">
-            <span className="mp__search-icon">{searchIcon}</span>
-            <input
-              className="mp__search"
-              type="text"
-              placeholder="Search..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
+        {workshops.length > 0 && (
+          <div className="mp__results-right">
+            <div className="mp__search-wrap">
+              <span className="mp__search-icon">{searchIcon}</span>
+              <input
+                className="mp__search"
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <button className="btn btn--outline btn--sm" onClick={() => setSuggestOpen(!suggestOpen)}>
+              Suggest a Topic
+            </button>
           </div>
-          <button className="btn btn--outline btn--sm" onClick={() => setSuggestOpen(!suggestOpen)}>
-            Suggest a Topic
-          </button>
-        </div>
+        )}
       </div>
 
       {/* ── Suggest topic panel ── */}
