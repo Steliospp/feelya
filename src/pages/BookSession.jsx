@@ -14,16 +14,41 @@ const TIME_SLOTS = [
 function generateWeekDays(startOffset = 0) {
   const days = [];
   const today = new Date();
-  today.setDate(today.getDate() + 1 + startOffset);
+  today.setHours(0, 0, 0, 0);
+  const start = new Date(today);
+  start.setDate(today.getDate() + startOffset * 7);
   for (let i = 0; i < 7; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
     days.push(d);
   }
   return days;
 }
 
+function isToday(d) {
+  const now = new Date();
+  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+}
+
+function isPastDay(d) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(d);
+  target.setHours(0, 0, 0, 0);
+  return target.getTime() < today.getTime();
+}
+
+function isSlotPassed(timeStr, date) {
+  if (!isToday(date)) return false;
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  const now = new Date();
+  const slotTime = new Date();
+  slotTime.setHours(hours, minutes, 0, 0);
+  return slotTime <= now;
+}
+
 function formatDayLabel(d) {
+  if (isToday(d)) return 'Today';
   const today = new Date();
   today.setHours(0,0,0,0);
   const tomorrow = new Date(today);
@@ -35,11 +60,13 @@ function formatDayLabel(d) {
 }
 
 // Simulate some slots being unavailable (deterministic per therapist+date)
-function getAvailableSlots(therapistId, dateStr) {
+function getAvailableSlots(therapistId, dateStr, date) {
   const seed = therapistId + dateStr.split('-').reduce((a, b) => a + parseInt(b), 0);
-  return TIME_SLOTS.filter((_, i) => {
+  return TIME_SLOTS.filter((slot, i) => {
     const hash = ((seed * 31 + i * 17) % 10);
-    return hash < 7; // ~70% availability
+    if (hash >= 7) return false; // ~70% availability
+    if (date && isSlotPassed(slot, date)) return false;
+    return true;
   });
 }
 
@@ -81,7 +108,7 @@ export default function BookSession() {
   const { price, duration, label: sessionLabel } = getPrice();
 
   const selectedDateStr = selectedDate ? selectedDate.toISOString().split('T')[0] : null;
-  const availableSlots = selectedDateStr ? getAvailableSlots(therapist.id, selectedDateStr) : [];
+  const availableSlots = selectedDateStr ? getAvailableSlots(therapist.id, selectedDateStr, selectedDate) : [];
 
   function handleConfirm() {
     setBooked(true);
@@ -216,15 +243,18 @@ export default function BookSession() {
           <div className="bk__dates">
             {weekDays.map(d => {
               const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+              const past = isPastDay(d);
+              const today = isToday(d);
               const isSelected = selectedDate && d.toDateString() === selectedDate.toDateString();
+              const disabled = isWeekend || past;
               return (
                 <button
                   key={d.toISOString()}
-                  className={`bk__date ${isSelected ? 'bk__date--active' : ''} ${isWeekend ? 'bk__date--disabled' : ''}`}
-                  disabled={isWeekend}
+                  className={`bk__date ${isSelected ? 'bk__date--active' : ''} ${disabled ? 'bk__date--disabled' : ''} ${today && !isSelected ? 'bk__date--today' : ''}`}
+                  disabled={disabled}
                   onClick={() => { setSelectedDate(d); setSelectedTime(null); }}
                 >
-                  <span className="bk__date-day">{d.toLocaleDateString('en-GB', { weekday: 'short' })}</span>
+                  <span className="bk__date-day">{today ? 'Today' : d.toLocaleDateString('en-GB', { weekday: 'short' })}</span>
                   <span className="bk__date-num">{d.getDate()}</span>
                 </button>
               );

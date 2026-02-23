@@ -2080,6 +2080,20 @@ button { font-family: var(--font); }
   color: white;
 }
 
+.bk__date--today {
+  border-color: var(--primary);
+  background: var(--primary-50, #eef2ff);
+}
+
+.bk__date--today .bk__date-day {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.bk__date--today .bk__date-num {
+  color: var(--primary);
+}
+
 .bk__date--disabled {
   opacity: 0.35;
   cursor: not-allowed;
