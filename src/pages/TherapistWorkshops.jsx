@@ -77,11 +77,6 @@ export default function TherapistWorkshops() {
     refresh();
   }
 
-  function handleDecline(id) {
-    // Just remove from published — admin can re-publish
-    // For now just do nothing visible (therapist ignores it)
-  }
-
   function handleCancelClick(w) {
     setCancelConfirm(w.id);
   }
@@ -148,10 +143,7 @@ export default function TherapistWorkshops() {
                   </div>
                   {activeTab === 'available' && (
                     <div style={{ display: 'flex', gap: 8, flexDirection: 'column', alignItems: 'flex-end' }}>
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        <button className="btn btn--primary btn--sm" onClick={() => handleClaim(w.id)}>Claim</button>
-                        <button className="btn btn--ghost btn--sm" onClick={() => handleDecline(w.id)}>Decline</button>
-                      </div>
+                      <button className="btn btn--primary btn--sm" onClick={() => handleClaim(w.id)}>Claim</button>
                       {claimError?.workshopId === w.id && (
                         <div style={{ fontSize: 13, color: 'var(--danger)', background: 'rgba(239,68,68,0.06)', border: '1px solid var(--danger)', borderRadius: 8, padding: '8px 12px', maxWidth: 340 }}>
                           {claimError.message}
