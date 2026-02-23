@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/app.css';
 
 const mockTherapists = [
@@ -13,6 +14,7 @@ const mockTherapists = [
 ];
 
 export default function HRTherapists() {
+  const navigate = useNavigate();
   const [therapists] = useState(mockTherapists);
 
   const active = therapists.filter(t => t.status === 'active').length;
@@ -54,9 +56,9 @@ export default function HRTherapists() {
           </thead>
           <tbody>
             {therapists.map(t => (
-              <tr key={t.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+              <tr key={t.id} style={{ borderBottom: '1px solid var(--border-light)', cursor: 'pointer' }} onClick={() => navigate(`/app/therapist-profile/${t.id}`)}>
                 <td style={{ padding: '14px 16px' }}>
-                  <div style={{ fontWeight: 600 }}>{t.name}</div>
+                  <div style={{ fontWeight: 600, color: 'var(--primary)' }}>{t.name}</div>
                   <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.title}</div>
                 </td>
                 <td style={{ padding: '14px 16px' }}>

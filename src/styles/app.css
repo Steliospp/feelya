@@ -1700,3 +1700,176 @@ button { font-family: var(--font); }
   .self-test-q__opt { flex-basis: calc(50% - 4px); }
   .org-stats-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ============ THERAPIST PROFILE VIEW ============ */
+.tp__header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding: 28px;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+}
+
+.tp__avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--violet));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tp__header-info {
+  flex: 1;
+}
+
+.tp__name {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.tp__title {
+  font-size: 15px;
+  color: var(--text-sec);
+  margin-top: 2px;
+}
+
+.tp__header-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.tp__rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tp__review-count {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.tp__grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+.tp__main {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tp__section {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.tp__section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+
+.tp__section-text {
+  font-size: 14px;
+  color: var(--text-sec);
+  line-height: 1.8;
+  margin: 0;
+  white-space: pre-line;
+}
+
+.tp__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tp__sidebar-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+.tp__pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tp__price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 14px;
+  color: var(--text-sec);
+}
+
+.tp__price-row:last-child {
+  border-bottom: none;
+}
+
+.tp__price-row strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.tp__availability {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--success);
+}
+
+/* Clickable therapist name in cards */
+.tc__name--link {
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.tc__name--link:hover {
+  color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .tp__header {
+    flex-direction: column;
+    text-align: center;
+  }
+  .tp__grid {
+    grid-template-columns: 1fr;
+  }
+  .tp__sidebar-card {
+    position: static;
+  }
+}

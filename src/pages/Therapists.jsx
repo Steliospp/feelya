@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useModal } from '../context/ModalContext';
 
 const MOCK_THERAPISTS = [
@@ -313,6 +314,7 @@ export default function Therapists() {
 
 /* ========= Horizontal Card ========= */
 function TherapistCard({ therapist: t, onViewProfile, onBookNow }) {
+  const navigate = useNavigate();
   const [pricingOpen, setPricingOpen] = useState(false);
   const lowestPrice = getLowestPrice(t);
   const specs = t.specialisations.split(',').slice(0, 3);
@@ -320,7 +322,7 @@ function TherapistCard({ therapist: t, onViewProfile, onBookNow }) {
   return (
     <div className="tc">
       {/* Left: Avatar */}
-      <div className="tc__avatar-col">
+      <div className="tc__avatar-col" style={{ cursor: 'pointer' }} onClick={() => navigate(`/app/therapist-profile/${t.id}`)}>
         <div className="tc__avatar">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
             <path d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12zm0 2c-3 0-9 1.5-9 4.5V21h18v-2.5c0-3-6-4.5-9-4.5z" fill="white" />
@@ -336,7 +338,7 @@ function TherapistCard({ therapist: t, onViewProfile, onBookNow }) {
 
       {/* Centre: Info */}
       <div className="tc__info">
-        <div className="tc__name">{t.name}</div>
+        <div className="tc__name tc__name--link" onClick={() => navigate(`/app/therapist-profile/${t.id}`)}>{t.name}</div>
         <div className="tc__role">{t.title}</div>
         <span className="tc__badge">{t.accreditation}</span>
         <div className="tc__chips">
@@ -374,7 +376,7 @@ function TherapistCard({ therapist: t, onViewProfile, onBookNow }) {
         </div>
         <span className="tc__avail">Next: {t.next_available}</span>
         <button className="btn btn--dark btn--sm tc__btn-book" onClick={() => onBookNow(t.id)}>Book now</button>
-        <button className="btn btn--ghost btn--sm tc__btn-profile" onClick={() => onViewProfile(t.id)}>View profile</button>
+        <button className="btn btn--ghost btn--sm tc__btn-profile" onClick={() => navigate(`/app/therapist-profile/${t.id}`)}>View profile</button>
       </div>
     </div>
   );
