@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getWorkshops, updateWorkshop } from '../lib/workshopStore';
+import { mockSessions } from './TherapistSessions';
 import '../styles/app.css';
 
 function isWithin48Hours(dateStr, timeStr) {
@@ -10,11 +11,33 @@ function isWithin48Hours(dateStr, timeStr) {
   return diffMs >= 0 && diffMs < 48 * 60 * 60 * 1000;
 }
 
+// Parse both "6:00 PM" and "12:00" (24h) formats to minutes since midnight
+function parseTimeToMinutes(timeStr) {
+  const ampm = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (ampm) {
+    let h = parseInt(ampm[1]);
+    const m = parseInt(ampm[2]);
+    if (ampm[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+    if (ampm[3].toUpperCase() === 'AM' && h === 12) h = 0;
+    return h * 60 + m;
+  }
+  const [h, m] = timeStr.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function hasTimeConflict(date1, time1, dur1, date2, time2, dur2) {
+  if (date1 !== date2) return false;
+  const s1 = parseTimeToMinutes(time1);
+  const s2 = parseTimeToMinutes(time2);
+  return s1 < s2 + dur2 && s2 < s1 + dur1;
+}
+
 export default function TherapistWorkshops() {
   const { user } = useAuth();
   const [workshops, setWorkshops] = useState(() => getWorkshops());
   const [activeTab, setActiveTab] = useState('available');
   const [cancelConfirm, setCancelConfirm] = useState(null); // workshop id being confirmed
+  const [claimError, setClaimError] = useState(null); // { workshopId, message }
 
   function refresh() { setWorkshops(getWorkshops()); }
 
@@ -24,6 +47,29 @@ export default function TherapistWorkshops() {
   const filtered = activeTab === 'available' ? available : mine;
 
   function handleClaim(id) {
+    const workshop = workshops.find(w => w.id === id);
+    setClaimError(null);
+
+    // Check against already-claimed workshops
+    const workshopConflict = mine.find(w =>
+      w.status === 'scheduled' &&
+      hasTimeConflict(workshop.date, workshop.time, workshop.duration, w.date, w.time, w.duration)
+    );
+    if (workshopConflict) {
+      setClaimError({ workshopId: id, message: `This overlaps with your workshop "${workshopConflict.title}" on ${workshopConflict.date} at ${workshopConflict.time}.` });
+      return;
+    }
+
+    // Check against upcoming therapy sessions
+    const sessionConflict = mockSessions.find(s =>
+      s.status === 'upcoming' &&
+      hasTimeConflict(workshop.date, workshop.time, workshop.duration, s.date, s.time, s.duration)
+    );
+    if (sessionConflict) {
+      setClaimError({ workshopId: id, message: `This overlaps with your session with ${sessionConflict.clientName} on ${sessionConflict.date} at ${sessionConflict.time}.` });
+      return;
+    }
+
     updateWorkshop(id, {
       status: 'scheduled',
       therapist: { id: user.id, name: `${user.first_name} ${user.last_name}` },
@@ -101,9 +147,16 @@ export default function TherapistWorkshops() {
                     </div>
                   </div>
                   {activeTab === 'available' && (
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      <button className="btn btn--primary btn--sm" onClick={() => handleClaim(w.id)}>Claim</button>
-                      <button className="btn btn--ghost btn--sm" onClick={() => handleDecline(w.id)}>Decline</button>
+                    <div style={{ display: 'flex', gap: 8, flexDirection: 'column', alignItems: 'flex-end' }}>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button className="btn btn--primary btn--sm" onClick={() => handleClaim(w.id)}>Claim</button>
+                        <button className="btn btn--ghost btn--sm" onClick={() => handleDecline(w.id)}>Decline</button>
+                      </div>
+                      {claimError?.workshopId === w.id && (
+                        <div style={{ fontSize: 13, color: 'var(--danger)', background: 'rgba(239,68,68,0.06)', border: '1px solid var(--danger)', borderRadius: 8, padding: '8px 12px', maxWidth: 340 }}>
+                          {claimError.message}
+                        </div>
+                      )}
                     </div>
                   )}
                   {activeTab === 'mine' && w.status === 'scheduled' && cancelConfirm !== w.id && (

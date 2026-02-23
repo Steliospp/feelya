@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import '../styles/app.css';
 
-const mockSessions = [
+export const mockSessions = [
   { id: 1, clientInitial: 'A', clientName: 'A. Taylor', date: '2026-02-20', time: '6:00 PM', format: 'Video', type: 'Standard', duration: 50, price: 90, status: 'upcoming', notes: '' },
   { id: 2, clientInitial: 'M', clientName: 'M. Johnson', date: '2026-02-20', time: '7:00 PM', format: 'Audio', type: 'Standard', duration: 50, price: 90, status: 'upcoming', notes: '' },
   { id: 3, clientInitial: 'R', clientName: 'R. Patel', date: '2026-02-21', time: '10:00 AM', format: 'Video', type: 'Intro', duration: 30, price: 45, status: 'upcoming', notes: '' },
