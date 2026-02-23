@@ -31,6 +31,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminDemos from './pages/AdminDemos';
 import AdminWorkshops from './pages/AdminWorkshops';
 import TherapistProfileView from './pages/TherapistProfileView';
+import ClientProfileView from './pages/ClientProfileView';
 import BookSession from './pages/BookSession';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -78,6 +79,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="workshops" element={<TherapistWorkshops />} />
             <Route path="profile" element={<TherapistProfile />} />
             <Route path="view/:id" element={<TherapistProfileView />} />
+            <Route path="client/:clientName" element={<ClientProfileView />} />
           </Route>
 
           {/* Super Admin portal */}

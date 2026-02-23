@@ -2,6 +2,39 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
 
+function CancelModal({ session, onConfirm, onClose }) {
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 420 }}>
+        <button className="modal__close" onClick={onClose}>&times;</button>
+        <div style={{ textAlign: 'center', marginBottom: 20 }}>
+          <div style={{
+            width: 56, height: 56, borderRadius: '50%', background: 'var(--danger-bg)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px',
+          }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="var(--danger)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <h3 className="modal__title" style={{ fontSize: 20 }}>Cancel Session?</h3>
+          <p style={{ fontSize: 14, color: 'var(--text-sec)', lineHeight: 1.6, marginBottom: 8 }}>
+            Are you sure you want to cancel your session with <strong>{session.therapist_name}</strong> on {session.date} at {session.time}?
+          </p>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            This action cannot be undone.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button className="btn btn--ghost btn--md btn--full" onClick={onClose}>Keep Session</button>
+          <button className="btn btn--md btn--full" onClick={onConfirm} style={{
+            background: 'var(--danger)', color: '#fff', border: 'none',
+          }}>Cancel Session</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const formatIcons = {
   video: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -75,10 +108,11 @@ export default function Sessions() {
 
   const [sessions, setSessions] = useState(MOCK_SESSIONS);
   const [activeTab, setActiveTab] = useState('upcoming');
+  const [cancellingSession, setCancellingSession] = useState(null);
 
   function cancelSession(id) {
-    if (!window.confirm('Are you sure you want to cancel this session?')) return;
     setSessions(prev => prev.map(s => s.id === id ? { ...s, status: 'cancelled' } : s));
+    setCancellingSession(null);
     showToast('Session cancelled');
   }
 
@@ -174,7 +208,7 @@ export default function Sessions() {
               {s.status === 'upcoming' && (
                 <>
                   <span className="tag tag--success">Confirmed</span>
-                  <button className="btn btn--danger-outline btn--xs" onClick={() => cancelSession(s.id)}>
+                  <button className="btn btn--danger-outline btn--xs" onClick={() => setCancellingSession(s)}>
                     Cancel
                   </button>
                 </>
@@ -189,6 +223,14 @@ export default function Sessions() {
           </div>
         ))}
       </div>
+
+      {cancellingSession && (
+        <CancelModal
+          session={cancellingSession}
+          onConfirm={() => cancelSession(cancellingSession.id)}
+          onClose={() => setCancellingSession(null)}
+        />
+      )}
     </>
   );
 }

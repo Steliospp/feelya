@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getWorkshops } from '../lib/workshopStore';
 import '../styles/app.css';
@@ -24,6 +24,7 @@ const mockUpcoming = [
 
 export default function TherapistDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const availableWorkshops = getWorkshops().filter(w => w.status === 'published').length;
 
   return (
@@ -90,7 +91,7 @@ export default function TherapistDashboard() {
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 12a4 4 0 100-8 4 4 0 000 8zm0 0c-4 0-7 2-7 4.5V18h14v-1.5c0-2.5-3-4.5-7-4.5z" stroke="#fff" strokeWidth="1.5"/></svg>
                   </div>
                   <div>
-                    <div className="session-item__name">{s.clientName}</div>
+                    <div className="session-item__name" style={{ color: 'var(--primary)', cursor: 'pointer' }} onClick={() => navigate(`/therapist/client/${encodeURIComponent(s.clientName)}`)}>{s.clientName}</div>
                     <div className="session-item__detail">{s.format} · {s.type} · {s.duration}min</div>
                   </div>
                 </div>
