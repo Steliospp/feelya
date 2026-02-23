@@ -185,23 +185,25 @@ export default function Therapists() {
           <h1 className="mp__title">Therapists</h1>
           <span className="mp__count">{therapists.length} available</span>
         </div>
-        <div className="mp__results-right">
-          <div className="mp__search-wrap">
-            <span className="mp__search-icon">{searchIcon}</span>
-            <input
-              className="mp__search"
-              type="text"
-              placeholder="Search..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
+        {therapists.length > 0 && (
+          <div className="mp__results-right">
+            <div className="mp__search-wrap">
+              <span className="mp__search-icon">{searchIcon}</span>
+              <input
+                className="mp__search"
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <select className="mp__sort" value={sort} onChange={e => setSort(e.target.value)}>
+              {SORT_OPTIONS.map(o => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
           </div>
-          <select className="mp__sort" value={sort} onChange={e => setSort(e.target.value)}>
-            {SORT_OPTIONS.map(o => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
-        </div>
+        )}
       </div>
 
       {/* ── Sidebar + Cards grid ── */}
