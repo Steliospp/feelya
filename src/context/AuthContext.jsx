@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useCallback } from 'react';
 const AuthContext = createContext(null);
 
 const STORAGE_KEY = 'feelya_auth';
+const ONBOARDING_KEY = 'feelya_onboarding';
 
 const MOCK_USERS = {
   'employee@demo.com': { id: 'emp-1', email: 'employee@demo.com', role: 'EMPLOYEE', companyId: 'comp-1', companyName: 'Acme Corp', first_name: 'Alex', last_name: 'Taylor', avatar_color: '#6366f1' },
@@ -30,8 +31,21 @@ function saveAuth(user) {
   }
 }
 
+function loadOnboarding() {
+  try {
+    const stored = localStorage.getItem(ONBOARDING_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return {};
+}
+
+function saveOnboarding(state) {
+  localStorage.setItem(ONBOARDING_KEY, JSON.stringify(state));
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => loadAuth());
+  const [onboarding, setOnboarding] = useState(() => loadOnboarding());
   const loading = false;
 
   const login = useCallback((email, _password) => {
@@ -79,8 +93,33 @@ export function AuthProvider({ children }) {
 
   const updateUser = useCallback(() => {}, []);
 
+  // Onboarding helpers — keyed by "{role}:{userId}"
+  const getOnboardingStatus = useCallback((role, userId) => {
+    const key = `${role}:${userId}`;
+    return onboarding[key] || null;
+  }, [onboarding]);
+
+  const completeOnboarding = useCallback((role, userId, data) => {
+    setOnboarding(prev => {
+      const key = `${role}:${userId}`;
+      const next = { ...prev, [key]: { completed: true, ...data, completedAt: new Date().toISOString() } };
+      saveOnboarding(next);
+      return next;
+    });
+  }, []);
+
+  const resetOnboarding = useCallback((role, userId) => {
+    setOnboarding(prev => {
+      const key = `${role}:${userId}`;
+      const next = { ...prev };
+      delete next[key];
+      saveOnboarding(next);
+      return next;
+    });
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, switchRole, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, switchRole, updateUser, getOnboardingStatus, completeOnboarding, resetOnboarding }}>
       {children}
     </AuthContext.Provider>
   );
