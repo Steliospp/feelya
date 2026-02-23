@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { downloadCSV } from '../lib/csv';
 import '../styles/app.css';
 
 const mockDepartments = [
@@ -19,11 +21,32 @@ export default function HREmployees() {
   const totalSessions = mockDepartments.reduce((s, d) => s + d.sessions, 0);
   const avgEngagement = Math.round(mockDepartments.reduce((s, d) => s + d.engagement, 0) / mockDepartments.length);
 
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+
+  function handleExport() {
+    downloadCSV('employees-report.csv', mockDepartments, [
+      { key: 'dept', label: 'Department' },
+      { key: 'total', label: 'Employees' },
+      { key: 'active', label: 'Active' },
+      { key: 'sessions', label: 'Sessions' },
+      { key: 'engagement', label: 'Engagement %' },
+    ]);
+  }
+
   return (
     <div className="page">
-      <div className="page-header">
-        <h1 className="page-header__title">Employees</h1>
-        <p className="page-header__subtitle">Aggregated engagement metrics by department. Individual data is never shown.</p>
+      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+        <div>
+          <h1 className="page-header__title">Employees</h1>
+          <p className="page-header__subtitle">Aggregated engagement metrics by department. Individual data is never shown.</p>
+        </div>
+        <div className="export-bar">
+          <input type="date" className="export-bar__date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
+          <span className="export-bar__sep">to</span>
+          <input type="date" className="export-bar__date" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+          <button className="btn btn--outline btn--sm" onClick={handleExport}>Export CSV</button>
+        </div>
       </div>
 
       <div className="org-stats-grid" style={{ marginBottom: 24 }}>

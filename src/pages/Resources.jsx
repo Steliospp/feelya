@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react';
 import { useToast } from '../components/Toast';
 
 const resources = [
@@ -12,8 +13,26 @@ const resources = [
   { cat: 'Relationships', title: 'Communicating Better at Work', desc: 'Expert advice on improving workplace communication, resolving conflict, and building stronger professional relationships.', grad: 'linear-gradient(135deg, #fef3c7, #e0e7ff)', icon: '#f59e0b' },
 ];
 
+const CATEGORIES = [...new Set(resources.map(r => r.cat))];
+
 export default function Resources() {
   const showToast = useToast();
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('');
+
+  const filtered = useMemo(() => {
+    let list = resources;
+    if (category) list = list.filter(r => r.cat === category);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(r =>
+        r.title.toLowerCase().includes(q) ||
+        r.desc.toLowerCase().includes(q) ||
+        r.cat.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [search, category]);
 
   return (
     <>
@@ -21,23 +40,66 @@ export default function Resources() {
         <h1 className="page-header__title">Resources</h1>
         <p className="page-header__subtitle">Expert articles and guides to support your mental health and workplace wellbeing.</p>
       </div>
-      <div className="resources-grid">
-        {resources.map((r, i) => (
-          <div className="resource-card" key={i} onClick={() => showToast('Article coming soon!')}>
-            <div className="resource-card__img" style={{ background: r.grad }}>
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                <path d="M12 6.5a.5.5 0 11-1 0 .5.5 0 011 0zM12 12a.5.5 0 11-1 0 .5.5 0 011 0zM12 17.5a.5.5 0 11-1 0 .5.5 0 011 0z" stroke={r.icon} strokeWidth="1.5" />
-                <rect x="3" y="3" width="18" height="18" rx="3" stroke={r.icon} strokeWidth="1.5" />
-              </svg>
-            </div>
-            <div className="resource-card__body">
-              <div className="resource-card__cat">{r.cat}</div>
-              <div className="resource-card__title">{r.title}</div>
-              <div className="resource-card__desc">{r.desc}</div>
-            </div>
-          </div>
-        ))}
+
+      <div className="resources-toolbar">
+        <div className="mp__search-wrap">
+          <span className="mp__search-icon">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.3" />
+              <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+            </svg>
+          </span>
+          <input
+            className="mp__search"
+            type="text"
+            placeholder="Search resources..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="resources-cats">
+          <button
+            className={`resources-cat${!category ? ' resources-cat--active' : ''}`}
+            onClick={() => setCategory('')}
+          >
+            All
+          </button>
+          {CATEGORIES.map(c => (
+            <button
+              key={c}
+              className={`resources-cat${category === c ? ' resources-cat--active' : ''}`}
+              onClick={() => setCategory(c)}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {filtered.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-state__title">No resources found</div>
+          <p className="empty-state__desc">Try adjusting your search or category filter.</p>
+        </div>
+      ) : (
+        <div className="resources-grid">
+          {filtered.map((r, i) => (
+            <div className="resource-card" key={i} onClick={() => showToast('Article coming soon!')}>
+              <div className="resource-card__img" style={{ background: r.grad }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 6.5a.5.5 0 11-1 0 .5.5 0 011 0zM12 12a.5.5 0 11-1 0 .5.5 0 011 0zM12 17.5a.5.5 0 11-1 0 .5.5 0 011 0z" stroke={r.icon} strokeWidth="1.5" />
+                  <rect x="3" y="3" width="18" height="18" rx="3" stroke={r.icon} strokeWidth="1.5" />
+                </svg>
+              </div>
+              <div className="resource-card__body">
+                <div className="resource-card__cat">{r.cat}</div>
+                <div className="resource-card__title">{r.title}</div>
+                <div className="resource-card__desc">{r.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 }

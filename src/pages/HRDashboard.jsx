@@ -52,9 +52,9 @@ export default function HRDashboard() {
           <div className="org-stat__change org-stat__change--up">+12% vs last month</div>
         </div>
         <div className="org-stat">
-          <div className="org-stat__label">Engagement Rate</div>
-          <div className="org-stat__value">{mockStats.engagementRate}%</div>
-          <div className="org-stat__change org-stat__change--up">+5% vs last month</div>
+          <div className="org-stat__label">Avg Wellbeing Score</div>
+          <div className="org-stat__value">{mockStats.avgWellbeing}/100</div>
+          <div className="org-stat__change org-stat__change--up">+3 vs last month</div>
         </div>
       </div>
 
