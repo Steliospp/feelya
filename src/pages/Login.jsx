@@ -5,7 +5,7 @@ import '../styles/auth.css';
 
 function redirectForRole(role) {
   if (role === 'SUPER_ADMIN') return '/admin';
-  if (role === 'HR_ADMIN') return '/app/hr';
+  if (role === 'THERAPIST') return '/therapist';
   return '/app';
 }
 

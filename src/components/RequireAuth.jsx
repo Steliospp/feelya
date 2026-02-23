@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { homePathForRole, ROLES } from '../lib/roles';
 
 export default function RequireAuth({ children, roles }) {
   const { user } = useAuth();
@@ -8,12 +9,9 @@ export default function RequireAuth({ children, roles }) {
     return <Navigate to="/login" replace />;
   }
 
-  if (roles && !roles.includes(user.role)) {
-    // Redirect to the appropriate home for their role
-    if (user.role === 'SUPER_ADMIN') return <Navigate to="/admin" replace />;
-    if (user.role === 'HR_ADMIN') return <Navigate to="/app/hr" replace />;
-    if (user.role === 'THERAPIST') return <Navigate to="/therapist" replace />;
-    return <Navigate to="/app" replace />;
+  // SUPER_ADMIN can access everything
+  if (roles && user.role !== ROLES.SUPER_ADMIN && !roles.includes(user.role)) {
+    return <Navigate to={homePathForRole(user.role)} replace />;
   }
 
   return children;
