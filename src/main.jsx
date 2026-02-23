@@ -42,6 +42,7 @@ import AdminContent from './pages/AdminContent';
 import TherapistProfileView from './pages/TherapistProfileView';
 import ClientProfileView from './pages/ClientProfileView';
 import BookSession from './pages/BookSession';
+import TherapistJoin from './pages/TherapistJoin';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -53,6 +54,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/login" element={<Login />} />
           <Route path="/book-demo" element={<BookDemo />} />
           <Route path="/signup" element={<BookDemo />} />
+          <Route path="/therapist-join" element={<TherapistJoin />} />
 
           {/* Company portal — single shell, role-gated nav */}
           <Route path="/app" element={<RequireAuth roles={['EMPLOYEE', 'HR_ADMIN']}><AppLayout /></RequireAuth>}>
