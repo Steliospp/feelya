@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import TherapistOnboarding from '../pages/TherapistOnboarding';
 import '../styles/app.css';
 
 export default function TherapistLayout() {
-  const { user, logout } = useAuth();
+  const { user, logout, getOnboardingStatus } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -12,6 +13,11 @@ export default function TherapistLayout() {
     logout();
     navigate('/login');
   };
+
+  // Onboarding gate — therapist must complete onboarding before accessing portal
+  if (!getOnboardingStatus('THERAPIST', user.id)) {
+    return <TherapistOnboarding />;
+  }
 
   const initial = (user.first_name || 'T')[0].toUpperCase();
 
