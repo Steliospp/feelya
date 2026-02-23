@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/app.css';
 
 export const mockSessions = [
@@ -15,6 +16,7 @@ export const mockSessions = [
 const tabs = ['upcoming', 'completed', 'cancelled'];
 
 export default function TherapistSessions() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('upcoming');
 
   const filtered = mockSessions.filter((s) => s.status === activeTab);
@@ -71,7 +73,7 @@ export default function TherapistSessions() {
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 12a4 4 0 100-8 4 4 0 000 8zm0 0c-4 0-7 2-7 4.5V18h14v-1.5c0-2.5-3-4.5-7-4.5z" stroke="#fff" strokeWidth="1.5"/></svg>
                 </div>
                 <div>
-                  <div className="session-item__name">{s.clientName}</div>
+                  <div className="session-item__name" style={{ color: 'var(--primary)', cursor: 'pointer' }} onClick={() => navigate(`/therapist/client/${encodeURIComponent(s.clientName)}`)}>{s.clientName}</div>
                   <div className="session-item__detail">
                     {s.format} · {s.type} · {s.duration}min · £{s.price}
                   </div>

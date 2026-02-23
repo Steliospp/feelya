@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ToastProvider } from './Toast';
 import { ModalProvider } from '../context/ModalContext';
@@ -21,6 +21,7 @@ export default function AppLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
 
   function handleLogout() {
     logout();
@@ -57,18 +58,22 @@ export default function AppLayout() {
             {sections.map((section, si) => {
               if (!section.label) {
                 // Top-level items (no section header)
-                return section.items.map(item => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.to === '/app/dashboard'}
-                    className={({ isActive }) => `sidebar__link ${isActive ? 'active' : ''}`}
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    {item.icon}
-                    {item.label}
-                  </NavLink>
-                ));
+                return section.items.map(item => {
+                  const isDashboard = item.to === '/app/dashboard';
+                  const isAtRoot = location.pathname === '/app' || location.pathname === '/app/';
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      end={isDashboard}
+                      className={({ isActive }) => `sidebar__link ${isActive || (isDashboard && isAtRoot) ? 'active' : ''}`}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      {item.icon}
+                      {item.label}
+                    </NavLink>
+                  );
+                });
               }
               return (
                 <div className="sidebar__section" key={si}>
