@@ -27,6 +27,7 @@ import TherapistDashboard from './pages/TherapistDashboard';
 import TherapistSessions from './pages/TherapistSessions';
 import TherapistProfile from './pages/TherapistProfile';
 import TherapistWorkshops from './pages/TherapistWorkshops';
+import TherapistBlogs from './pages/TherapistBlogs';
 import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDemos from './pages/AdminDemos';
@@ -85,6 +86,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/therapist" element={<RequireAuth roles={['THERAPIST']}><TherapistLayout /></RequireAuth>}>
             <Route index element={<TherapistDashboard />} />
             <Route path="sessions" element={<TherapistSessions />} />
+            <Route path="blogs" element={<TherapistBlogs />} />
             <Route path="workshops" element={<TherapistWorkshops />} />
             <Route path="profile" element={<TherapistProfile />} />
             <Route path="view/:id" element={<TherapistProfileView />} />
