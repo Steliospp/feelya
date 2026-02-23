@@ -68,7 +68,7 @@ export default function TherapistProfileView() {
             </div>
           </div>
         </div>
-        <button className="btn btn--primary btn--sm" onClick={() => navigate(`/app/book/${therapist.id}`)}>Book a Session</button>
+        <button className="btn btn--primary btn--lg" onClick={() => navigate(`/app/book/${therapist.id}`)} style={{ whiteSpace: 'nowrap' }}>Book a Session</button>
       </div>
 
       <div className="tp__grid">
@@ -166,7 +166,7 @@ export default function TherapistProfileView() {
               <span>Next available: {therapist.next_available}</span>
             </div>
           )}
-          <button className="btn btn--primary btn--full" style={{ marginTop: 16 }} onClick={() => navigate(`/app/book/${therapist.id}`)}>Book a Session</button>
+          <button className="btn btn--primary btn--full btn--lg" style={{ marginTop: 16 }} onClick={() => navigate(`/app/book/${therapist.id}`)}>Book a Session</button>
         </div>
       </div>
     </div>
