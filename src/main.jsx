@@ -31,6 +31,13 @@ import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDemos from './pages/AdminDemos';
 import AdminWorkshops from './pages/AdminWorkshops';
+import AdminSessions from './pages/AdminSessions';
+import AdminTherapists from './pages/AdminTherapists';
+import AdminUsers from './pages/AdminUsers';
+import AdminCompanies from './pages/AdminCompanies';
+import AdminCoupons from './pages/AdminCoupons';
+import AdminCategories from './pages/AdminCategories';
+import AdminContent from './pages/AdminContent';
 import TherapistProfileView from './pages/TherapistProfileView';
 import ClientProfileView from './pages/ClientProfileView';
 import BookSession from './pages/BookSession';
@@ -87,8 +94,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           {/* Super Admin portal */}
           <Route path="/admin" element={<RequireAuth roles={['SUPER_ADMIN']}><AdminLayout /></RequireAuth>}>
             <Route index element={<AdminDashboard />} />
-            <Route path="demos" element={<AdminDemos />} />
+            <Route path="sessions" element={<AdminSessions />} />
+            <Route path="therapists" element={<AdminTherapists />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="companies" element={<AdminCompanies />} />
+            <Route path="coupons" element={<AdminCoupons />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="content" element={<AdminContent />} />
             <Route path="workshops" element={<AdminWorkshops />} />
+            <Route path="demos" element={<AdminDemos />} />
             <Route path="therapist/:id" element={<TherapistProfileView />} />
           </Route>
         </Routes>
