@@ -44,6 +44,7 @@ export default function AdminContent() {
   // Blog state
   const [blogs, setBlogs] = useState(initialBlogs);
   const [showBlogModal, setShowBlogModal] = useState(false);
+  const [editingBlogId, setEditingBlogId] = useState(null);
   const [blogForm, setBlogForm] = useState({ title: '', author: '', category: '' });
 
   // FAQ state
@@ -64,6 +65,27 @@ export default function AdminContent() {
     setBlogForm({ title: '', author: '', category: '' });
     setShowBlogModal(false);
     showToast('Blog added as draft');
+  }
+
+  function startEditBlog(blog) {
+    setEditingBlogId(blog.id);
+    setBlogForm({ title: blog.title, author: blog.author, category: blog.category });
+    setShowBlogModal(true);
+  }
+
+  function saveBlog() {
+    if (!blogForm.title.trim()) return;
+    setBlogs(prev => prev.map(b => b.id === editingBlogId ? { ...b, title: blogForm.title.trim(), author: blogForm.author.trim(), category: blogForm.category.trim() } : b));
+    setEditingBlogId(null);
+    setBlogForm({ title: '', author: '', category: '' });
+    setShowBlogModal(false);
+    showToast('Blog updated');
+  }
+
+  function closeBlogModal() {
+    setShowBlogModal(false);
+    setEditingBlogId(null);
+    setBlogForm({ title: '', author: '', category: '' });
   }
 
   function toggleBlogStatus(id) {
@@ -133,7 +155,7 @@ export default function AdminContent() {
         <>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div style={{ fontSize: 14, color: 'var(--text-sec)' }}>{blogs.length} articles &middot; {blogs.filter(b => b.status === 'published').length} published</div>
-            <button className="btn btn--primary btn--sm" onClick={() => setShowBlogModal(true)}>Add Blog</button>
+            <button className="btn btn--primary btn--sm" onClick={() => { setEditingBlogId(null); setBlogForm({ title: '', author: '', category: '' }); setShowBlogModal(true); }}>Add Blog</button>
           </div>
 
           <div className="card card--no-hover">
@@ -161,9 +183,12 @@ export default function AdminContent() {
                       </span>
                     </td>
                     <td style={{ padding: '12px' }}>
-                      <button className="btn btn--outline btn--xs" onClick={() => toggleBlogStatus(b.id)}>
-                        {b.status === 'published' ? 'Unpublish' : 'Publish'}
-                      </button>
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <button className="btn btn--outline btn--xs" onClick={() => startEditBlog(b)}>Edit</button>
+                        <button className="btn btn--outline btn--xs" onClick={() => toggleBlogStatus(b.id)}>
+                          {b.status === 'published' ? 'Unpublish' : 'Publish'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -172,10 +197,10 @@ export default function AdminContent() {
           </div>
 
           {showBlogModal && (
-            <div className="modal-overlay" onClick={() => setShowBlogModal(false)}>
+            <div className="modal-overlay" onClick={closeBlogModal}>
               <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 460 }}>
-                <button className="modal__close" onClick={() => setShowBlogModal(false)}>&times;</button>
-                <h3 className="modal__title">Add Blog Article</h3>
+                <button className="modal__close" onClick={closeBlogModal}>&times;</button>
+                <h3 className="modal__title">{editingBlogId ? 'Edit Blog Article' : 'Add Blog Article'}</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 16 }}>
                   <div>
                     <label className="form-label">Title</label>
@@ -191,8 +216,10 @@ export default function AdminContent() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-                  <button className="btn btn--ghost btn--md btn--full" onClick={() => setShowBlogModal(false)}>Cancel</button>
-                  <button className="btn btn--primary btn--md btn--full" onClick={addBlog}>Add Blog</button>
+                  <button className="btn btn--ghost btn--md btn--full" onClick={closeBlogModal}>Cancel</button>
+                  <button className="btn btn--primary btn--md btn--full" onClick={editingBlogId ? saveBlog : addBlog}>
+                    {editingBlogId ? 'Save Changes' : 'Add Blog'}
+                  </button>
                 </div>
               </div>
             </div>
