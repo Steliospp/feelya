@@ -31,6 +31,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminDemos from './pages/AdminDemos';
 import AdminWorkshops from './pages/AdminWorkshops';
 import TherapistProfileView from './pages/TherapistProfileView';
+import BookSession from './pages/BookSession';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -50,8 +51,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
 
-            {/* Therapist profile (shared across employee & HR) */}
+            {/* Therapist profile & booking (shared across employee & HR) */}
             <Route path="therapist-profile/:id" element={<TherapistProfileView />} />
+            <Route path="book/:id" element={<BookSession />} />
 
             {/* Employee-only pages */}
             <Route path="therapists" element={<RequireAuth roles={['EMPLOYEE']}><Therapists /></RequireAuth>} />
