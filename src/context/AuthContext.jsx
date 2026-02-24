@@ -55,11 +55,6 @@ export function AuthProvider({ children }) {
 
   /* ── Bootstrap: resolve existing Supabase session ── */
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-
     let cancelled = false;
 
     // 1. Check for an existing session (page reload / returning visitor)
@@ -114,7 +109,6 @@ export function AuthProvider({ children }) {
 
   /* ── Login (returns { success, user } or { success, error }) ── */
   const login = useCallback(async (email, password) => {
-    if (!supabase) return { success: false, error: 'Supabase is not configured' };
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) return { success: false, error: error.message };
@@ -131,9 +125,7 @@ export function AuthProvider({ children }) {
   /* ── Logout ── */
   const logout = useCallback(async () => {
     setUser(null); // clear immediately so UI redirects right away
-    if (supabase) {
-      await supabase.auth.signOut().catch(() => {});
-    }
+    await supabase.auth.signOut().catch(() => {});
   }, []);
 
   /* ── Dev-only role switch (local override — no Supabase mutation) ── */
