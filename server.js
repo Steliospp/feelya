@@ -215,6 +215,38 @@ if (therapistCount.count === 0) {
   }
 }
 
+// --- Seed Demo Users ---
+const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get();
+if (userCount.count === 0) {
+  const demoPassword = bcrypt.hashSync('password', 12);
+
+  // Create demo organisation
+  const orgResult = db.prepare(
+    'INSERT INTO organisations (name, size, invite_code) VALUES (?, ?, ?)'
+  ).run('Acme Corp', '50-200', 'DEMO1234');
+  const orgId = orgResult.lastInsertRowid;
+
+  // Employee
+  db.prepare(
+    'INSERT INTO users (first_name, last_name, email, password, avatar_color, role, job_title, org_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run('Alex', 'Johnson', 'employee@demo.com', demoPassword, '#6366f1', 'employee', 'Software Engineer', orgId);
+
+  // HR Admin
+  db.prepare(
+    'INSERT INTO users (first_name, last_name, email, password, avatar_color, role, job_title, org_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run('Sarah', 'Williams', 'hr@demo.com', demoPassword, '#ec4899', 'admin', 'HR Director', orgId);
+
+  // Super Admin
+  db.prepare(
+    'INSERT INTO users (first_name, last_name, email, password, avatar_color, role, job_title, org_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run('Admin', 'User', 'admin@feelya.com', demoPassword, '#14b8a6', 'superadmin', 'Platform Admin', null);
+
+  // Therapist
+  db.prepare(
+    'INSERT INTO users (first_name, last_name, email, password, avatar_color, role, job_title, org_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run('Dr. Sarah', 'Mitchell', 'therapist@demo.com', demoPassword, '#8b5cf6', 'therapist', 'Clinical Psychologist', null);
+}
+
 // --- Middleware ---
 app.use(express.json());
 app.use(cookieParser());
