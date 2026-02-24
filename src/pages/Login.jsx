@@ -20,13 +20,13 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const result = login(email, password);
+      const result = await login(email, password);
       if (result.success) {
         navigate(redirectForRole(result.user.role));
       } else {

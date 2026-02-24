@@ -3,7 +3,10 @@ import { useAuth } from '../context/AuthContext';
 import { homePathForRole, ROLES } from '../lib/roles';
 
 export default function RequireAuth({ children, roles }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // Wait for Supabase session to resolve before deciding
+  if (loading) return null;
 
   if (!user) {
     return <Navigate to="/login" replace />;
