@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabaseClient';
 import '../styles/auth.css';
-
-function redirectForRole(role) {
-  if (role === 'SUPER_ADMIN') return '/admin';
-  if (role === 'THERAPIST') return '/therapist';
-  return '/app';
-}
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -17,7 +11,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [therapistMode, setTherapistMode] = useState(false);
 
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -25,15 +18,26 @@ export default function Login() {
     setLoading(true);
     setError('');
 
+    console.log('[Login] Using Supabase auth for:', email);
+
+    if (!supabase) {
+      setError('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local and rebuild.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const result = await login(email, password);
-      if (result.success) {
-        navigate(redirectForRole(result.user.role));
+      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+      if (authError) {
+        console.error('[Login] Supabase auth error:', authError.message);
+        setError(authError.message);
       } else {
-        setError(result.error || 'Invalid credentials');
+        console.log('[Login] Supabase login success:', data.user.email);
+        navigate('/app');
       }
-    } catch {
-      setError('Something went wrong. Please try again.');
+    } catch (err) {
+      console.error('[Login] Unexpected error:', err);
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
