@@ -3,3 +3,4 @@ feelya.db
 feelya.db-shm
 feelya.db-wal
 .env
+.env.local

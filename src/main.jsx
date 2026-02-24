@@ -1,6 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { supabase } from './lib/supabaseClient';
+
+// DEV-ONLY: Supabase connection sanity check (remove once verified)
+if (import.meta.env.DEV) {
+  console.log('[Supabase] URL present:', !!import.meta.env.VITE_SUPABASE_URL);
+  supabase.auth.getSession().then(({ data, error }) => {
+    if (error) console.error('[Supabase] getSession error:', error.message);
+    else console.log('[Supabase] getSession OK:', data);
+  });
+}
 import { AuthProvider } from './context/AuthContext';
 import RequireAuth from './components/RequireAuth';
 import DevRoleSwitcher from './components/DevRoleSwitcher';
