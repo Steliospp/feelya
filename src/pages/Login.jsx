@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, getProfile } from '../lib/supabaseClient';
+import { homePathForRole } from '../lib/roles';
 import '../styles/auth.css';
 
 export default function Login() {
@@ -33,7 +34,9 @@ export default function Login() {
         setError(authError.message);
       } else {
         console.log('[Login] Supabase login success:', data.user.email);
-        navigate('/app');
+        const profile = await getProfile(data.user.id);
+        const role = profile?.role || 'EMPLOYEE';
+        navigate(homePathForRole(role));
       }
     } catch (err) {
       console.error('[Login] Unexpected error:', err);
