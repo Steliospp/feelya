@@ -134,10 +134,16 @@ export function AuthProvider({ children }) {
         });
         const me = await meRes.json();
 
+        const roleMap = {
+          admin: ROLES.HR_ADMIN,
+          superadmin: ROLES.SUPER_ADMIN,
+          therapist: ROLES.THERAPIST,
+          employee: ROLES.EMPLOYEE,
+        };
         const appUser = {
           id: me.id,
           email: me.email,
-          role: me.role === 'admin' ? ROLES.HR_ADMIN : ROLES.EMPLOYEE,
+          role: roleMap[me.role] || ROLES.EMPLOYEE,
           companyId: me.org_id || null,
           companyName: me.org_name || null,
           first_name: me.first_name,
