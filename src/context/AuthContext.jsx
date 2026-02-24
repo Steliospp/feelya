@@ -69,6 +69,9 @@ export function AuthProvider({ children }) {
         }
       }
       if (!cancelled) setLoading(false);
+    }).catch((err) => {
+      console.error('[Auth] getSession failed:', err);
+      if (!cancelled) setLoading(false);
     });
 
     // 2. React to auth changes (sign-out from another tab, token refresh, etc.)
