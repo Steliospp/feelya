@@ -55,6 +55,11 @@ export function AuthProvider({ children }) {
 
   /* ── Bootstrap: resolve existing Supabase session ── */
   useEffect(() => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     // 1. Check for an existing session (page reload / returning visitor)
@@ -110,8 +115,42 @@ export function AuthProvider({ children }) {
     }
   }, [user]);
 
-  /* ── Login (returns { success, user } or { success, error }) ── */
+  /* ── Login ── */
   const login = useCallback(async (email, password) => {
+    if (!supabase) {
+      // Supabase not available — fall back to the Express /api/login
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) return { success: false, error: data.error || 'Login failed' };
+
+        // Fetch profile from Express API
+        const meRes = await fetch('/api/me', {
+          headers: { Authorization: `Bearer ${data.token}` },
+        });
+        const me = await meRes.json();
+
+        const appUser = {
+          id: me.id,
+          email: me.email,
+          role: me.role === 'admin' ? ROLES.HR_ADMIN : ROLES.EMPLOYEE,
+          companyId: me.org_id || null,
+          companyName: me.org_name || null,
+          first_name: me.first_name,
+          last_name: me.last_name,
+          avatar_color: me.avatar_color || '#6366f1',
+        };
+        setUser(appUser);
+        return { success: true, user: appUser };
+      } catch (err) {
+        return { success: false, error: err.message || 'Login failed' };
+      }
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) return { success: false, error: error.message };
@@ -127,8 +166,12 @@ export function AuthProvider({ children }) {
 
   /* ── Logout ── */
   const logout = useCallback(async () => {
-    setUser(null); // clear immediately so UI redirects right away
-    await supabase.auth.signOut().catch(() => {});
+    setUser(null);
+    if (supabase) {
+      await supabase.auth.signOut().catch(() => {});
+    } else {
+      await fetch('/api/logout', { method: 'POST' }).catch(() => {});
+    }
   }, []);
 
   /* ── Dev-only role switch (local override — no Supabase mutation) ── */
